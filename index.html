@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Radar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#121214">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Live Radar">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #121214;
+            color: #f4f4f5;
+            margin: 0;
+            padding: 20px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 12px;
+            margin-top: 4px;
+        }
+        .app-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        /* Autonomous Callout Card */
+        .auto-card {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.38);
+            border-radius: 14px;
+            padding: 13px 40px 13px 14px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.08);
+        }
+        .auto-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .auto-text {
+            font-size: 13.5px;
+            line-height: 1.45;
+            color: #d1d5db;
+        }
+        .auto-text b {
+            color: #4ade80;
+            font-size: 13.5px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .auto-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 13.5px;
+            line-height: 1;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            padding: 0;
+            transition: all 0.2s;
+        }
+        .auto-close-btn:hover {
+            color: #f4f4f5;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Banner install */
+        .install-card {
+            background: transparent;
+            /* border: 1px solid #27272a; */
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 0;
+            display: none;
+            text-align: left;
+        }
+        .install-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #f4f4f5;
+            margin-bottom: 4px;
+        }
+        .install-desc {
+            font-size: 13.5px;
+            color: #a1a1aa;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        .btn-install {
+            background: #27272a;
+            color: #e4e4e7;
+            border: 1px solid #3f3f46;
+            border-radius: 8px;
+            padding: 9px 16px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .btn-install:active {
+            background: #3f3f46;
+        }
+
+        /* Android APK Download Banner */
+        .apk-card {
+            background: rgba(2, 132, 199, 0.1);
+            border: 1px solid #0284c7;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 12px;
+            display: none;
+            text-align: left;
+        }
+        
+        .apk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .apk-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f4f4f5;
+            margin-bottom: 6px;
+        }
+        .apk-desc {
+            font-size: 13.5px;
+            color: #a1a1aa;
+            line-height: 1.45;
+            margin-bottom: 10px;
+        }
+        .apk-features {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+            font-size: 13.5px;
+            color: #cbd5e1;
+        }
+        .apk-feat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-apk {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #ffffff;
+            text-decoration: none;
+            border: none;
+            border-radius: 10px;
+            padding: 13px 16px;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            transition: 0.2s;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+        }
+        .btn-apk:active {
+            transform: scale(0.98);
+            background: #1d4ed8;
+        }
+
+        /* Main IP Card */
+        .card {
+            background: transparent;
+            /* border: 1px solid #27272a; */
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .ip-label {
+            font-size: 13.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #71717a;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .ip-value {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 26px;
+            font-weight: 700;
+            color: #f4f4f5;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 15.5px;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 48px;
+            box-shadow: 0 2px 10px rgba(34, 197, 94, 0.15);
+            transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+            background: rgba(34, 197, 94, 0.22);
+        }
+
+        .btn-sync {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #0284c7;
+            border-radius: 12px;
+            padding: 11px 16px;
+            min-height: 48px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn-sync:active {
+            background: #0f172a;
+        }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            background: #27272a;
+            color: #e4e4e7;
+            border: 1px solid #3f3f46;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13.5px;
+            font-weight: 600;
+            min-height: 48px;
+            box-sizing: border-box;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .btn-secondary:active {
+            background: #3f3f46;
+        }
+
+        .btn-ghost {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            color: #a1a1aa;
+            border: 1px solid #2d2d32;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-ghost:hover {
+            color: #f4f4f5;
+            border-color: #3f3f46;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .btn-ghost:active {
+            transform: scale(0.99);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Bento Grid Navigation (2 square tiles in a row) */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .bento-tile {
+            background: transparent;
+            /* border: 1px solid #27272a; */
+            border-radius: 14px;
+            padding: 13px 13px 11px 13px;
+            cursor: pointer;
+            text-align: left;
+            user-select: none;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 84px;
+            box-sizing: border-box;
+        }
+        .bento-tile:hover {
+            border-color: #3f3f46;
+            background: #1f1f23;
+        }
+        .bento-tile:active {
+            transform: scale(0.98);
+        }
+        .bento-tile.active {
+            border-color: rgba(34, 197, 94, 0.65);
+            background: rgba(34, 197, 94, 0.07);
+            box-shadow: 0 0 14px rgba(34, 197, 94, 0.12);
+        }
+        .bento-tile-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .bento-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+        .bento-arrow {
+            font-size: 10px;
+            color: #71717a;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .bento-tile.active .bento-arrow {
+            color: #4ade80;
+            transform: rotate(180deg);
+        }
+        .bento-tile-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #f4f4f5;
+            line-height: 1.25;
+            margin-bottom: 3px;
+        }
+        .bento-tile-sub {
+            font-size: 11px;
+            color: #71717a;
+            line-height: 1.2;
+            font-weight: 500;
+        }
+        .bento-tile.active .bento-tile-sub {
+            color: #86efac;
+        }
+
+        /* Bento Content Panels (Expanded beneath tiles) */
+        .bento-content {
+            display: none;
+            background: transparent;
+            /* border: 1px solid #27272a; */
+            border-radius: 14px;
+            padding: 0;
+            text-align: left;
+            margin-bottom: 16px;
+            animation: bentoFadeIn 0.2s ease;
+        }
+        @keyframes bentoFadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Steps Layout */
+        .guide-step {
+            margin-bottom: 16px;
+            background: #202024;
+            border: 1px solid #2d2d32;
+            border-radius: 10px;
+            padding: 13px 15px;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #3b82f6;
+            color: #ffffff;
+            font-size: 13.5px;
+            font-weight: 700;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f4f4f5;
+        }
+        .step-body {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #cbd5e1;
+            padding-left: 32px;
+        }
+        .step-body b {
+            color: #e4e4e7;
+        }
+        .step-body code, .trouble-a code {
+            background: transparent;
+            color: #38bdf8;
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 13.5px;
+            font-weight: 600;
+            border: 1px solid #3f3f46;
+        }
+
+        .option-box {
+            background: transparent;
+            border: 1px solid #2e2e34;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 8px;
+        }
+        .option-title {
+            font-weight: 600;
+            color: #93c5fd;
+            font-size: 13.5px;
+            margin-bottom: 4px;
+        }
+        .cred-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 13.5px;
+        }
+        .option-note {
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        /* Troubleshooting List & Accordion */
+        .trouble-item {
+            background: #202024;
+            border: 1px solid #2d2d32;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .trouble-item:hover {
+            border-color: #3f3f46;
+        }
+        .trouble-item.open {
+            background: #232328;
+            border-color: #3b82f6;
+        }
+        .trouble-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+        .trouble-q {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #f4f4f5;
+        }
+        .trouble-arrow {
+            font-size: 11px;
+            color: #a1a1aa;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+        .trouble-item.open .trouble-arrow {
+            transform: rotate(180deg);
+            color: #38bdf8;
+        }
+        .trouble-a {
+            display: none;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #2d2d32;
+            cursor: default;
+        }
+        .trouble-item.open .trouble-a {
+            display: block;
+        }
+        .trouble-a b {
+            color: #e4e4e7;
+        }
+
+        /* Edit Modal / Inline */
+        .edit-row {
+            display: none;
+            margin-top: 14px;
+            gap: 8px;
+        }
+        .input-ip {
+            flex: 1;
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-family: monospace;
+            font-size: 15px;
+        }
+        .input-ip:focus {
+            outline: none;
+            border-color: #22c55e;
+        }
+        .btn-save-ip {
+            background: #3f3f46;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .first-run-tip {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #ffffff;
+            color: #09090b;
+            border: 1px solid #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 1.35;
+            min-height: 48px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), 0 0 20px rgba(255, 255, 255, 0.12);
+            transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        .first-run-tip:hover {
+            background: #f4f4f5;
+            color: #000000;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 255, 255, 0.18);
+        }
+        .first-run-tip:active {
+            transform: scale(0.98);
+            background: #e4e4e7;
+        }
+        .sync-hint {
+            font-size: 11.5px;
+            color: #71717a;
+            margin-top: 6px;
+            margin-bottom: 4px;
+            line-height: 1.35;
+        }
+        .badge-recommended {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .ip-unreachable-hint {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fde68a;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 13.5px;
+            line-height: 1.4;
+            margin-top: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .ip-unreachable-hint:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #fbbf24;
+            color: #ffffff;
+        }
+        .notify-toast {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #4ade80;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app-container">
+        <!-- Toast Notify -->
+        <div id="toast" class="notify-toast"></div>
+
+        <!-- Web App Install section (only shown in browser when not installed) -->
+        <div id="install-banner-android" class="install-card" style="display: none; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div class="install-title" id="t-install-title-android" style="margin-bottom: 0;">📲 Install Application</div>
+                <button type="button" class="btn-ghost" onclick="document.getElementById('install-banner-android').style.display='none'" style="padding: 4px; margin: -4px -4px 0 0; width: auto; background: transparent; border: none; cursor: pointer;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="install-desc" id="t-install-desc-android">Add Live Radar to your home screen for quick one-tap access.</div>
+            <button type="button" id="btn-install-app" class="btn-install">Install</button>
+        </div>
+
+        <!-- iOS install guide banner -->
+        <div id="install-banner-ios" class="install-card" style="display: none; margin-bottom: 14px; border-color: #52525b; background: transparent; padding: 14px 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div class="install-title" id="t-install-title-ios" style="color: #e4e4e7; margin-bottom: 0;">📲 Install on iPhone</div>
+                <button type="button" class="btn-ghost" onclick="document.getElementById('install-banner-ios').style.display='none'" style="padding: 4px; margin: -4px -4px 0 0; width: auto; background: transparent; border: none; cursor: pointer;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="install-desc" id="t-install-desc-ios" style="margin-bottom: 0;">Tap the <b>Share button ⎋</b> in Safari, then select <b>«Add to Home Screen» ➕</b>.</div>
+        </div>
+
+        <!-- Autonomous Callout Card -->
+        <div class="auto-card" id="auto-card">
+            <span class="auto-icon">🛡️</span>
+            <div class="auto-text" id="t-auto-text">
+                <b>Контроллер работает полностью автономно.</b> Телефон используется только для мониторинга и настройки.
+            </div>
+            <button type="button" class="auto-close-btn" onclick="dismissAutoCard(event)" title="Скрыть" aria-label="Скрыть">✕</button>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card" id="main-card">
+            <div class="ip-label" id="t-ip-label">Controller IP Address</div>
+            <div id="display-ip" class="ip-value">--</div>
+            <div id="cloud-status-badge" style="display: none; margin-top: -6px; margin-bottom: 12px; font-size: 13px; color: #4ade80; font-weight: 600; text-align: center;">🟢 В сети (Облако)</div>
+            <div id="first-run-tip" class="first-run-tip" onclick="openAndScrollToGuide()">
+                <span style="font-size: 16px; line-height: 1;">📖</span>
+                <span id="t-first-run-tip">First-time setup: follow the guide below 👇</span>
+            </div>
+
+            <button id="btn-open" class="btn-primary" onclick="openDashboard()">
+                <span id="open-btn-icon">📊</span>
+                <span id="t-btn-open">Live Monitor</span>
+            </button>
+
+            <!-- IP Unreachable Hint (shows if user clicks dashboard but board IP is changed/unreachable) -->
+            <div id="ip-unreachable-hint" class="ip-unreachable-hint" onclick="handleIpUnreachable()" style="display: none;">
+                <span style="font-size: 16px;">💡</span>
+                <span id="t-ip-unreachable-text">Не открывается? Возможно, сменился IP-адрес. Нажмите сюда для автопоиска</span>
+            </div>
+
+            <!-- Android App Collapsible Button (shown on Android / Desktop) -->
+            <button type="button" id="btn-toggle-apk" class="btn-secondary" onclick="toggleApkDetails()" style="display: none; justify-content: space-between; padding: 12px 14px; border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.08); margin-top: 12px;">
+                <div style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #fde68a; white-space: nowrap;">
+                    <span>🤖</span>
+                    <span id="t-btn-apk-toggle">Android App</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0;">
+                    <span class="badge-recommended" id="t-badge-recommended" style="font-size: 10px; padding: 2px 7px; white-space: nowrap;">🔥 RECOMMENDED</span>
+                    <span id="apk-toggle-arrow" style="font-size: 11px; color: #fde68a; transition: transform 0.2s;">▼</span>
+                </div>
+            </button>
+
+            <!-- Android App Collapsible Details -->
+            <div id="apk-details-box" style="display: none; margin-top: 10px; background: #202024; border: 1px solid #2d2d32; border-radius: 12px; padding: 14px; text-align: left;">
+                <div style="font-size: 13.5px; font-weight: 700; color: #f4f4f5; margin-bottom: 4px;" id="t-apk-title">Live Monitor</div>
+                <div style="font-size: 13.5px; color: #a1a1aa; line-height: 1.4; margin-bottom: 10px;" id="t-apk-desc">Android app with live battery HUD widget:</div>
+                <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.45;">
+                    <span style="font-size: 13.5px; margin-top: 1px;">⚡</span>
+                    <div id="t-apk-f2"><b>Instant auto-connect via smartphone hotspot</b><br><span style="color: #a1a1aa; font-size: 11.5px;">App discovers controller automatically — no IP search or manual setup.</span></div>
+                </div>
+                <a href="./Live_Monitor.apk" download="Live_Monitor.apk" class="btn-apk" id="btn-download-apk" onclick="onApkDownload()">
+                    <span>⬇️</span>
+                    <span id="t-btn-download-apk">Download APK</span>
+                </a>
+                <div id="t-apk-install-hint" style="font-size: 13.5px; color: #94a3b8; margin-top: 8px; text-align: center; line-height: 1.4;">
+                    После загрузки откройте файл из шторки телефона для установки
+                </div>
+            </div>
+        </div>
+
+        <!-- Bento Grid Navigation (2 square tiles in a row) -->
+        <div class="bento-grid" id="bento-grid">
+            <div class="bento-tile" id="tile-setup" onclick="toggleAccordion('setup')">
+                <div class="bento-tile-top">
+                    <span class="bento-icon" id="setup-tile-icon">🚀</span>
+                    <span id="setup-arrow" class="bento-arrow">▼</span>
+                </div>
+                <div>
+                    <div class="bento-tile-title" id="t-setup-accordion-title">First-Time Setup</div>
+                    <div class="bento-tile-sub" id="t-setup-sub">Step-by-step guide</div>
+                </div>
+            </div>
+
+            <div class="bento-tile" id="tile-faq" onclick="toggleAccordion('faq')">
+                <div class="bento-tile-top">
+                    <span class="bento-icon">❓</span>
+                    <span id="faq-arrow" class="bento-arrow">▼</span>
+                </div>
+                <div>
+                    <div class="bento-tile-title" id="t-faq-accordion-title">Help & FAQ</div>
+                    <div class="bento-tile-sub" id="t-faq-sub">Knowledge base</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Panel 1: Connection & Settings Guide -->
+        <div id="setup-content" class="bento-content">
+            <div class="guide-step">
+                <div class="step-header">
+                    <span class="step-num">1</span>
+                    <span class="step-title" id="t-step1-title">Turn ON Phone Hotspot</span>
+                </div>
+                <div class="step-body">
+                    <div style="border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
+                        <div style="padding: 10px 10px 4px 10px;">
+                            <div id="t-step1-desc">Enable <b>Personal Hotspot</b> on your phone with the following credentials:</div>
+                            <div class="cred-row" style="margin-bottom: 0;">
+                                <span id="t-step1-net">Network: <code>Bms</code></span>
+                                <span id="t-step1-pwd">Password: <code>bmslocal</code></span>
+                            </div>
+                        </div>
+                        <div class="option-note" id="t-step1-warn" style="background: rgba(245, 158, 11, 0.1); border-top: 1px solid rgba(245, 158, 11, 0.2); border-left: none; border-right: none; border-bottom: none; border-radius: 0; padding: 10px; margin: 0; color: #e4e4e7; font-size: 13.5px; line-height: 1.5;">⚠️ <b>Important:</b> Only supports <b>2.4GHz Wi-Fi</b>. On iPhone, turn ON <i>«Maximize Compatibility»</i>.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-step">
+                <div class="step-header">
+                    <span class="step-num">2</span>
+                    <span class="step-title" id="t-step2-title">Plug into Car & Power ON</span>
+                </div>
+                <div class="step-body" id="t-step2-body">
+                    Insert the controller into your vehicle's <b>OBD2 port</b> (under the steering wheel) and power on the car (<b>READY</b> mode).
+                </div>
+            </div>
+
+            <div class="guide-step" id="guide-step-3">
+                <div class="step-header">
+                    <span class="step-num">3</span>
+                    <span class="step-title" id="t-step3-title">IP Discovery (Auto-Sync)</span>
+                </div>
+                <div class="step-body">
+                    <div style="border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
+                        <div style="padding: 10px 10px 4px 10px;">
+                            <div id="t-step3-desc">Connect phone Wi-Fi to controller network with the following credentials:</div>
+                            <div class="cred-row" style="margin-bottom: 0;">
+                                <span id="t-step3-net">Network: <code>Bms_Setup</code></span>
+                                <span id="t-step3-pwd">Password: <code>bmslocal</code></span>
+                            </div>
+                        </div>
+                        <div class="option-note" id="t-step3-tips" style="background: rgba(245, 158, 11, 0.1); border-top: 1px solid rgba(245, 158, 11, 0.2); border-left: none; border-right: none; border-bottom: none; border-radius: 0; padding: 10px; margin: 0; color: #e4e4e7; font-size: 13.5px; line-height: 1.5;"></div>
+                    </div>
+                    
+                    <!-- Option A: Auto-Sync Button -->
+                    <button type="button" class="btn-sync" id="btn-guide-sync" onclick="findControllerInCloud(false, true)" style="margin-top: 10px; margin-bottom: 6px; width: 100%;">
+                        <span id="guide-sync-icon" style="font-size: 18px;">📡</span>
+                        <span id="t-btn-sync" style="font-size: 14.5px; font-weight: 700;">Найти контроллер</span>
+                    </button>
+                    <div class="option-note" id="t-step3-note">The controller will send its IP to Live Radar, disable Bms_Setup, and redirect you back with IP saved.</div>
+
+                    <!-- Option B: Manual IP Input in Step 3 -->
+                    <div style="margin-top: 12px; border-top: 1px dashed #3f3f46; padding-top: 12px;">
+                        <div style="font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px;" id="t-step3-advanced-title">Для продвинутых пользователей</div>
+                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 8px; line-height: 1.4;" id="t-step3-advanced-desc">Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства». Нажмите «Ввести IP-адрес вручную» и сохраните его.</div>
+                        <button type="button" class="btn-ghost" onclick="toggleEditIp()" style="width: 100%; padding: 8px 10px; margin: 0; font-size: 13.5px; justify-content: center; background: rgba(255, 255, 255, 0.03);">
+                            <span>✏️</span>
+                            <span id="t-btn-manual">Ввести IP-адрес вручную</span>
+                        </button>
+                        <div id="edit-row" class="edit-row" style="flex-direction: column; margin-top: 8px;">
+                            <div style="display: flex; width: 100%; gap: 8px;">
+                                <input type="text" id="manual-ip" class="input-ip" placeholder="10.48.33.187" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="15">
+                                <button class="btn-save-ip" id="t-btn-save-ip" onclick="saveManualIp()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-step" style='margin-bottom: 4px;'>
+                <div class="step-header">
+                    <span class="step-num">4</span>
+                    <span class="step-title" id="t-step4-title">Launch Live Monitor</span>
+                </div>
+                <div class="step-body" id="t-step4-body">
+                    After obtaining the IP address, tap <b>«📊 Live Monitor»</b> above to view live telemetry.
+                </div>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #3f3f46;">
+                    <button type="button" class="btn-primary" onclick="openDashboard()" style="margin: 0; width: 100%;">
+                        <span style="font-size: 16px; margin-right: 6px;">📊</span>
+                        <span id="t-step4-btn">Live Monitor</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Panel 2: Questions and Answers (FAQ) -->
+        <div id="faq-content" class="bento-content">
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-auto-q">🛡️ How does autonomy and updates work?</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-auto-a">
+                    • <b>⚡ Full autonomy:</b> Controller is plugged into the vehicle and automatically regulates fan speed. A discharged or forgotten phone never affects battery cooling.<br>
+                    • <b>📲 Energy-efficient link:</b> Phone battery is not drained by continuous data polling. Connection is only active when viewing battery temperature or changing network settings.<br>
+                    • <b>🔄 Support & updates:</b> Both controller and mobile app are engineered with support for wireless updates.
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-1-q">🔴 Dashboard not opening or offline?</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-1-a">
+                    • Ensure vehicle is in <b>READY</b> mode.<br>
+                    • Verify hotspot is ON: default network <code>Bms</code> (password <code>bmslocal</code>) or your custom network.<br>
+                    • On iPhone, turn <b>ON</b> <i>«Maximize Compatibility»</i> in Personal Hotspot settings.<br>
+                    • On Android, set Hotspot AP Band to <b>2.4 GHz</b>.
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-custom-q">⚙️ How to connect controller to custom/home Wi-Fi?</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-custom-a">
+                    1. Turn off phone hotspot for 15s. The controller will launch its setup Wi-Fi <code>Bms_Setup</code> (password <code>bmslocal</code>).<br>
+                    2. Connect phone Wi-Fi to <code>Bms_Setup</code>, open <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>, or tap <b>«Auto-Sync»</b> above.<br>
+                    3. In the Wi-Fi settings section, enter your hotspot SSID and password, then save.<br>
+                    The controller will reconnect to your network automatically!
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-4-q">❓ Changed phone or typo in Wi-Fi password?</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-4-a">
+                    No worries: turn off phone hotspot for 15 seconds. Since the controller cannot find the network, it will re-open <code>Bms_Setup</code> (password <code>bmslocal</code>), so you can enter new credentials via <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>.
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-2-q">📶 Tips for <code>Bms_Setup</code> Wi-Fi:</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-2-a">
+                    • Turn <b>OFF</b> <i>«Auto-reconnect»</i> for Bms_Setup.<br>
+                    • If prompted <i>«No Internet»</i>, tap <b>«Keep Wi-Fi connection» / «Always connect»</b>.
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-android-q">🤖 Android Hotspot 2.4GHz Settings:</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-android-a">
+                    In your Android phone settings ➔ <i>Portable Hotspot / Tethering</i> ➔ <i>Set up hotspot</i>, make sure <b>AP Band</b> is set to <b>2.4 GHz Band</b> (not 5.0 GHz preferred).
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)" style='margin-bottom: 4px;'>
+                <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-3-q">🟡 IP address changed?</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-3-a">
+                    • Ensure phone Hotspot (2.4GHz) is ON and phone is connected to <code>Bms_Setup</code> Wi-Fi, then tap <b>«Auto-Sync»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(go to button)</a>.<br>
+                    • Or check phone Hotspot settings for the connected device IP and save it manually.
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        // Translations Dictionary
+        const I18N = {
+            en: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android App",
+                btnApkToggle: "Android App",
+                badgeRecommended: "🔥 RECOMMENDED",
+                ipLabel: "Controller IP Address",
+                ipStatusOnline: "Online (Telemetry Active)",
+                ipStatusOffline: "Offline / Standby",
+                ipStatusChecking: "Checking status...",
+                firstRunTip: "First-time setup: follow the guide below 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "No connection. Turn on Mobile Hotspot. If it's already on, tap here to find IP.",
+                btnSync: "Find Controller",
+                                btnManual: "Set IP Manually",
+                step3Or: "Or enter controller IP manually:",
+                step3AdvancedTitle: "For advanced users",
+                step3AdvancedDesc: "Where to find the IP address? Go to the 'Connected devices' section in your phone's hotspot settings.",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "Save",
+                autoText: "<b>Controller operates fully autonomously.</b> Phone is used only for monitoring and settings.",
+                accordionSetupFirst: "First-Time Setup",
+                accordionSetupConfig: "Connection & Setup",
+                accordionFaq: "Help & FAQ",
+                setupSub: "Step-by-step guide",
+                faqSub: "Knowledge base",
+                apkTitle: "Live Monitor",
+                apkDesc: "Android app with live battery HUD widget:",
+                apkF2: "<b>Instant auto-connect via smartphone hotspot</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">App discovers controller automatically — no IP search or manual setup.</span>",
+                btnDownloadApk: "Download APK",
+                apkInstallHint: "After downloading, open the APK from notifications to install",
+                installTitleAndroid: "📲 Install Application",
+                installDescAndroid: "Add Live Radar to your home screen for quick one-tap access.",
+                btnInstall: "Install",
+                installTitleIos: "📲 Install on iPhone",
+                installDescIos: "Tap the <b>Share button ⎋</b> in Safari, then select <b>«Add to Home Screen» ➕</b>.",
+                step1Title: "Turn ON Phone Hotspot",
+                step1Desc: "Enable <b>Personal Hotspot</b> on your phone with the following credentials:",
+                step1Net: "Network: <code>Bms</code>",
+                step1Pwd: "Password: <code>bmslocal</code>",
+                step1Warn: "⚠️ <b>Important:</b> Only supports <b>2.4GHz Wi-Fi</b>. On iPhone, turn ON <i>«Maximize Compatibility»</i>.",
+                step1Note: "",
+                step2Title: "Plug into Car & Power ON",
+                step2Body: "Insert the controller into your vehicle's <b>OBD2 port</b> (under the steering wheel) and power on the car (<b>READY</b> mode).",
+                step3Title: "IP Discovery (Auto-Sync)",
+                step3Desc: "Connect phone Wi-Fi to controller network with the following credentials:",
+                step3Net: "Network: <code>Bms_Setup</code>",
+                step3Pwd: "Password: <code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ IMPORTANT:</b> In the settings of this Wi-Fi network, turn <b>OFF</b> «Auto-reconnect». If prompted, select <b>«Stay connected»</b>.",
+                                btnGuideSync: "Auto-Sync with Controller",
+                step3Note: "The controller will send its IP to Live Radar, disable Bms_Setup, and redirect you back with IP saved.",
+                step4Title: "Launch Live Monitor",
+                step4Body: "After obtaining the IP address, tap <b>«📊 Live Monitor»</b> (here or at the very top) to view live telemetry.",
+                trAutoQ: "🛡️ How does autonomy and updates work?",
+                trAutoA: "• <b>⚡ Full autonomy:</b> Controller is plugged into the vehicle and automatically regulates fan speed. A discharged or forgotten phone never affects battery cooling.<br>• <b>📲 Energy-efficient link:</b> Phone battery is not drained by continuous data polling. Connection is only active when viewing battery temperature or changing network settings.<br>• <b>🔄 Support & updates:</b> Both controller and mobile app are engineered with support for wireless updates.",
+                tr1Q: "🔴 Dashboard not opening or offline?",
+                tr1A: "• Ensure vehicle is in <b>READY</b> mode.<br>• Verify hotspot is ON: default network <code>Bms</code> (password <code>bmslocal</code>) or your custom network.<br>• On iPhone, turn <b>ON</b> <i>«Maximize Compatibility»</i> in Personal Hotspot settings.<br>• On Android, set Hotspot AP Band to <b>2.4 GHz</b>.<br>• You can also try opening <a href=\"http://bms.local\" target=\"_blank\" style=\"color: #4ade80; text-decoration: underline;\">http://bms.local</a> (may be unstable on iPhone hotspot).",
+                tr2Q: "📶 Tips for <code>Bms_Setup</code> Wi-Fi:",
+                tr2A: "• Turn <b>OFF</b> <i>«Auto-reconnect»</i> for Bms_Setup.<br>• If prompted <i>«No Internet»</i>, tap <b>«Keep Wi-Fi connection» / «Always connect»</b>.",
+                tr3Q: "🟡 IP address changed?",
+                tr3A: "• Ensure phone Hotspot (2.4GHz) is ON and phone is connected to <code>Bms_Setup</code> Wi-Fi, then tap <b>«Auto-Sync»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(go to button)</a>.<br>• Or check phone Hotspot settings for the connected device IP and save it manually.",
+                trAndroidQ: "🤖 Android Hotspot 2.4GHz Settings:",
+                trAndroidA: "In your Android phone settings ➔ <i>Portable Hotspot / Tethering</i> ➔ <i>Set up hotspot</i>, make sure <b>AP Band</b> is set to <b>2.4 GHz Band</b> (not 5.0 GHz preferred).",
+                trCustomQ: "⚙️ How to connect controller to custom/home Wi-Fi?",
+                trCustomA: "1. Turn off phone hotspot for 15s. The controller will launch its setup Wi-Fi <code>Bms_Setup</code> (password <code>bmslocal</code>).<br>2. Connect phone Wi-Fi to <code>Bms_Setup</code>, open <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>, or tap <b>«Auto-Sync»</b> above.<br>3. In the Wi-Fi settings section, enter your network SSID and password, then save. The controller will reconnect to your network automatically!",
+                tr4Q: "❓ Changed phone or typo in Wi-Fi password?",
+                tr4A: "No worries: turn off phone hotspot for 15 seconds. Since the controller cannot find the network, it will re-open <code>Bms_Setup</code> (password <code>bmslocal</code>), so you can enter new credentials via <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://bms.local</a>.",
+                toastLinked: "✅ Controller linked: ",
+                toastConnecting: "📡 Connecting (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">Ensure phone hotspot is ON and you are connected to <code>Bms_Setup</code> Wi-Fi!</small>",
+                toastSetupFirst: "Please complete setup following the guide below",
+                btnConnecting: "Connecting...",
+                alertInvalidIp: "Invalid IP address format (example: 10.48.33.187)",
+                dashUnreachable: "⚠️ <b>Cannot connect to controller.</b><br>• Ensure phone Hotspot (2.4GHz) is ON:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Network: <code>Bms</code></span><span>Password: <code>bmslocal</code></span></div><br>• Ensure vehicle ignition is in <b>READY</b> mode.<br>• Connect to <code>Bms_Setup</code> Wi-Fi and tap <b>«Auto-Sync via Bms_Setup»</b>.",
+                errNoSetupNetwork: "⚠️ Please connect to <code>Bms_Setup</code> Wi-Fi first",
+                manualIpHint: "Find IP in Hotspot settings (e.g. 10.48.33.x)",
+                btnCloudSearch: "Find Controller in Cloud",
+                cloudSearching: "Searching in cloud...",
+                cloudFound: "Controller found:",
+                cloudNotFound: "Controller not connected to cloud yet. Turn on phone hotspot.",
+                cloudError: "Cloud error. Check phone internet connection."
+            },
+            zh: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android 应用",
+                btnApkToggle: "Android 应用",
+                badgeRecommended: "🔥 推荐",
+                ipLabel: "控制器 IP 地址",
+                ipStatusOnline: "在线 (遥测正常)",
+                ipStatusOffline: "离线 / 待机",
+                ipStatusChecking: "检查状态中...",
+                firstRunTip: "首次设置：请按照下方指南操作 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "无法连接。请开启手机热点。如果已开启，请点击此处查找新 IP。",
+                btnSync: "查找控制器",
+                                btnManual: "手动设置 IP",
+                step3Or: "或手动输入控制器 IP：",
+                step3AdvancedTitle: "对于高级用户",
+                step3AdvancedDesc: "哪里可以找到 IP 地址？进入手机热点设置的“已连接设备”部分。",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "保存",
+                autoText: "<b>控制器完全自主运行。</b> 手机仅用于监控与设置。",
+                accordionSetupFirst: "首次连接指南",
+                accordionSetupConfig: "连接与设置",
+                accordionFaq: "常见问题 (FAQ)",
+                setupSub: "逐步设置指南",
+                faqSub: "知识库与 FAQ",
+                apkTitle: "Live Monitor",
+                apkDesc: "支持悬浮窗实时监控的 Android 应用：",
+                apkF2: "<b>智能手机热点极速自动直连</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">应用自动发现控制器 — 无需查找 IP 与手动设置。</span>",
+                btnDownloadApk: "下载 APK",
+                apkInstallHint: "下载完成后，请从手机通知栏打开文件以完成安装",
+                installTitleAndroid: "📲 安装应用程序",
+                installDescAndroid: "将 Live Radar 添加到主屏幕，享受一键快速访问。",
+                btnInstall: "立即安装",
+                installTitleIos: "📲 在 iPhone 上添加",
+                installDescIos: "在 Safari 浏览器中点击底部<b>分享按钮 ⎋</b>，然后选择<b>“添加到主屏幕” ➕</b>。",
+                step1Title: "开启手机热点",
+                step1Desc: "请在手机上开启<b>个人热点</b>，参数如下：",
+                step1Net: "热点名称：<code>Bms</code>",
+                step1Pwd: "热点密码：<code>bmslocal</code>",
+                step1Warn: "⚠️ <b>特别注意：</b> 仅支持 <b>2.4GHz Wi-Fi</b>。iPhone 用户请开启<i>“最大兼容性”</i>。",
+                step1Note: "",
+                step2Title: "插入车辆并通电",
+                step2Body: "将控制器插入车辆方向盘下方的 <b>OBD2 接口</b>，并将车辆启动至 <b>READY</b>模式。",
+                step3Title: "IP 检测（自动同步）",
+                step3Desc: "请在手机上连接控制器热点，参数如下：",
+                step3Net: "热点名称：<code>Bms_Setup</code>",
+                step3Pwd: "热点密码：<code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ 重要提示：</b> 在此 Wi-Fi 网络的设置中，<b>关闭“自动连接”</b>。如果提示“无网络”，请选择<b>“保持连接”</b>。",
+                                btnGuideSync: "与控制器自动同步",
+                step3Note: "控制器将自动将 IP 发送给雷达，关闭临时热点，并带您返回主屏（已保存 IP）。",
+                step4Title: "启动 Live Monitor",
+                step4Body: "获取 IP 地址后，点击<b>«📊 Live Monitor»</b>（此处或顶部均可）即可查看实时电池遥测数据。",
+                trAutoQ: "🛡️ 自主运行与系统更新机制？",
+                trAutoA: "• <b>⚡ 完全自主运行：</b>控制器硬件直连车辆，完全自动独立调节散热风扇转速。手机没电或遗忘绝不影响电池散热。<br>• <b>📲 超低功耗连接：</b>手机不会因持续通信而耗电。仅在您需要查看电池温度或更改网络设置时才发起连接。<br>• <b>🔄 长期维护与更新：</b>控制器硬件与移动端 App 均具备无线更新支持。",
+                tr1Q: "🔴 无法打开仪表板或设备离线？",
+                tr1A: "• 确保车辆处于通电状态（<b>READY</b> 模式）。<br>• 检查手机热点是否开启：默认网络：<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>热点名称：<code>Bms</code></span><span>热点密码：<code>bmslocal</code></span></div>或您设置的自定义网络。<br>• iPhone 用户请务必在个人热点设置中开启<i>“最大兼容性”</i>。<br>• Android 用户请将热点 AP 频段设置为 <b>2.4 GHz</b>。<br>• 您也可以尝试访问 <a href=\"http://bms.local\" target=\"_blank\" style=\"color: #4ade80; text-decoration: underline;\">http://bms.local</a>（在 iPhone 热点上可能不稳定）。",
+                tr2Q: "📶 连接 Bms_Setup 时的注意事项：",
+                tr2A: "• <b>关闭自动重连：</b>输入密码 <code>bmslocal</code> 时，请<b>关闭</b><i>“自动重连”</i>开关。<br>• <b>提示无网络：</b>若系统提示<i>“无互联网连接”</i>，请勾选<b>“始终连接”/“保持连接”</b>。",
+                tr3Q: "🟡 IP 地址发生变化？",
+                tr3A: "• 请确保手机热点 (2.4GHz) 已开启且手机已连接至 <code>Bms_Setup</code> Wi-Fi，然后点击<b>“自动同步”</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(前往按钮)</a>。<br>• 或在手机的<i>设置 ➔ 个人热点 ➔ 已连接设备</i>中查看分配的 IP 并手动输入。",
+                trAndroidQ: "🤖 Android 手机 2.4GHz 热点设置方法：",
+                trAndroidA: "在手机 <i>设置 ➔ 个人热点 / 网络共享 ➔ 热点设置</i> 中，将 <b>AP 频段</b> 切换为 <b>2.4 GHz 频段</b>（不要选 5 GHz）。",
+                trCustomQ: "⚙️ 如何将控制器连接至自定义 Wi-Fi 网络？",
+                trCustomA: "1. 关闭手机热点 15 秒，控制器将自动开启临时网络 <code>Bms_Setup</code>（密码 <code>bmslocal</code>）。<br>2. 手机连接 <code>Bms_Setup</code> Wi-Fi，打开 <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 或 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>，或点击上方的<b>“自动同步”</b>。<br>3. 在 Wi-Fi 设置栏中输入您的专属热点 SSID 和密码并点击保存。<br>保存后控制器将自动连接您的网络！",
+                tr4Q: "❓ 更换了手机或输错了 Wi-Fi 密码？",
+                tr4A: "无需担心：关闭手机热点 15 秒。控制器因无法连接网络会自动重新开启 服务热点：<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>热点名称：<code>Bms_Setup</code></span><span>热点密码：<code>bmslocal</code></span></div>，您可通过 <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 或 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a> 重新输入正确的配置。",
+                toastLinked: "✅ 控制器已连接：",
+                toastConnecting: "📡 正在连接 (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">请确保手机热点已开启，且已连接到 <code>Bms_Setup</code> Wi-Fi！</small>",
+                toastSetupFirst: "请先按照下方指南完成连接设置",
+                btnConnecting: "正在连接...",
+                alertInvalidIp: "IP 地址格式无效（示例：10.48.33.187）",
+                dashUnreachable: "⚠️ <b>无法连接至控制器。</b><br>• 请确认手机热点 (2.4GHz) 已开启：<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>热点名称：<code>Bms</code></span><span>热点密码：<code>bmslocal</code></span></div>。<br>• 请确认车辆处于 <b>READY</b> 模式。<br>• 或连接 <code>Bms_Setup</code> 热点并点击<b>“通过 Bms_Setup 自动同步”</b>。",
+                errNoSetupNetwork: "⚠️ 请先连接到 <code>Bms_Setup</code> Wi-Fi",
+                manualIpHint: "在热点设置中查找 IP (例如：10.48.33.x)",
+                btnCloudSearch: "在云端查找控制器",
+                cloudSearching: "正在云端查找控制器...",
+                cloudFound: "已找到控制器：",
+                cloudNotFound: "控制器尚未连接到云端。请开启手机热点。",
+                cloudError: "云端连接错误，请检查手机网络。"
+            },
+            ko: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android 앱",
+                btnApkToggle: "Android 앱",
+                badgeRecommended: "🔥 추천",
+                ipLabel: "컨트롤러 IP 주소",
+                ipStatusOnline: "온라인 (원격 제어 활성)",
+                ipStatusOffline: "오프라인 / 대기",
+                ipStatusChecking: "상태 확인 중...",
+                firstRunTip: "최초 설정: 아래 가이드에 따라 진행하세요 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "연결 없음. 모바일 핫스팟을 켜세요. 켜져 있다면 여기를 눌러 IP를 찾으세요.",
+                btnSync: "컨트롤러 찾기",
+                                btnManual: "수동으로 IP 입력",
+                step3Or: "또는 수동으로 IP 입력:",
+                step3AdvancedTitle: "고급 사용자용",
+                step3AdvancedDesc: "IP 주소는 어디서 찾나요? 휴대폰 핫스팟 설정의 '연결된 기기' 섹션으로 이동하세요.",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "저장",
+                autoText: "<b>컨트롤러는 완전 자율 작동합니다.</b> 스마트폰은 모니터링 및 설정에만 사용됩니다.",
+                accordionSetupFirst: "최초 설정 가이드",
+                accordionSetupConfig: "연결 및 설정",
+                accordionFaq: "자주 묻는 질문 (FAQ)",
+                setupSub: "단계별 설정 가이드",
+                faqSub: "도움말 및 FAQ",
+                apkTitle: "Live Monitor",
+                apkDesc: "실시간 배터리 HUD 위젯을 지원하는 Android 앱:",
+                apkF2: "<b>스마트폰 핫스팟 자동 즉시 연결</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">앱이 컨트롤러를 자동 검색 — IP 검색이나 수동 설정 불필요.</span>",
+                btnDownloadApk: "APK 다운로드",
+                apkInstallHint: "다운로드 후 스마트폰 알림창에서 파일을 열어 설치하세요",
+                installTitleAndroid: "📲 앱 설치하기",
+                installDescAndroid: "원터치 빠른 실행을 위해 홈 화면에 Live Radar를 추가하세요.",
+                btnInstall: "설치하기",
+                installTitleIos: "📲 iPhone에 추가하기",
+                installDescIos: "Safari 하단의 <b>공유 버튼 ⎋</b>을 탭한 후 <b>«홈 화면에 추가» ➕</b>를 선택하세요.",
+                step1Title: "스마트폰 핫스팟 켜기",
+                step1Desc: "스마트폰에서 다음 정보로 <b>개인용 핫스팟</b>을 켜세요:",
+                step1Net: "네트워크 이름: <code>Bms</code>",
+                step1Pwd: "비밀번호: <code>bmslocal</code>",
+                step1Warn: "⚠️ <b>중요 알림:</b> <b>2.4GHz Wi-Fi</b>만 지원합니다. iPhone은 <i>«호환성 최대화»</i>를 켜주세요.",
+                step1Note: "",
+                step2Title: "차량 OBD2에 연결 및 전원 켜기",
+                step2Body: "컨트롤러를 운전대 아래 <b>OBD2 단자</b>에 연결하고 차량 전원을 켜세요 (<b>READY</b> 모드).",
+                step3Title: "IP 확인 (자동 동기화)",
+                step3Desc: "스마트폰 Wi-Fi를 컨트롤러 네트워크에 연결하세요. 매개변수는 다음과 같습니다:",
+                step3Net: "네트워크 이름: <code>Bms_Setup</code>",
+                step3Pwd: "비밀번호: <code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ 중요:</b> 이 Wi-Fi 네트워크 설정에서 <b>«자동 연결»</b>을 끕니다. 팝업 시 <b>«연결 유지»</b>를 선택합니다.",
+                                btnGuideSync: "컨트롤러와 자동 동기화",
+                step3Note: "컨트롤러가 Live Radar로 IP 주소를 전송하고 Bms_Setup을 끈 후 IP가 저장된 상태로 돌아옵니다.",
+                step4Title: "Live Monitor 실행",
+                step4Body: "IP 주소를 가져온 후 <b>«📊 Live Monitor»</b>(여기 또는 맨 위)를 누르면 실시간 데이터를 볼 수 있습니다.",
+                trAutoQ: "🛡️ 자율 냉각 및 업데이트 방식 안내",
+                trAutoA: "• <b>⚡ 완전 자율 작동:</b> 컨트롤러가 차량에 직접 연결되어 팬 속도를 스스로 조절합니다. 스마트폰이 꺼지거나 없어도 배터리 냉각에는 아무런 영향을 주지 않습니다.<br>• <b>📲 배터리 절약형 통신:</b> 스마트폰 배터리를 지속적으로 소모하지 않습니다. 배터리 온도를 확인하거나 네트워크 설정을 변경할 때만 연결됩니다.<br>• <b>🔄 지원 및 업데이트:</b> 컨트롤러와 모바일 앱 모두 무선 업데이트를 지원하도록 설계되었습니다.",
+                tr1Q: "🔴 대시보드가 열리지 않거나 오프라인인 경우:",
+                tr1A: "• 차량 시동이 켜져 있는지 확인하세요 (<b>READY</b> 모드).<br>• 스마트폰 핫스팟이 켜져 있는지 확인하세요: 기본 네트워크 또는 컨트롤러에 설정한 네트워크:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms</code></span><span>비밀번호: <code>bmslocal</code></span></div><br>• iPhone의 경우 핫스팟 설정에서 <i>«호환성 최대화»</i>를 켜주세요.<br>• Android의 경우 AP 밴드를 <b>2.4 GHz</b>로 설정하세요.<br>• <a href=\"http://bms.local\" target=\"_blank\" style=\"color: #4ade80; text-decoration: underline;\">http://bms.local</a> 에 접속해 볼 수도 있습니다 (iPhone 핫스팟에서는 불안정할 수 있음).",
+                tr2Q: "📶 Bms_Setup Wi-Fi 연결 주의사항:",
+                tr2A: "• Bms_Setup의 <i>«자동 다시 연결»</i>을 끄세요.<br>• <i>«인터넷 없음»</i> 팝업 시 <b>«항상 연결» / «Wi-Fi 연결 유지»</b>를 선택하세요.",
+                tr3Q: "🟡 IP 주소가 변경된 경우:",
+                tr3A: "• 스마트폰 핫스팟(2.4GHz)이 켜져 있고 스마트폰이 <code>Bms_Setup</code> Wi-Fi에 연결되어 있는지 확인한 후 <b>«자동 동기화»</b>를 누르세요 <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(버튼으로 이동)</a>.<br>• 또는 핫스팟 설정에서 연결된 기기의 IP 주소를 확인하여 수동 입력하세요.",
+                trAndroidQ: "🤖 Android 핫스팟 2.4GHz 설정 방법:",
+                trAndroidA: "스마트폰 <i>설정 ➔ 테더링 및 핫스팟 ➔ 핫스팟 설정</i>에서 <b>AP 밴드</b>를 <b>2.4 GHz 대역</b>으로 선택하세요.",
+                trCustomQ: "⚙️ 컨트롤러를 나만의 Wi-Fi에 연결하는 방법은?",
+                trCustomA: "1. 스마트폰 핫스팟을 15초간 끕니다. 컨트롤러가 설정용 Wi-Fi를 시작합니다:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms_Setup</code></span><span>비밀번호: <code>bmslocal</code></span></div><br>2. <code>Bms_Setup</code> Wi-Fi에 연결한 후 <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 또는 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a> 에 접속하거나 상단의 <b>«자동 동기화»</b>를 누릅니다.<br>3. Wi-Fi 설정 항목에서 사용할 핫스팟 이름과 비밀번호를 입력하고 저장합니다.<br>저장 후 컨트롤러가 자동으로 연결됩니다!",
+                tr4Q: "❓ 스마트폰을 변경했거나 Wi-Fi 비밀번호를 잘못 입력한 경우?",
+                tr4A: "걱정하지 마세요: 스마트폰 핫스팟을 15초간 끕니다. 네트워크를 찾지 못한 컨트롤러가 설정용 Wi-Fi를 다시 실행하므로:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms_Setup</code></span><span>비밀번호: <code>bmslocal</code></span></div> <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 또는 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a> 에서 새 정보를 다시 입력하실 수 있습니다.",
+                toastLinked: "✅ 컨트롤러 연결됨: ",
+                toastConnecting: "📡 연결 중 (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">스마트폰 핫스팟이 켜져 있고 <code>Bms_Setup</code> Wi-Fi에 연결되어 있는지 확인하세요!</small>",
+                toastSetupFirst: "먼저 아래 가이드에 따라 설정을 완료하세요",
+                btnConnecting: "연결 중...",
+                alertInvalidIp: "올바르지 않은 IP 주소 형식입니다 (예: 10.48.33.187)",
+                dashUnreachable: "⚠️ <b>컨트롤러에 연결할 수 없습니다.</b><br>• 스마트폰 핫스팟 (2.4GHz)이 켜져 있는지 확인하세요:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms</code></span><span>비밀번호: <code>bmslocal</code></span></div><br>• 차량 시동이 <b>READY</b> 상태인지 확인하세요.<br>• 또는 <code>Bms_Setup</code>에 연결 후 <b>«Bms_Setup을 통한 자동 동기화»</b>를 누르세요.",
+                errNoSetupNetwork: "⚠️ 먼저 <code>Bms_Setup</code> Wi-Fi에 연결하세요",
+                manualIpHint: "핫스팟 설정에서 IP 찾기 (예: 10.48.33.x)",
+                btnCloudSearch: "클라우드에서 찾기",
+                cloudSearching: "클라우드에서 검색 중...",
+                cloudFound: "컨트롤러를 찾았습니다:",
+                cloudNotFound: "컨트롤러가 아직 연결되지 않았습니다. 스마트폰 핫스팟을 켜주세요.",
+                cloudError: "클라우드 오류입니다. 스마트폰 인터넷을 확인하세요."
+            },
+            ru: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android App",
+                btnApkToggle: "Android App",
+                badgeRecommended: "🔥 РЕКОМЕНДУЕМ",
+                ipLabel: "IP адрес контроллера",
+                ipStatusOnline: "В сети (Телеметрия активна)",
+                ipStatusOffline: "Не в сети / Ожидание",
+                ipStatusChecking: "Проверка связи...",
+                firstRunTip: "Первый запуск: следуйте инструкции ниже 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "Нет связи. Включите Точку доступа. Если она включена — нажмите сюда для поиска IP-адреса.",
+                btnSync: "Найти контроллер",
+                                btnManual: "Ввести IP-адрес вручную",
+                step3Or: "Укажите IP-адрес вручную:",
+                step3AdvancedTitle: "Для продвинутых пользователей",
+                step3AdvancedDesc: "Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "Сохранить",
+                autoText: "<b>Контроллер работает полностью автономно.</b> Телефон используется только для мониторинга и настройки.",
+                accordionSetupFirst: "Первое подключение",
+                accordionSetupConfig: "Настройка и связь",
+                accordionFaq: "Вопросы и ответы",
+                setupSub: "Пошаговый гид",
+                faqSub: "База знаний (FAQ)",
+                apkTitle: "Live Monitor",
+                apkDesc: "Android приложение с плавающим HUD виджетом:",
+                apkF2: "<b>Мгновенное автоподключение к точке доступа смартфона</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">Приложение само находит контроллер — без поиска IP-адреса и ручных настроек.</span>",
+                btnDownloadApk: "Скачать APK",
+                apkInstallHint: "После загрузки откройте файл из шторки уведомлений для установки",
+                installTitleAndroid: "📲 Установить приложение",
+                installDescAndroid: "Добавьте Live Radar на главный экран для быстрого доступа.",
+                btnInstall: "Установить",
+                installTitleIos: "📲 Установка на iPhone",
+                installDescIos: "Нажмите кнопку <b>Поделиться ⎋</b> в Safari и выберите <b>«На экран Домой» ➕</b>.",
+                step1Title: "Включите раздачу с телефона",
+                step1Desc: "Включите <b>Точку доступа</b> на телефоне со следующими параметрами:",
+                step1Net: "Имя сети: <code>Bms</code>",
+                step1Pwd: "Пароль: <code>bmslocal</code>",
+                step1Warn: "⚠️ <b>Важно:</b> Поддерживается только <b>2.4GHz Wi-Fi</b>. На iPhone включите <i>«Максимальная совместимость»</i>.",
+                step1Note: "",
+                step2Title: "Подключение к авто и запуск",
+                step2Body: "Вставьте контроллер в <b>OBD2 разъем</b> автомобиля и включите зажигание (режим <b>READY</b>).",
+                step3Title: "Определение IP-адреса (Автопоиск)",
+                step3Desc: "Подключите Wi-Fi телефона к сети контроллера со следующими параметрами:",
+                step3Net: "Имя сети: <code>Bms_Setup</code>",
+                step3Pwd: "Пароль: <code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ ВАЖНО:</b> В настройках этой Wi-Fi сети выключите <b>«Автоподключение»</b>. При окне «Нет интернета» выберите <b>«Оставаться подключенным»</b>.",
+                                btnGuideSync: "Найти контроллер (Автопоиск IP-адреса)",
+                step3Note: "Контроллер передаст свой IP-адрес Радару, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с уже сохраненным IP-адресом.",
+                step4Title: "Запуск Live Monitor",
+                step4Body: "После получения IP-адреса нажмите <b>«📊 Live Monitor»</b> (здесь или в самом верху) для перехода к телеметрии.",
+                trAutoQ: "🛡️ Как устроена автономность и обновления?",
+                trAutoA: "• <b>⚡ Полная автономность:</b> Контроллер подключен к автомобилю и сам регулирует обороты вентилятора. Забытый или разряженный телефон никак не влияет на охлаждение батареи.<br>• <b>📲 Энергоэффективная связь:</b> Телефон не сажает батарею постоянным обменом данными. Соединение требуется только тогда, когда вы хотите посмотреть температуру батареи или изменить параметры сети.<br>• <b>🔄 Поддержка и обновления:</b> Контроллер и мобильное приложение спроектированы с поддержкой обновлений.",
+                tr1Q: "🔴 Дашборд не открывается или не в сети?",
+                tr1A: "• Убедитесь, что зажигание включено (режим <b>READY</b>).<br>• Убедитесь, что включена раздача: стандартная сеть либо заданная вами в настройках контроллера:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms</code></span><span>Пароль: <code>bmslocal</code></span></div><br>• На iPhone включите <i>«Максимальная совместимость»</i> в настройках модема.<br>• На Android выберите диапазон частот точки доступа <b>2.4 ГГц</b>.",
+                tr2Q: "📶 Подсказки для сети Bms_Setup:",
+                tr2A: "• Выключите <i>«Автоподключение»</i> для <code>Bms_Setup</code>.<br>• При появлении окна <i>«Нет интернета»</i> выберите <i>«Оставаться подключенным»</i>.",
+                tr3Q: "🟡 Сменился IP-адрес?",
+                tr3A: "• Убедитесь, что на телефоне включена точка доступа (2.4 ГГц) и телефон подключен к Wi-Fi сети <code>Bms_Setup</code>, затем нажмите <b>«Найти контроллер»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(перейти к кнопке)</a>.<br>• Или посмотрите IP-адрес в настройках точки доступа телефона и введите вручную.",
+                trAndroidQ: "🤖 Настройка 2.4GHz на телефонах Android:",
+                trAndroidA: "В меню <i>Настройки ➔ Точка доступа Wi-Fi ➔ Настройка точки доступа</i> переключите пункт <b>Диапазон частот (AP Band)</b> на <b>2.4 ГГц</b> (вместо 5 ГГц).",
+                trCustomQ: "⚙️ Как подключить контроллер к своей сети Wi-Fi (своё имя и пароль)?",
+                trCustomA: "1. Выключите раздачу с телефона на 15 сек — контроллер откроет временную сеть:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms_Setup</code></span><span>Пароль: <code>bmslocal</code></span></div><br>2. Подключитесь к Wi-Fi <code>Bms_Setup</code>, перейдите на <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> или <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>, или нажмите <b>«Найти контроллер»</b> выше.<br>3. В блоке настроек Wi-Fi введите SSID и пароль вашей точки доступа и сохраните.<br>После сохранения контроллер будет подключаться к вашей сети автоматически!",
+                tr4Q: "❓ Сменили телефон или ошиблись в пароле Wi-Fi?",
+                tr4A: "Не переживайте: выключите раздачу на телефоне на 15 секунд. Контроллер не найдет сеть и снова откроет сервисную сеть:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms_Setup</code></span><span>Пароль: <code>bmslocal</code></span></div> чтобы вы могли ввести новые данные через <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> или <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>.",
+                toastLinked: "✅ Контроллер привязан: ",
+                toastConnecting: "📡 Подключение (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">Убедитесь, что на телефоне включена точка доступа и вы подключены к Wi-Fi сети <code>Bms_Setup</code>!</small>",
+                toastSetupFirst: "Пожалуйста, выполните подключение по инструкции ниже",
+                btnConnecting: "Подключение...",
+                alertInvalidIp: "Неверный формат IP адреса (пример: 10.48.33.187)",
+                dashUnreachable: "⚠️ <b>Не удается открыть страницу контроллера.</b><br>• Проверьте, что на телефоне включена раздача (2.4GHz):<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms</code></span><span>Пароль: <code>bmslocal</code></span></div><br>• Убедитесь, что авто в режиме <b>READY</b>.<br>• Или подключитесь к Wi-Fi сети <code>Bms_Setup</code> и нажмите <b>«Найти контроллер»</b>.",
+                errNoSetupNetwork: "⚠️ Сначала подключитесь к сети <code>Bms_Setup</code>",
+                manualIpHint: "Найдите IP-адрес в настройках точки доступа (например: 10.48.33.x)",
+                btnCloudSearch: "Найти контроллер в облаке",
+                cloudSearching: "Поиск контроллера в облаке...",
+                cloudFound: "Контроллер найден:",
+                cloudNotFound: "Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.",
+                cloudError: "Ошибка связи с облаком. Проверьте интернет на телефоне."
+            }
+        };
+
+        // Global URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Validates a real IPv4 address (each octet 0-255)
+        const IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+        function isValidIp(value) {
+            return IP_REGEX.test((value || '').trim());
+        }
+
+        // IP State Management (Top-level declaration to prevent TDZ)
+        
+        let currentIp = localStorage.getItem('bms_saved_ip') || '';
+        let currentMac = localStorage.getItem('bms_saved_mac') || '';
+        
+        const queryIp = urlParams.get('ip');
+        const queryMac = urlParams.get('mac');
+        
+        let justLinkedFromUrl = false;
+
+        if (queryMac && queryMac.length > 5) {
+            currentMac = queryMac.trim();
+            localStorage.setItem('bms_saved_mac', currentMac);
+        }
+
+        if (queryIp && isValidIp(queryIp)) {
+            currentIp = queryIp.trim();
+            localStorage.setItem('bms_saved_ip', currentIp);
+            localStorage.setItem('bms_last_saved', new Date().toISOString());
+            justLinkedFromUrl = true;
+            if (window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+
+        // Automatic Language Detection (Russian -> Korean -> Chinese -> English default)
+        function detectLanguage() {
+            const urlLang = (urlParams.get('lang') || '').toLowerCase();
+            if (urlLang === 'ko' || urlLang === 'zh' || urlLang === 'en' || urlLang === 'ru') {
+                return urlLang;
+            }
+            const languages = navigator.languages || [navigator.language || 'en'];
+            for (let lang of languages) {
+                const l = (lang || '').toLowerCase();
+                if (l.startsWith('en')) return 'en';
+                if (l.startsWith('ru')) return 'ru';
+                if (l.startsWith('ko')) return 'ko';
+                if (l.startsWith('zh')) return 'zh';
+            }
+            return 'en';
+        }
+
+        let currentLang = detectLanguage();
+
+        function applyLanguage() {
+            const t = I18N[currentLang] || I18N.en;
+
+            // Text elements
+            if (document.getElementById('t-app-title')) document.getElementById('t-app-title').innerText = t.appTitle;
+            if (document.getElementById('t-apps-header')) document.getElementById('t-apps-header').innerText = t.appsHeader;
+            if (document.getElementById('t-btn-apk-toggle')) document.getElementById('t-btn-apk-toggle').innerText = t.btnApkToggle;
+            if (document.getElementById('t-badge-recommended')) document.getElementById('t-badge-recommended').innerText = t.badgeRecommended;
+            if (document.getElementById('t-auto-text')) document.getElementById('t-auto-text').innerHTML = t.autoText;
+            if (document.getElementById('t-ip-label')) document.getElementById('t-ip-label').innerText = t.ipLabel;
+            if (document.getElementById('t-first-run-tip')) document.getElementById('t-first-run-tip').innerText = t.firstRunTip;
+            if (document.getElementById('t-btn-open')) document.getElementById('t-btn-open').innerText = t.btnOpen;
+            if (document.getElementById('t-btn-cloud-search') && t.btnCloudSearch) document.getElementById('t-btn-cloud-search').innerText = t.btnCloudSearch;
+            if (document.getElementById('t-ip-unreachable-text') && t.ipUnreachableText) document.getElementById('t-ip-unreachable-text').innerText = t.ipUnreachableText;
+            if (document.getElementById('t-btn-sync')) document.getElementById('t-btn-sync').innerText = t.btnSync;
+                        if (document.getElementById('t-btn-manual')) document.getElementById('t-btn-manual').innerText = t.btnManual;
+            if (document.getElementById('t-manual-ip-hint')) document.getElementById('t-manual-ip-hint').innerText = t.manualIpHint;
+            if (document.getElementById('t-btn-save-ip')) document.getElementById('t-btn-save-ip').innerText = t.btnSaveIp;
+            const isIpConfigured = (currentIp && currentIp !== '--');
+            if (document.getElementById('t-setup-accordion-title')) {
+                document.getElementById('t-setup-accordion-title').innerText = isIpConfigured ? t.accordionSetupConfig : t.accordionSetupFirst;
+            }
+            if (document.getElementById('setup-tile-icon')) {
+                document.getElementById('setup-tile-icon').innerText = isIpConfigured ? '⚙️' : '🚀';
+            }
+            if (document.getElementById('t-setup-sub') && t.setupSub) {
+                document.getElementById('t-setup-sub').innerText = t.setupSub;
+            }
+            if (document.getElementById('t-faq-accordion-title')) {
+                document.getElementById('t-faq-accordion-title').innerText = t.accordionFaq;
+            }
+            if (document.getElementById('t-faq-sub') && t.faqSub) {
+                document.getElementById('t-faq-sub').innerText = t.faqSub;
+            }
+            if (document.getElementById('t-step3-or') && t.step3Or) document.getElementById('t-step3-or').innerText = t.step3Or;
+            if (document.getElementById('t-step3-advanced-title') && t.step3AdvancedTitle) document.getElementById('t-step3-advanced-title').innerHTML = t.step3AdvancedTitle;
+            if (document.getElementById('t-step3-advanced-desc') && t.step3AdvancedDesc) document.getElementById('t-step3-advanced-desc').innerHTML = t.step3AdvancedDesc;
+            if (document.getElementById('t-step4-btn') && t.step4Btn) document.getElementById('t-step4-btn').innerHTML = t.step4Btn;
+
+            if (document.getElementById('t-apk-title')) document.getElementById('t-apk-title').innerText = t.apkTitle;
+            if (document.getElementById('t-apk-desc')) document.getElementById('t-apk-desc').innerText = t.apkDesc;
+            if (document.getElementById('t-apk-f2')) document.getElementById('t-apk-f2').innerHTML = t.apkF2;
+            if (document.getElementById('t-btn-download-apk')) document.getElementById('t-btn-download-apk').innerText = t.btnDownloadApk;
+            if (document.getElementById('t-apk-install-hint') && t.apkInstallHint) document.getElementById('t-apk-install-hint').innerText = t.apkInstallHint;
+
+            if (document.getElementById('t-install-title-android')) document.getElementById('t-install-title-android').innerText = t.installTitleAndroid;
+            if (document.getElementById('t-install-desc-android')) document.getElementById('t-install-desc-android').innerText = t.installDescAndroid;
+            if (document.getElementById('btn-install-app')) document.getElementById('btn-install-app').innerText = t.btnInstall;
+            if (document.getElementById('t-install-title-ios')) document.getElementById('t-install-title-ios').innerText = t.installTitleIos;
+            if (document.getElementById('t-install-desc-ios')) document.getElementById('t-install-desc-ios').innerHTML = t.installDescIos;
+
+            if (document.getElementById('t-step1-title')) document.getElementById('t-step1-title').innerText = t.step1Title;
+            if (document.getElementById('t-step1-desc')) document.getElementById('t-step1-desc').innerHTML = t.step1Desc;
+            if (document.getElementById('t-step1-net')) document.getElementById('t-step1-net').innerHTML = t.step1Net;
+            if (document.getElementById('t-step1-pwd')) document.getElementById('t-step1-pwd').innerHTML = t.step1Pwd;
+            if (document.getElementById('t-step1-warn')) document.getElementById('t-step1-warn').innerHTML = t.step1Warn;
+            if (document.getElementById('t-step1-note')) document.getElementById('t-step1-note').innerHTML = t.step1Note;
+            if (document.getElementById('t-step3-net')) document.getElementById('t-step3-net').innerHTML = t.step3Net;
+            if (document.getElementById('t-step3-pwd')) document.getElementById('t-step3-pwd').innerHTML = t.step3Pwd;
+            if (document.getElementById('t-step2-title')) document.getElementById('t-step2-title').innerText = t.step2Title;
+            if (document.getElementById('t-step2-body')) document.getElementById('t-step2-body').innerHTML = t.step2Body;
+            if (document.getElementById('t-step3-title')) document.getElementById('t-step3-title').innerText = t.step3Title;
+            if (document.getElementById('t-step3-desc')) document.getElementById('t-step3-desc').innerHTML = t.step3Desc;
+            if (document.getElementById('t-step3-tips')) document.getElementById('t-step3-tips').innerHTML = t.step3Tips;
+                        if (document.getElementById('t-btn-guide-sync')) document.getElementById('t-btn-guide-sync').innerText = t.btnGuideSync;
+            if (document.getElementById('t-step3-note')) document.getElementById('t-step3-note').innerHTML = t.step3Note;
+            if (document.getElementById('t-step4-title')) document.getElementById('t-step4-title').innerText = t.step4Title;
+            if (document.getElementById('t-step4-body')) document.getElementById('t-step4-body').innerHTML = t.step4Body;
+
+            if (document.getElementById('t-tr-auto-q')) document.getElementById('t-tr-auto-q').innerText = t.trAutoQ;
+            if (document.getElementById('t-tr-auto-a')) document.getElementById('t-tr-auto-a').innerHTML = t.trAutoA;
+            if (document.getElementById('t-tr-1-q')) document.getElementById('t-tr-1-q').innerText = t.tr1Q;
+            if (document.getElementById('t-tr-1-a')) document.getElementById('t-tr-1-a').innerHTML = t.tr1A;
+            if (document.getElementById('t-tr-2-q')) document.getElementById('t-tr-2-q').innerText = t.tr2Q;
+            if (document.getElementById('t-tr-2-a')) document.getElementById('t-tr-2-a').innerHTML = t.tr2A;
+            if (document.getElementById('t-tr-3-q')) document.getElementById('t-tr-3-q').innerText = t.tr3Q;
+            if (document.getElementById('t-tr-3-a')) document.getElementById('t-tr-3-a').innerHTML = t.tr3A;
+            if (document.getElementById('t-tr-android-q')) document.getElementById('t-tr-android-q').innerText = t.trAndroidQ;
+            if (document.getElementById('t-tr-android-a')) document.getElementById('t-tr-android-a').innerHTML = t.trAndroidA;
+            if (document.getElementById('t-tr-custom-q')) document.getElementById('t-tr-custom-q').innerText = t.trCustomQ;
+            if (document.getElementById('t-tr-custom-a')) document.getElementById('t-tr-custom-a').innerHTML = t.trCustomA;
+            if (document.getElementById('t-tr-4-q')) document.getElementById('t-tr-4-q').innerText = t.tr4Q;
+            if (document.getElementById('t-tr-4-a')) document.getElementById('t-tr-4-a').innerHTML = t.tr4A;
+        }
+
+        let toastTimeout = null;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerHTML = msg;
+            toast.style.display = 'block';
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 6000);
+        }
+
+        // Apply language as soon as defined
+        applyLanguage();
+
+        // Autonomous Card Dismissal
+        function dismissAutoCard(event) {
+            if (event) event.stopPropagation();
+            const card = document.getElementById('auto-card');
+            if (card) card.style.display = 'none';
+            try {
+                localStorage.setItem('bms_autocard_dismissed', '1');
+            } catch (e) {}
+        }
+        try {
+            if (localStorage.getItem('bms_autocard_dismissed') === '1') {
+                const card = document.getElementById('auto-card');
+                if (card) card.style.display = 'none';
+            }
+        } catch (e) {}
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+
+        // Device Detection (Android vs iOS vs Desktop)
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = Boolean(
+            (window.navigator && window.navigator.standalone) || 
+            (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+        );
+
+        // Toggle APK Card in Main View
+        function toggleApkDetails() {
+            const box = document.getElementById('apk-details-box');
+            const arrow = document.getElementById('apk-toggle-arrow');
+            if (!box) return;
+            const isHidden = (box.style.display === 'none' || !box.style.display);
+            if (isHidden) {
+                box.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                box.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Dismissal handlers for APK Card
+        function onApkDownload() {
+            // Tracking or UI updates can happen here
+        }
+
+        if (isAndroid) {
+            const btnApk = document.getElementById('btn-toggle-apk');
+            if (btnApk) btnApk.style.display = 'flex';
+        }
+
+        if (isIOS && !isStandalone) {
+            const iosBanner = document.getElementById('install-banner-ios');
+            if (iosBanner) iosBanner.style.display = 'block';
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!isStandalone) {
+                const banner = document.getElementById('install-banner-android');
+                if (banner) banner.style.display = 'block';
+            }
+        });
+
+        const btnInstall = document.getElementById('btn-install-app');
+        if (btnInstall) {
+            btnInstall.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    const banner = document.getElementById('install-banner-android');
+                    if (banner) banner.style.display = 'none';
+                }
+            });
+        }
+
+        function updateUI() {
+            const displayEl = document.getElementById('display-ip');
+            const manualIpInput = document.getElementById('manual-ip');
+            const firstRunTip = document.getElementById('first-run-tip');
+            const setupTitle = document.getElementById('t-setup-accordion-title');
+            const setupIcon = document.getElementById('setup-tile-icon');
+            const t = I18N[currentLang] || I18N.en;
+
+            if (currentIp && currentIp !== '--') {
+                if (displayEl) displayEl.innerText = currentIp;
+                if (manualIpInput) manualIpInput.value = currentIp;
+                if (firstRunTip) firstRunTip.style.display = 'none';
+                if (setupTitle) setupTitle.innerText = t.accordionSetupConfig;
+                if (setupIcon) setupIcon.innerText = '⚙️';
+            } else {
+                if (displayEl) displayEl.innerText = '--';
+                if (manualIpInput) manualIpInput.value = '';
+                if (firstRunTip) firstRunTip.style.display = 'flex';
+                if (setupTitle) setupTitle.innerText = t.accordionSetupFirst;
+                if (setupIcon) setupIcon.innerText = '🚀';
+            }
+        }
+
+        // Apply saved IP immediately to DOM
+        updateUI();
+
+        // If linked from URL parameter (?ip=...)
+        if (justLinkedFromUrl) {
+            const t = I18N[currentLang] || I18N.en;
+            showToast(`${t.toastLinked}${currentIp}`);
+        }
+
+        // Auto-expand setup accordion for first-time visitors if IP is not set
+        if (!currentIp || currentIp === '--') {
+            const content = document.getElementById('setup-content');
+            const tile = document.getElementById('tile-setup');
+            if (content) content.style.display = 'block';
+            if (tile) tile.classList.add('active');
+        }
+
+        function openAndScrollToGuide() {
+            const setupContent = document.getElementById('setup-content');
+            const setupTile = document.getElementById('tile-setup');
+            const faqContent = document.getElementById('faq-content');
+            const faqTile = document.getElementById('tile-faq');
+
+            if (faqContent) faqContent.style.display = 'none';
+            if (faqTile) faqTile.classList.remove('active');
+
+            if (setupContent) setupContent.style.display = 'block';
+            if (setupTile) {
+                setupTile.classList.add('active');
+                setupTile.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function openAndScrollToStep3() {
+            openAndScrollToGuide();
+            const step3El = document.getElementById('guide-step-3');
+            if (step3El) {
+                setTimeout(() => {
+                    step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+        function goToSetupSync() {
+            openAndScrollToStep3();
+        }
+
+        
+
+        
+        
+
+        function checkFailedNavigation() {
+            const recovery = document.getElementById('nav-recovery-card');
+            const hint = document.getElementById('ip-unreachable-hint');
+            if (recovery && currentIp !== '10.10.10.1') {
+                recovery.style.display = 'block';
+            }
+            if (hint && currentIp !== '10.10.10.1') {
+                hint.style.display = 'flex';
+            }
+        }
+
+        async function handleIpUnreachable() {
+            const t = I18N[currentLang] || I18N.ru;
+            showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+            const found = await findControllerInCloud(true, true, 1500);
+            if (!found) {
+                openAndScrollToStep3();
+            }
+        }
+
+        function openDashboard() {
+            if (!currentIp || currentIp === '--') {
+                const openBtnIcon = document.getElementById('open-btn-icon');
+                if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
+                // Если IP не сохранен — даем облаку ровно 1.2 секунды на автопоиск
+                findControllerInCloud(true, true, 1200).finally(() => {
+                    if (openBtnIcon) openBtnIcon.style.animation = '';
+                });
+                return;
+            }
+            // Double Cache: мгновенно открываем сохраненный локальный IP (Zero-Cloud)
+            const recovery = document.getElementById('nav-recovery-card');
+            const hint = document.getElementById('ip-unreachable-hint');
+            if (recovery) recovery.style.display = 'none';
+            if (hint) hint.style.display = 'none';
+            window.open('http://' + currentIp + '/', '_blank');
+            if (currentIp !== '10.10.10.1') {
+                setTimeout(() => {
+                    checkFailedNavigation();
+                }, 800);
+            }
+        }
+
+        function syncWithBoard() {
+            const t = I18N[currentLang] || I18N.en;
+            showToast(t.toastConnecting);
+            setTimeout(() => {
+                window.location.href = 'http://10.10.10.1/sync?lang=' + currentLang;
+            }, 600);
+        }
+
+        function toggleEditIp() {
+            const row = document.getElementById('edit-row');
+            if (row) {
+                row.style.display = (row.style.display === 'flex') ? 'none' : 'flex';
+            }
+        }
+
+        function saveManualIp() {
+            const t = I18N[currentLang] || I18N.en;
+            const input = document.getElementById('manual-ip');
+            const val = input ? input.value.trim() : '';
+            if (isValidIp(val)) {
+                currentIp = val;
+                localStorage.setItem('bms_saved_ip', currentIp);
+                updateUI();
+                toggleEditIp();
+                showToast(`${t.toastLinked}${currentIp}`);
+            } else {
+                alert(t.alertInvalidIp);
+            }
+        }
+
+        function toggleAccordion(type) {
+            const isSetup = (type === 'setup');
+            const targetContent = document.getElementById(type + '-content');
+            const targetTile = document.getElementById('tile-' + type);
+
+            const otherType = isSetup ? 'faq' : 'setup';
+            const otherContent = document.getElementById(otherType + '-content');
+            const otherTile = document.getElementById('tile-' + otherType);
+
+            if (!targetContent) return;
+
+            const isOpen = (targetContent.style.display === 'block');
+
+            if (isOpen) {
+                targetContent.style.display = 'none';
+                if (targetTile) targetTile.classList.remove('active');
+            } else {
+                if (otherContent) otherContent.style.display = 'none';
+                if (otherTile) otherTile.classList.remove('active');
+
+                targetContent.style.display = 'block';
+                if (targetTile) targetTile.classList.add('active');
+                targetTile.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function toggleTrouble(el, ev) {
+            if (ev && ev.target && ev.target.closest('a')) return;
+            el.classList.toggle('open');
+        }
+
+        // Final UI refresh
+        updateUI();
+
+        // ==========================================
+        // FIREBASE CLOUD HANDSHAKE & ZERO-CLICK DISCOVERY (RTDB)
+        // ==========================================
+        const RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
+
+        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 1500) {
+            const t = I18N[currentLang] || I18N.ru;
+            const searchIcon = document.getElementById('cloud-search-icon');
+            const searchLabel = document.getElementById('t-btn-cloud-search');
+            const guideSyncBtn = document.getElementById('btn-guide-sync');
+            const cloudBadge = document.getElementById('cloud-status-badge');
+
+            if (isUserInitiated) {
+                if (searchIcon) searchIcon.style.animation = 'spin 0.8s linear infinite';
+                if (searchLabel) searchLabel.innerText = t.cloudSearching || "Поиск...";
+                if (guideSyncBtn) guideSyncBtn.disabled = true;
+                showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+            }
+
+            let foundIp = null;
+            let foundMac = null;
+            let foundVersion = null;
+
+            try {
+                // Method 1: Direct fetch by known saved MAC (fastest)
+                if (currentMac && currentMac.trim().length > 4) {
+                    const cleanMac = currentMac.replace(/[^a-zA-Z0-9]/g, '');
+                    const directUrl = `${RTDB_URL}/boards/${cleanMac}.json`;
+                    try {
+                        const controller = new AbortController();
+                        const tid = setTimeout(() => controller.abort(), timeoutMs);
+                        const directRes = await fetch(directUrl, { signal: controller.signal });
+                        clearTimeout(tid);
+                        if (directRes.ok) {
+                            const data = await directRes.json();
+                            if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
+                                foundIp = data.ip;
+                                foundMac = data.mac || cleanMac;
+                                foundVersion = data.version || '';
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("[RTDB Discovery] Direct fetch failed or aborted:", e);
+                    }
+                }
+
+                // Method 2: Query boards collection for the most active board
+                if (!foundIp) {
+                    const queryUrl = `${RTDB_URL}/boards.json`;
+                    const controller = new AbortController();
+                    const tid = setTimeout(() => controller.abort(), timeoutMs);
+                    try {
+                        const queryRes = await fetch(queryUrl, { signal: controller.signal });
+                        clearTimeout(tid);
+                        if (queryRes.ok) {
+                            const boards = await queryRes.json();
+                            if (boards && typeof boards === 'object') {
+                                const validBoards = Object.entries(boards)
+                                    .map(([key, item]) => ({ key, ...item }))
+                                    .filter(item => item && item.ip && isValidIp(item.ip) && item.ip !== '0.0.0.0' && item.ip !== '1.2.3.4' && item.ip !== '192.168.43.99')
+                                    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+                                if (validBoards.length > 0) {
+                                    foundIp = validBoards[0].ip;
+                                    foundMac = validBoards[0].mac || validBoards[0].key;
+                                    foundVersion = validBoards[0].version || '';
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("[RTDB Discovery] Query failed or aborted:", e);
+                    }
+                }
+
+                if (foundIp) {
+                    console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac);
+                    currentIp = foundIp;
+                    localStorage.setItem('bms_saved_ip', currentIp);
+                    if (foundMac) {
+                        currentMac = foundMac;
+                        localStorage.setItem('bms_saved_mac', currentMac);
+                    }
+
+                    updateUI();
+
+                    if (cloudBadge) {
+                        cloudBadge.style.display = 'block';
+                        cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Облако)`;
+                    }
+
+                    if (isUserInitiated) {
+                        showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${currentIp}`);
+                    }
+
+                    if (autoOpen) {
+                        setTimeout(() => {
+                            openDashboard();
+                        }, 400);
+                    }
+                    return true;
+                } else {
+                    if (isUserInitiated) {
+                        showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
+                    }
+                    return false;
+                }
+            } catch (err) {
+                console.error("[Cloud Discovery] Error:", err);
+                if (isUserInitiated) {
+                    showToast(t.cloudError || "⚠️ Ошибка связи с облаком. Проверьте интернет на телефоне.");
+                }
+                return false;
+            } finally {
+                if (searchIcon) searchIcon.style.animation = '';
+                if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
+                if (guideSyncBtn) guideSyncBtn.disabled = false;
+            }
+        }
+
+        // Double Cache: On page load, if IP is already cached in localStorage,
+        // do NOT make any cloud requests! Works 100% offline with 0 cloud queries.
+        // Only if IP is missing (-- or empty), run a silent 1-second cloud lookup.
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!justLinkedFromUrl && (!currentIp || currentIp === '--')) {
+                findControllerInCloud(false, false, 1000);
+            }
+        });
+
+    </script>
+</body>
+</html>
