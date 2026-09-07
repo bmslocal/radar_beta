@@ -1211,7 +1211,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Версия Радара:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v77-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v78-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">ID устройства (MAC):</span>
@@ -1229,7 +1229,11 @@
                     <span class="support-label" id="t-sup-status">Статус связи:</span>
                     <span class="support-val" id="sup-link-status">Ожидание</span>
                 </div>
-                <button type="button" class="btn-copy-support" onclick="copySupportInfo()">
+                <button type="button" class="btn-copy-support" onclick="resetActiveDevice()" style="margin-top: 6px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.35); color: #fca5a5;">
+                    <span>🔄</span>
+                    <span id="t-btn-reset-dev">Сменить / забыть текущую плату</span>
+                </button>
+                <button type="button" class="btn-copy-support" onclick="copySupportInfo()" style="margin-top: 6px;">
                     <span>📋</span>
                     <span id="t-btn-copy-support">Скопировать данные для поддержки</span>
                 </button>
@@ -1340,6 +1344,7 @@
                 supDevIp: "Controller IP:",
                 supBoardFw: "Board Firmware:",
                 supStatus: "Link Status:",
+                btnResetDev: "Switch / Forget Current Board",
                 btnCopySupport: "Copy Support Data",
                 toastSupportCopied: "✅ Service information copied to clipboard"
             },
@@ -1443,6 +1448,7 @@
                 supDevIp: "控制器 IP：",
                 supBoardFw: "主板固件：",
                 supStatus: "连接状态：",
+                btnResetDev: "切换 / 忘记当前主板",
                 btnCopySupport: "复制支持信息",
                 toastSupportCopied: "✅ 服务信息已复制到剪贴板"
             },
@@ -1546,6 +1552,7 @@
                 supDevIp: "컨트롤러 IP:",
                 supBoardFw: "보드 펌웨어:",
                 supStatus: "연결 상태:",
+                btnResetDev: "현재 보드 전환 / 초기화",
                 btnCopySupport: "지원 정보 복사",
                 toastSupportCopied: "✅ 서비스 정보가 클립보드에 복사되었습니다"
             },
@@ -1649,6 +1656,7 @@
                 supDevIp: "IP-адрес контроллера:",
                 supBoardFw: "Прошивка платы:",
                 supStatus: "Статус связи:",
+                btnResetDev: "Сменить / забыть текущую плату",
                 btnCopySupport: "Скопировать данные для поддержки",
                 toastSupportCopied: "✅ Служебная информация скопирована в буфер"
             },
@@ -1708,6 +1716,7 @@
                 supDevIp: "コントローラー IP:",
                 supBoardFw: "ファームウェア:",
                 supStatus: "接続ステータス:",
+                btnResetDev: "現在のボードを変更 / 消去",
                 btnCopySupport: "サポート用データをコピー",
                 toastSupportCopied: "✅ サポート情報をクリップボードにコピーしました",
                 btnCloudSearch: "クラウドで検索",
@@ -1933,6 +1942,7 @@
             if (document.getElementById('t-sup-dev-ip')) document.getElementById('t-sup-dev-ip').innerText = t.supDevIp || 'IP-адрес контроллера:';
             if (document.getElementById('t-sup-board-fw')) document.getElementById('t-sup-board-fw').innerText = t.supBoardFw || 'Прошивка платы:';
             if (document.getElementById('t-sup-status')) document.getElementById('t-sup-status').innerText = t.supStatus || 'Статус связи:';
+            if (document.getElementById('t-btn-reset-dev')) document.getElementById('t-btn-reset-dev').innerText = t.btnResetDev || 'Сменить / забыть текущую плату';
             if (document.getElementById('t-btn-copy-support')) document.getElementById('t-btn-copy-support').innerText = t.btnCopySupport || 'Скопировать данные для поддержки';
 
             if (document.getElementById('t-apps-header')) document.getElementById('t-apps-header').innerText = t.appsHeader;
@@ -2158,7 +2168,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v77-beta',
+                'Radar Version: v78-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2173,6 +2183,17 @@
             }).catch(() => {
                 showToast('⚠️ Не удалось скопировать в буфер');
             });
+        }
+
+        function resetActiveDevice() {
+            localStorage.removeItem('bms_active_mac');
+            localStorage.removeItem('bms_saved_ip');
+            localStorage.removeItem('bms_saved_mac');
+            currentIp = '';
+            currentMac = '';
+            updateUI();
+            showToast("Память платы сброшена. Поиск активной платы в сети...");
+            findControllerInCloud(false, true, 3000);
         }
 
         function toggleQuickGuide() {
@@ -2208,6 +2229,12 @@
         let isDiscovering = false;
         async function startOneTapDiscovery(forceSearch = false) {
             if (isDiscovering) return;
+
+            // If background cloud search is still in flight on page load, await it so we don't open a stale IP from an old board!
+            if (initialCloudPromise) {
+                try { await initialCloudPromise; } catch (e) {}
+                initialCloudPromise = null;
+            }
 
             // If we already have a valid active IP and not forcing a re-search, open dashboard immediately
             if (!forceSearch && currentIp && currentIp !== '--' && isValidIp(currentIp)) {
@@ -2274,9 +2301,9 @@
                     } catch (e) {}
                 }
 
-                // Phase 3: Firebase RTDB Cloud lookup (works with known MAC or auto-discovers freshest on first run!)
+                // Phase 3: Firebase RTDB Cloud lookup (auto-discovers freshest online board globally)
                 if (statusText) statusText.innerText = t.statusSearchingCloud || 'Запрос адреса из облака...';
-                const cloudFound = await findControllerInCloud(false, false, 3500, targetMac);
+                const cloudFound = await findControllerInCloud(false, false, 3500);
                 if (cloudFound && currentIp && currentIp !== '--') {
                     if (statusDot) statusDot.innerText = '🟢';
                     if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
@@ -2487,7 +2514,7 @@
             if (!currentIp || currentIp === '--') {
                 const openBtnIcon = document.getElementById('open-btn-icon');
                 if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
-                const found = await findControllerInCloud(true, true, 2000, expectedMac);
+                const found = await findControllerInCloud(true, true, 2000);
                 if (openBtnIcon) openBtnIcon.style.animation = '';
                 if (!found) {
                     openAndScrollToStep3();
@@ -2526,8 +2553,8 @@
                     showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)}). Запрашиваю облако...`);
                     // Update the actual board that responded on this IP in registry
                     setDeviceIp(verify.actualMac, currentIp, (verify.data && (verify.data.firmware || verify.data.version)));
-                    // Search cloud for our actual expected board
-                    await findControllerInCloud(true, true, 2500, expectedMac);
+                    // Search cloud for our active board
+                    await findControllerInCloud(true, true, 2500);
                     return;
                 }
 
@@ -2542,7 +2569,7 @@
                 // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!
                 console.warn(`[Hardware Unreachable] Device did not answer on ${currentIp}. Querying cloud...`);
                 showToast(`📡 Плата не ответила на ${currentIp}. Поиск свежего IP в облаке...`);
-                const found = await findControllerInCloud(false, true, 2500, expectedMac);
+                const found = await findControllerInCloud(false, true, 2500);
                 if (expectedMac && expectedMac !== getActiveMac()) {
                     return;
                 }
@@ -2747,6 +2774,7 @@
         const RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
         let discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
         let activeCloudAbortController = null;
+        let initialCloudPromise = null;
 
         async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 3500, specificMac = null) {
             const t = I18N[currentLang] || I18N.ru;
@@ -2755,11 +2783,11 @@
             const guideSyncBtn = document.getElementById('btn-guide-sync');
             const cloudBadge = document.getElementById('cloud-status-badge');
 
-            const targetMac = cleanMac(specificMac || getActiveMac());
             const isHttps = (window.location.protocol === 'https:');
 
             // DIRECT-FIRST: Check if the device is already directly accessible locally on lastKnownIP (HTTP only)
-            if (!isHttps && targetMac && targetMac.length >= 6) {
+            if (!isHttps && specificMac && cleanMac(specificMac).length >= 6) {
+                const targetMac = cleanMac(specificMac);
                 const activeDev = getActiveDevice();
                 const lastKnownIp = (activeDev && activeDev.cleanMac === targetMac) ? activeDev.ip : currentIp;
                 if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
@@ -2808,24 +2836,22 @@
                 const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
 
                 try {
-                    // Strategy 1: Targeted query if MAC is known
-                    if (targetMac && targetMac.length >= 6) {
-                        const targetedUrl = `${RTDB_URL}/boards/${targetMac}.json?nocache=${Date.now()}`;
+                    // Strategy 1: Targeted query ONLY if specificMac is explicitly requested (e.g. from Device Modal)
+                    if (specificMac && cleanMac(specificMac).length >= 6) {
+                        const targetCleanMac = cleanMac(specificMac);
+                        const targetedUrl = `${RTDB_URL}/boards/${targetCleanMac}.json?nocache=${Date.now()}`;
                         const res = await fetch(targetedUrl, { signal: abortCtrl.signal });
                         if (res && res.ok) {
                             const data = await res.json();
                             if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
                                 foundIp = data.ip.trim();
-                                foundMac = data.mac || targetMac;
+                                foundMac = data.mac || targetCleanMac;
                                 foundVersion = data.version || '';
                                 foundTs = Number(data.ts) || 0;
                             }
                         }
-                    }
-
-                    // Strategy 2: If no targetMac (first run) OR targeted board not online yet, query global boards
-                    // and select the freshest online board!
-                    if (!foundIp && (!abortCtrl.signal.aborted) && (thisEpoch === discoveryEpoch)) {
+                    } else {
+                        // Strategy 2: Global query of ALL boards. Always pick the freshest online board!
                         const globalUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
                         const res = await fetch(globalUrl, { signal: abortCtrl.signal });
                         if (res && res.ok) {
@@ -2833,11 +2859,11 @@
                             if (allBoards && typeof allBoards === 'object') {
                                 const validBoards = Object.entries(allBoards)
                                     .map(([key, val]) => ({
-                                        keyMac: key,
-                                        mac: (val && val.mac) || key,
-                                        ip: val && val.ip,
+                                        keyMac: cleanMac(key),
+                                        mac: (val && val.mac) ? cleanMac(val.mac) : cleanMac(key),
+                                        ip: val && val.ip && val.ip.trim(),
                                         ts: Number((val && val.ts) || 0),
-                                        version: val && val.version
+                                        version: (val && val.version) || ''
                                     }))
                                     .filter(b => b.ip && isValidIp(b.ip) && b.ip !== '0.0.0.0' && b.ip !== '1.2.3.4' && b.ip !== '192.168.43.99');
 
@@ -2865,7 +2891,14 @@
 
                 if (foundIp && foundMac) {
                     console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs);
-                    setDeviceIp(foundMac, foundIp, foundVersion);
+                    const previousMac = getActiveMac();
+                    const cleanPrev = cleanMac(previousMac);
+                    const cleanNew = cleanMac(foundMac);
+                    const isBoardSwitched = cleanPrev && (cleanPrev !== cleanNew);
+
+                    // Always ensure the freshest board is set as active
+                    setActiveMac(cleanNew);
+                    setDeviceIp(cleanNew, foundIp, foundVersion);
                     updateUI();
 
                     const now = Date.now();
@@ -2890,6 +2923,8 @@
                     if (isUserInitiated) {
                         if (isStale) {
                             showToast(`⚠️ Запись в облаке устарела (${Math.round(ageMs / 3600000)} ч назад). Включите зажигание (READY)`);
+                        } else if (isBoardSwitched) {
+                            showToast(`✅ Обнаружена активная плата: ${formatMac(cleanNew)} (${foundIp})`);
                         } else {
                             showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
                         }
@@ -2907,7 +2942,8 @@
                     return true;
                 } else {
                     if (cloudBadge) {
-                        cloudBadge.style.display = 'none';
+                        cloudBadge.style.display = 'block';
+                        cloudBadge.innerText = `⚪ ${t.ipStatusOffline || "Не в сети"}`;
                     }
                     if (isUserInitiated) {
                         showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
@@ -2936,17 +2972,16 @@
             }
         }
 
-        // On page load: Direct-First local check.
-        // If active device is verified locally on lastKnownIP -> zero cloud requests!
-        // If device IP is missing or unresponsive -> query cloud for this specific MAC.
+        // On page load: Direct-First local check (HTTP only).
+        // On HTTPS, query Firebase RTDB globally for the freshest active board immediately!
         window.addEventListener('DOMContentLoaded', () => {
             if (!justLinkedFromUrl) {
                 const aMac = getActiveMac();
                 const isHttps = (window.location.protocol === 'https:');
-                if (aMac) {
+                if (!isHttps && aMac) {
                     const dev = getActiveDevice();
                     const savedIp = (dev && dev.ip) ? dev.ip : currentIp;
-                    if (!isHttps && savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                    if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
                         verifyDeviceLocal(savedIp, aMac, 600).then(verify => {
                             if (aMac !== getActiveMac()) return;
                             const cloudBadge = document.getElementById('cloud-status-badge');
@@ -2956,17 +2991,16 @@
                                     cloudBadge.innerText = `🟢 ${I18N[currentLang]?.ipStatusOnline || "В сети"} (Локально)`;
                                 }
                             } else {
-                                // IP not responsive locally -> query cloud
-                                findControllerInCloud(false, false, 2000, aMac);
+                                // IP not responsive locally -> query cloud for freshest board
+                                findControllerInCloud(false, false, 2000);
                             }
                         });
                     } else {
-                        // On HTTPS, query cloud immediately with zero delay
-                        findControllerInCloud(false, false, 2500, aMac);
+                        initialCloudPromise = findControllerInCloud(false, false, 2500);
                     }
-                } else if (!currentIp || currentIp === '--') {
-                    // First time user: no active MAC saved yet -> auto query cloud for freshest board!
-                    findControllerInCloud(false, false, 2500);
+                } else {
+                    // On HTTPS or when no local check is performed, query cloud immediately for freshest board!
+                    initialCloudPromise = findControllerInCloud(false, false, 2500);
                 }
             }
         });
