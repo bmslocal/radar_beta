@@ -892,15 +892,6 @@
 </head>
 <body>
     <div class="container" id="app-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="app-title-wrap">
-                <span style="font-size: 22px;">⚡</span>
-                <h1 class="app-title" id="t-app-title">BMS Cooling Radar</h1>
-            </div>
-            <div id="radar-ver-badge" style="font-size: 11.5px; font-weight: 700; color: #a1a1aa; background: #27272a; border: 1px solid #3f3f46; padding: 4px 9px; border-radius: 6px; letter-spacing: 0.5px;">v75-beta</div>
-        </div>
-
         <!-- Toast Notify -->
         <div id="toast" class="notify-toast"></div>
 
@@ -1220,7 +1211,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Версия Радара:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v75-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v76-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">ID устройства (MAC):</span>
@@ -2157,7 +2148,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v75-beta',
+                'Radar Version: v76-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2209,11 +2200,13 @@
             const statusText = document.getElementById('t-status-idle');
             const btnIcon = document.getElementById('main-connect-icon');
 
+            const connectStatusBlock = document.getElementById('connect-status-text');
             if (btn) {
                 btn.classList.add('connecting');
                 btn.disabled = true;
             }
             if (btnIcon) btnIcon.style.animation = 'spin 0.8s linear infinite';
+            if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
             if (statusDot) statusDot.innerText = '🟡';
             if (statusText) statusText.innerText = t.statusSearchingLocal || 'Поиск контроллера в сети...';
 
@@ -2301,6 +2294,7 @@
             const firstRunTip = document.getElementById('first-run-tip');
             const setupTitle = document.getElementById('t-setup-accordion-title');
             const setupIcon = document.getElementById('setup-tile-icon');
+            const connectStatusBlock = document.getElementById('connect-status-text');
             const statusDot = document.getElementById('status-dot');
             const statusText = document.getElementById('t-status-idle');
             const tBtnMainConnect = document.getElementById('t-btn-main-connect');
@@ -2324,8 +2318,7 @@
                 if (firstRunTip) firstRunTip.style.display = 'none';
                 if (setupTitle) setupTitle.innerText = t.accordionSetupConfig;
                 if (setupIcon) setupIcon.innerText = '⚙️';
-                if (statusDot) statusDot.innerText = '🟢';
-                if (statusText && !isDiscovering) statusText.innerText = (t.ipStatusOnline ? t.ipStatusOnline : 'В сети') + ': ' + currentIp;
+                if (connectStatusBlock) connectStatusBlock.style.display = 'none';
                 if (tBtnMainConnect && !isDiscovering) tBtnMainConnect.innerText = t.btnOpenDash || 'Открыть Live Monitor';
                 if (mainConnectIcon && !isDiscovering) mainConnectIcon.innerText = '📊';
 
@@ -2344,6 +2337,7 @@
                 if (firstRunTip) firstRunTip.style.display = 'flex';
                 if (setupTitle) setupTitle.innerText = t.accordionSetupFirst;
                 if (setupIcon) setupIcon.innerText = '🚀';
+                if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
                 if (statusDot) statusDot.innerText = '⚪';
                 if (statusText && !isDiscovering) statusText.innerText = t.statusIdle || 'Нажмите для поиска и подключения';
                 if (tBtnMainConnect && !isDiscovering) tBtnMainConnect.innerText = t.btnMainConnect || 'Подключиться к контроллеру';
