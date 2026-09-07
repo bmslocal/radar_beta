@@ -719,7 +719,17 @@
         <div class="card" id="main-card">
             <div class="ip-label" id="t-ip-label">Controller IP Address</div>
             <div id="display-ip" class="ip-value">--</div>
-            <div id="cloud-status-badge" style="display: none; margin-top: -6px; margin-bottom: 12px; font-size: 13px; color: #4ade80; font-weight: 600; text-align: center;">🟢 В сети (Облако)</div>
+            <div id="cloud-status-badge" style="display: none; margin-top: -6px; margin-bottom: 8px; font-size: 13px; color: #4ade80; font-weight: 600; text-align: center;">🟢 В сети (Облако)</div>
+            
+            <!-- Active Device Indicator & Switcher -->
+            <div id="device-info-row" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: -2px; margin-bottom: 14px; font-size: 12.5px;">
+                <span id="device-badge" style="font-family: ui-monospace, monospace; color: #a1a1aa; background: #202024; border: 1px solid #2d2d32; border-radius: 6px; padding: 2px 8px;">
+                    MAC: <span id="display-mac" style="color: #38bdf8; font-weight: 600;">--</span>
+                </span>
+                <button type="button" id="btn-switch-device" onclick="toggleDeviceModal()" style="background: transparent; border: none; color: #94a3b8; cursor: pointer; text-decoration: underline; font-size: 12px; padding: 2px 4px;">
+                    Сменить плату
+                </button>
+            </div>
             <div id="first-run-tip" class="first-run-tip" onclick="openAndScrollToGuide()">
                 <span style="font-size: 16px; line-height: 1;">📖</span>
                 <span id="t-first-run-tip">First-time setup: follow the guide below 👇</span>
@@ -960,6 +970,27 @@
                 <div class="trouble-a" id="t-tr-3-a">
                     • Ensure phone Hotspot (2.4GHz) is ON and phone is connected to <code>Bms_Setup</code> Wi-Fi, then tap <b>«Auto-Sync»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(go to button)</a>.<br>
                     • Or check phone Hotspot settings for the connected device IP and save it manually.
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Switcher Modal -->
+        <div id="device-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 99999; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px);">
+            <div style="background: #18181b; border: 1px solid #27272a; border-radius: 14px; max-width: 380px; width: 100%; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 15px; color: #f4f4f5;">Выбор устройства</div>
+                    <button type="button" onclick="toggleDeviceModal()" style="background: transparent; border: none; color: #a1a1aa; font-size: 18px; cursor: pointer; padding: 2px 6px;">✕</button>
+                </div>
+                <div id="device-list" style="max-height: 220px; overflow-y: auto; margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- populated dynamically -->
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button type="button" class="btn-sync" onclick="addNewDeviceSearch()" style="margin-top: 0; font-size: 13.5px; padding: 10px;">
+                        <span>➕</span> Подключить другую плату (Поиск)
+                    </button>
+                    <button type="button" onclick="clearDeviceRegistry()" style="background: transparent; border: 1px solid #3f3f46; color: #ef4444; border-radius: 10px; padding: 8px; font-size: 12px; cursor: pointer;">
+                        🗑️ Очистить список устройств
+                    </button>
                 </div>
             </div>
         </div>
@@ -1299,29 +1330,144 @@
             return IP_REGEX.test((value || '').trim());
         }
 
-        // IP State Management (Top-level declaration to prevent TDZ)
-        
-        let currentIp = localStorage.getItem('bms_saved_ip') || '';
-        let currentMac = localStorage.getItem('bms_saved_mac') || '';
-        
-        const queryIp = urlParams.get('ip');
-        const queryMac = urlParams.get('mac');
-        
-        let justLinkedFromUrl = false;
-
-        if (queryMac && queryMac.length > 5) {
-            currentMac = queryMac.trim();
-            localStorage.setItem('bms_saved_mac', currentMac);
+        // MAC & IP helpers
+        function cleanMac(mac) {
+            return (mac || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
         }
 
-        if (queryIp && isValidIp(queryIp)) {
-            currentIp = queryIp.trim();
-            localStorage.setItem('bms_saved_ip', currentIp);
-            localStorage.setItem('bms_last_saved', new Date().toISOString());
-            justLinkedFromUrl = true;
-            if (window.history.replaceState) {
-                window.history.replaceState({}, document.title, window.location.pathname);
+        function formatMac(mac) {
+            const clean = cleanMac(mac);
+            if (clean.length === 12) {
+                return clean.match(/.{1,2}/g).join(':');
             }
+            return mac || '--';
+        }
+
+        // Device Registry Management: { [cleanMac]: { mac, cleanMac, ip, version, updatedAt } }
+        function getDeviceRegistry() {
+            let registry = {};
+            try {
+                const raw = localStorage.getItem('bms_device_registry');
+                if (raw) registry = JSON.parse(raw);
+            } catch (e) {}
+
+            // Backward compatibility & migration:
+            const legacyIp = localStorage.getItem('bms_saved_ip');
+            const legacyMac = localStorage.getItem('bms_saved_mac');
+            if (legacyMac && legacyIp && isValidIp(legacyIp)) {
+                const cMac = cleanMac(legacyMac);
+                if (cMac && !registry[cMac]) {
+                    registry[cMac] = {
+                        mac: formatMac(cMac),
+                        cleanMac: cMac,
+                        ip: legacyIp.trim(),
+                        updatedAt: Date.now()
+                    };
+                    try { localStorage.setItem('bms_device_registry', JSON.stringify(registry)); } catch (e) {}
+                }
+            }
+            return registry;
+        }
+
+        function saveDeviceRegistry(registry) {
+            try {
+                localStorage.setItem('bms_device_registry', JSON.stringify(registry));
+            } catch (e) {}
+        }
+
+        function getActiveMac() {
+            let active = cleanMac(localStorage.getItem('bms_active_mac') || '');
+            const registry = getDeviceRegistry();
+            if (!active || !registry[active]) {
+                const keys = Object.keys(registry);
+                if (keys.length > 0) {
+                    keys.sort((a, b) => (registry[b].updatedAt || 0) - (registry[a].updatedAt || 0));
+                    active = keys[0];
+                    localStorage.setItem('bms_active_mac', active);
+                }
+            }
+            return active;
+        }
+
+        function setActiveMac(mac) {
+            const cMac = cleanMac(mac);
+            localStorage.setItem('bms_active_mac', cMac);
+            const registry = getDeviceRegistry();
+            if (cMac && registry[cMac]) {
+                currentIp = registry[cMac].ip || '';
+                currentMac = registry[cMac].mac || formatMac(cMac);
+                localStorage.setItem('bms_saved_ip', currentIp);
+                localStorage.setItem('bms_saved_mac', currentMac);
+            } else {
+                currentMac = formatMac(cMac);
+                localStorage.setItem('bms_saved_mac', currentMac);
+            }
+            updateUI();
+        }
+
+        function getActiveDevice() {
+            const registry = getDeviceRegistry();
+            const aMac = getActiveMac();
+            return (aMac && registry[aMac]) ? registry[aMac] : null;
+        }
+
+        function setDeviceIp(mac, ip, version = '') {
+            const cMac = cleanMac(mac);
+            if (!cMac || !isValidIp(ip)) return;
+            const registry = getDeviceRegistry();
+            registry[cMac] = {
+                mac: formatMac(cMac),
+                cleanMac: cMac,
+                ip: ip.trim(),
+                version: version || (registry[cMac] && registry[cMac].version) || '',
+                updatedAt: Date.now()
+            };
+            saveDeviceRegistry(registry);
+            localStorage.setItem('bms_active_mac', cMac);
+            currentIp = ip.trim();
+            currentMac = registry[cMac].mac;
+            localStorage.setItem('bms_saved_ip', currentIp);
+            localStorage.setItem('bms_saved_mac', currentMac);
+            updateUI();
+        }
+
+        // Initialize state from Registry or LocalStorage
+        let currentIp = '';
+        let currentMac = '';
+        const initActive = getActiveDevice();
+        if (initActive && initActive.ip) {
+            currentIp = initActive.ip;
+            currentMac = initActive.mac;
+        } else {
+            currentIp = localStorage.getItem('bms_saved_ip') || '';
+            currentMac = localStorage.getItem('bms_saved_mac') || '';
+        }
+
+        const queryIp = urlParams.get('ip');
+        const queryMac = urlParams.get('mac');
+        let justLinkedFromUrl = false;
+
+        if (queryMac && queryMac.length >= 6) {
+            const cQueryMac = cleanMac(queryMac);
+            if (queryIp && isValidIp(queryIp)) {
+                setDeviceIp(cQueryMac, queryIp.trim());
+                justLinkedFromUrl = true;
+            } else {
+                setActiveMac(cQueryMac);
+            }
+        } else if (queryIp && isValidIp(queryIp)) {
+            const activeMac = getActiveMac();
+            if (activeMac) {
+                setDeviceIp(activeMac, queryIp.trim());
+            } else {
+                currentIp = queryIp.trim();
+                localStorage.setItem('bms_saved_ip', currentIp);
+            }
+            justLinkedFromUrl = true;
+        }
+
+        if (justLinkedFromUrl && window.history.replaceState) {
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
 
 
@@ -1529,11 +1675,21 @@
 
         function updateUI() {
             const displayEl = document.getElementById('display-ip');
+            const displayMacEl = document.getElementById('display-mac');
             const manualIpInput = document.getElementById('manual-ip');
             const firstRunTip = document.getElementById('first-run-tip');
             const setupTitle = document.getElementById('t-setup-accordion-title');
             const setupIcon = document.getElementById('setup-tile-icon');
             const t = I18N[currentLang] || I18N.en;
+
+            const active = getActiveDevice();
+            if (active && active.cleanMac) {
+                if (displayMacEl) displayMacEl.innerText = active.mac || formatMac(active.cleanMac);
+            } else if (currentMac) {
+                if (displayMacEl) displayMacEl.innerText = formatMac(currentMac);
+            } else {
+                if (displayMacEl) displayMacEl.innerText = '--';
+            }
 
             if (currentIp && currentIp !== '--') {
                 if (displayEl) displayEl.innerText = currentIp;
@@ -1597,11 +1753,6 @@
             openAndScrollToStep3();
         }
 
-        
-
-        
-        
-
         function checkFailedNavigation() {
             const recovery = document.getElementById('nav-recovery-card');
             const hint = document.getElementById('ip-unreachable-hint');
@@ -1622,17 +1773,51 @@
             }
         }
 
+        // Hardware-level verification via local /status endpoint
+        async function verifyDeviceLocal(ip, expectedMac = '', timeoutMs = 1200) {
+            if (!isValidIp(ip)) return { ok: false, error: 'invalid_ip' };
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const res = await fetch(`http://${ip}/status?t=${Date.now()}`, { signal: controller.signal });
+                clearTimeout(tid);
+                if (res.ok) {
+                    const data = await res.json();
+                    const actualMac = cleanMac(data.mac || '');
+                    const expMac = cleanMac(expectedMac);
+                    const matched = expMac ? (actualMac === expMac) : true;
+                    return { ok: true, matched, actualMac, data };
+                }
+                return { ok: false, error: 'http_error' };
+            } catch (e) {
+                clearTimeout(tid);
+                return { ok: false, error: e };
+            }
+        }
+
         function openDashboard() {
             if (!currentIp || currentIp === '--') {
                 const openBtnIcon = document.getElementById('open-btn-icon');
                 if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
-                // Если IP не сохранен — даем облаку ровно 1.2 секунды на автопоиск
-                findControllerInCloud(true, true, 1200).finally(() => {
+                findControllerInCloud(true, true, 1500).finally(() => {
                     if (openBtnIcon) openBtnIcon.style.animation = '';
                 });
                 return;
             }
-            // Double Cache: мгновенно открываем сохраненный локальный IP (Zero-Cloud)
+
+            // Quick background verification check of actual connected hardware
+            const active = getActiveDevice();
+            const expectedMac = active ? active.cleanMac : '';
+            if (expectedMac && currentIp !== '10.10.10.1') {
+                verifyDeviceLocal(currentIp, expectedMac, 900).then(verify => {
+                    if (verify.ok && !verify.matched && verify.actualMac) {
+                        console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
+                        showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)})`);
+                        setDeviceIp(verify.actualMac, currentIp, (verify.data && verify.data.version));
+                    }
+                });
+            }
+
             const recovery = document.getElementById('nav-recovery-card');
             const hint = document.getElementById('ip-unreachable-hint');
             if (recovery) recovery.style.display = 'none';
@@ -1665,13 +1850,121 @@
             const input = document.getElementById('manual-ip');
             const val = input ? input.value.trim() : '';
             if (isValidIp(val)) {
-                currentIp = val;
-                localStorage.setItem('bms_saved_ip', currentIp);
-                updateUI();
+                const activeMac = getActiveMac();
+                if (activeMac) {
+                    setDeviceIp(activeMac, val);
+                } else {
+                    currentIp = val;
+                    localStorage.setItem('bms_saved_ip', currentIp);
+                    updateUI();
+                }
                 toggleEditIp();
                 showToast(`${t.toastLinked}${currentIp}`);
             } else {
                 alert(t.alertInvalidIp);
+            }
+        }
+
+        // ==========================================
+        // DEVICE MANAGEMENT MODAL
+        // ==========================================
+        function toggleDeviceModal() {
+            const modal = document.getElementById('device-modal');
+            if (!modal) return;
+            const isOpen = (modal.style.display === 'flex');
+            if (isOpen) {
+                modal.style.display = 'none';
+            } else {
+                renderDeviceList();
+                modal.style.display = 'flex';
+            }
+        }
+
+        function renderDeviceList() {
+            const listEl = document.getElementById('device-list');
+            if (!listEl) return;
+            const registry = getDeviceRegistry();
+            const activeMac = getActiveMac();
+            const entries = Object.entries(registry);
+
+            if (entries.length === 0) {
+                listEl.innerHTML = '<div style="color: #71717a; font-size: 13px; text-align: center; padding: 12px 0;">Нет сохраненных плат</div>';
+                return;
+            }
+
+            let html = '';
+            entries.forEach(([cMac, dev]) => {
+                const isActive = (cMac === activeMac);
+                const displayMac = dev.mac || formatMac(cMac);
+                const ip = dev.ip || '--';
+                html += `
+                    <div style="background: ${isActive ? '#1e293b' : '#27272a'}; border: 1px solid ${isActive ? '#38bdf8' : '#3f3f46'}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div>
+                            <div style="font-family: monospace; font-size: 13px; font-weight: 700; color: ${isActive ? '#38bdf8' : '#f4f4f5'};">${displayMac}</div>
+                            <div style="font-size: 12px; color: #a1a1aa;">IP: <b style="color: #cbd5e1;">${ip}</b> ${dev.version ? `<span style="font-size: 10.5px; background: rgba(255,255,255,0.06); padding: 1px 4px; border-radius: 4px; margin-left: 4px;">${dev.version}</span>` : ''}</div>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            ${isActive ? 
+                                `<span style="font-size: 11px; font-weight: 700; color: #4ade80; background: rgba(74,222,128,0.12); padding: 4px 8px; border-radius: 6px;">АКТИВНА</span>` : 
+                                `<button type="button" onclick="selectDevice('${cMac}')" style="background: #3b82f6; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Выбрать</button>`
+                            }
+                            <button type="button" onclick="removeDevice('${cMac}')" style="background: transparent; border: none; color: #71717a; cursor: pointer; padding: 4px; font-size: 14px;" title="Удалить">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
+        }
+
+        function selectDevice(mac) {
+            setActiveMac(mac);
+            toggleDeviceModal();
+            showToast(`Выбрана плата: ${formatMac(mac)}`);
+            // Automatically query Firebase to ensure IP is current for this specific board
+            findControllerInCloud(false, true, 2000);
+        }
+
+        function removeDevice(mac) {
+            const registry = getDeviceRegistry();
+            delete registry[mac];
+            saveDeviceRegistry(registry);
+            if (getActiveMac() === mac) {
+                localStorage.removeItem('bms_active_mac');
+                const keys = Object.keys(registry);
+                if (keys.length > 0) {
+                    setActiveMac(keys[0]);
+                } else {
+                    currentIp = '';
+                    currentMac = '';
+                    localStorage.removeItem('bms_saved_ip');
+                    localStorage.removeItem('bms_saved_mac');
+                    updateUI();
+                }
+            }
+            renderDeviceList();
+        }
+
+        function addNewDeviceSearch() {
+            toggleDeviceModal();
+            // Clear active MAC marker to initiate wide search for any newly powered board
+            localStorage.removeItem('bms_active_mac');
+            currentIp = '';
+            currentMac = '';
+            updateUI();
+            findControllerInCloud(false, true, 3000);
+        }
+
+        function clearDeviceRegistry() {
+            if (confirm("Удалить все сохраненные платы из памяти?")) {
+                localStorage.removeItem('bms_device_registry');
+                localStorage.removeItem('bms_active_mac');
+                localStorage.removeItem('bms_saved_ip');
+                localStorage.removeItem('bms_saved_mac');
+                currentIp = '';
+                currentMac = '';
+                updateUI();
+                toggleDeviceModal();
+                showToast("Список устройств очищен");
             }
         }
 
@@ -1713,13 +2006,16 @@
         // FIREBASE CLOUD HANDSHAKE & ZERO-CLICK DISCOVERY (RTDB)
         // ==========================================
         const RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
+        let discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
 
-        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 1500) {
+        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 2000) {
             const t = I18N[currentLang] || I18N.ru;
             const searchIcon = document.getElementById('cloud-search-icon');
             const searchLabel = document.getElementById('t-btn-cloud-search');
             const guideSyncBtn = document.getElementById('btn-guide-sync');
             const cloudBadge = document.getElementById('cloud-status-badge');
+
+            const thisEpoch = ++discoveryEpoch;
 
             if (isUserInitiated) {
                 if (searchIcon) searchIcon.style.animation = 'spin 0.8s linear infinite';
@@ -1732,70 +2028,73 @@
             let foundMac = null;
             let foundVersion = null;
 
+            const activeMac = getActiveMac();
+
             try {
-                // Method 1: Query boards collection for the most recently active board (Active Board Priority)
-                const queryUrl = `${RTDB_URL}/boards.json`;
-                const controller = new AbortController();
-                const tid = setTimeout(() => controller.abort(), timeoutMs);
-                try {
-                    const queryRes = await fetch(queryUrl, { signal: controller.signal });
-                    clearTimeout(tid);
-                    if (queryRes.ok) {
-                        const boards = await queryRes.json();
-                        if (boards && typeof boards === 'object') {
-                            const validBoards = Object.entries(boards)
-                                .map(([key, item]) => ({ key, ...item }))
-                                .filter(item => item && item.ip && isValidIp(item.ip) && item.ip !== '0.0.0.0' && item.ip !== '1.2.3.4' && item.ip !== '192.168.43.99')
-                                .sort((a, b) => (b.ts || 0) - (a.ts || 0));
-
-                            if (validBoards.length > 0) {
-                                // Если пользователь сам нажал кнопку поиска (isUserInitiated),
-                                // или если у нас ещё нет сохраненной платы,
-                                // или если самая свежая плата выходила на связь недавно (за последние 30 мин),
-                                // выбираем самую свежую активную плату:
-                                const topBoard = validBoards[0];
-                                foundIp = topBoard.ip;
-                                foundMac = topBoard.mac || topBoard.key;
-                                foundVersion = topBoard.version || '';
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.warn("[RTDB Discovery] Global query failed or aborted, falling back to direct MAC:", e);
-                }
-
-                // Method 2: Fallback to direct fetch by known saved MAC if global query was empty or offline
-                if (!foundIp && currentMac && currentMac.trim().length > 4) {
-                    const cleanMac = currentMac.replace(/[^a-zA-Z0-9]/g, '');
-                    const directUrl = `${RTDB_URL}/boards/${cleanMac}.json`;
+                // Strategy 1: Targeted fetch by known active MAC (if bound to a specific board)
+                if (activeMac && activeMac.length >= 6) {
+                    const targetedUrl = `${RTDB_URL}/boards/${activeMac}.json?nocache=${Date.now()}`;
                     try {
-                        const directCtrl = new AbortController();
-                        const directTid = setTimeout(() => directCtrl.abort(), timeoutMs);
-                        const directRes = await fetch(directUrl, { signal: directCtrl.signal });
-                        clearTimeout(directTid);
-                        if (directRes.ok) {
-                            const data = await directRes.json();
+                        const targetCtrl = new AbortController();
+                        const targetTid = setTimeout(() => targetCtrl.abort(), timeoutMs);
+                        const targetRes = await fetch(targetedUrl, { signal: targetCtrl.signal });
+                        clearTimeout(targetTid);
+                        if (targetRes.ok) {
+                            const data = await targetRes.json();
                             if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
                                 foundIp = data.ip;
-                                foundMac = data.mac || cleanMac;
+                                foundMac = data.mac || activeMac;
                                 foundVersion = data.version || '';
                             }
                         }
                     } catch (e) {
-                        console.warn("[RTDB Discovery] Direct fetch failed or aborted:", e);
+                        console.warn("[RTDB Discovery] Targeted fetch failed, falling back to global:", e);
                     }
                 }
 
-                if (foundIp) {
-                    console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac);
-                    currentIp = foundIp;
-                    localStorage.setItem('bms_saved_ip', currentIp);
-                    if (foundMac) {
-                        currentMac = foundMac;
-                        localStorage.setItem('bms_saved_mac', currentMac);
-                    }
+                // Strategy 2: Global query if no active MAC or targeted query returned no fresh data
+                if (!foundIp) {
+                    const queryUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
+                    const globalCtrl = new AbortController();
+                    const globalTid = setTimeout(() => globalCtrl.abort(), timeoutMs);
+                    try {
+                        const queryRes = await fetch(queryUrl, { signal: globalCtrl.signal });
+                        clearTimeout(globalTid);
+                        if (queryRes.ok) {
+                            const boards = await queryRes.json();
+                            if (boards && typeof boards === 'object') {
+                                const validBoards = Object.entries(boards)
+                                    .map(([key, item]) => ({ key, ...item }))
+                                    .filter(item => item && item.ip && isValidIp(item.ip) && item.ip !== '0.0.0.0' && item.ip !== '1.2.3.4' && item.ip !== '192.168.43.99')
+                                    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
-                    updateUI();
+                                if (validBoards.length > 0) {
+                                    // If we have an activeMac, try to find it first in the list
+                                    let matchedBoard = activeMac ? validBoards.find(b => cleanMac(b.mac || b.key) === activeMac) : null;
+                                    if (!matchedBoard) {
+                                        // Pick the most recently active board
+                                        matchedBoard = validBoards[0];
+                                    }
+                                    foundIp = matchedBoard.ip;
+                                    foundMac = matchedBoard.mac || matchedBoard.key;
+                                    foundVersion = matchedBoard.version || '';
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("[RTDB Discovery] Global query failed or aborted:", e);
+                    }
+                }
+
+                // Check for Race Conditions: If a newer discovery request was launched, ignore this result
+                if (thisEpoch !== discoveryEpoch) {
+                    console.log("[RTDB Discovery] Stale epoch response ignored");
+                    return false;
+                }
+
+                if (foundIp && foundMac) {
+                    console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac);
+                    setDeviceIp(foundMac, foundIp, foundVersion);
 
                     if (cloudBadge) {
                         cloudBadge.style.display = 'block';
@@ -1803,7 +2102,7 @@
                     }
 
                     if (isUserInitiated) {
-                        showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${currentIp}`);
+                        showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
                     }
 
                     if (autoOpen) {
@@ -1825,18 +2124,19 @@
                 }
                 return false;
             } finally {
-                if (searchIcon) searchIcon.style.animation = '';
-                if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
-                if (guideSyncBtn) guideSyncBtn.disabled = false;
+                if (thisEpoch === discoveryEpoch) {
+                    if (searchIcon) searchIcon.style.animation = '';
+                    if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
+                    if (guideSyncBtn) guideSyncBtn.disabled = false;
+                }
             }
         }
 
-        // Double Cache: On page load, if IP is already cached in localStorage,
-        // do NOT make any cloud requests! Works 100% offline with 0 cloud queries.
-        // Only if IP is missing (-- or empty), run a silent 1-second cloud lookup.
+        // On page load: If active device is cached and valid, do not query cloud (Double Cache / Zero-Cloud).
+        // If no device or IP is cached, query cloud automatically.
         window.addEventListener('DOMContentLoaded', () => {
             if (!justLinkedFromUrl && (!currentIp || currentIp === '--')) {
-                findControllerInCloud(false, false, 1000);
+                findControllerInCloud(false, false, 1200);
             }
         });
 

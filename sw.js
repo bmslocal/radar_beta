@@ -1,4 +1,4 @@
-const CACHE_NAME = 'live-radar-v70-beta';
+const CACHE_NAME = 'live-radar-v71-beta';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -25,8 +25,20 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Only cache GET requests
+  // Only handle GET requests
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+
+  // CRITICAL: NEVER cache cross-origin requests (Firebase RTDB, external APIs, etc.)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Never cache local device status, API or dynamic queries
+  if (url.pathname.includes('/api/') || url.pathname.includes('/status')) {
+    return;
+  }
 
   // Network-First for HTML navigation/document requests so updates appear instantly
   if (event.request.mode === 'navigate' || event.request.destination === 'document') {
@@ -44,7 +56,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets
+  // Cache-first for local static assets only
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;
