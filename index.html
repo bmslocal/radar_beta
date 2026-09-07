@@ -1399,7 +1399,9 @@
                 localStorage.setItem('bms_saved_ip', currentIp);
                 localStorage.setItem('bms_saved_mac', currentMac);
             } else {
+                currentIp = '';
                 currentMac = formatMac(cMac);
+                localStorage.setItem('bms_saved_ip', '');
                 localStorage.setItem('bms_saved_mac', currentMac);
             }
             updateUI();
@@ -1423,12 +1425,15 @@
                 updatedAt: Date.now()
             };
             saveDeviceRegistry(registry);
-            localStorage.setItem('bms_active_mac', cMac);
-            currentIp = ip.trim();
-            currentMac = registry[cMac].mac;
-            localStorage.setItem('bms_saved_ip', currentIp);
-            localStorage.setItem('bms_saved_mac', currentMac);
-            updateUI();
+            
+            // Only update currentIp and UI if this MAC is the currently active one
+            if (cMac === getActiveMac()) {
+                currentIp = ip.trim();
+                currentMac = registry[cMac].mac;
+                localStorage.setItem('bms_saved_ip', currentIp);
+                localStorage.setItem('bms_saved_mac', currentMac);
+                updateUI();
+            }
         }
 
         // Initialize state from Registry or LocalStorage
@@ -1773,15 +1778,24 @@
             }
         }
 
-        // Hardware-level verification via local /status endpoint
+        // Hardware-level verification via local /api/info or /status endpoint
         async function verifyDeviceLocal(ip, expectedMac = '', timeoutMs = 1200) {
             if (!isValidIp(ip)) return { ok: false, error: 'invalid_ip' };
             const controller = new AbortController();
             const tid = setTimeout(() => controller.abort(), timeoutMs);
             try {
-                const res = await fetch(`http://${ip}/status?t=${Date.now()}`, { signal: controller.signal });
+                // First try lightweight /api/info
+                let res = null;
+                try {
+                    res = await fetch(`http://${ip}/api/info?t=${Date.now()}`, { signal: controller.signal });
+                } catch (e) {}
+                
+                // Fallback to /status if /api/info is not present on older firmware
+                if (!res || !res.ok) {
+                    res = await fetch(`http://${ip}/status?t=${Date.now()}`, { signal: controller.signal });
+                }
                 clearTimeout(tid);
-                if (res.ok) {
+                if (res && res.ok) {
                     const data = await res.json();
                     const actualMac = cleanMac(data.mac || '');
                     const expMac = cleanMac(expectedMac);
@@ -1795,38 +1809,61 @@
             }
         }
 
-        function openDashboard() {
+        async function openDashboard() {
+            const active = getActiveDevice();
+            const expectedMac = active ? active.cleanMac : getActiveMac();
+
             if (!currentIp || currentIp === '--') {
                 const openBtnIcon = document.getElementById('open-btn-icon');
                 if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
-                findControllerInCloud(true, true, 1500).finally(() => {
-                    if (openBtnIcon) openBtnIcon.style.animation = '';
-                });
+                const found = await findControllerInCloud(true, true, 2000, expectedMac);
+                if (openBtnIcon) openBtnIcon.style.animation = '';
+                if (!found) {
+                    openAndScrollToStep3();
+                }
                 return;
             }
 
-            // Quick background verification check of actual connected hardware
-            const active = getActiveDevice();
-            const expectedMac = active ? active.cleanMac : '';
-            if (expectedMac && currentIp !== '10.10.10.1') {
-                verifyDeviceLocal(currentIp, expectedMac, 900).then(verify => {
-                    if (verify.ok && !verify.matched && verify.actualMac) {
-                        console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
-                        showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)})`);
-                        setDeviceIp(verify.actualMac, currentIp, (verify.data && verify.data.version));
-                    }
-                });
+            if (currentIp === '10.10.10.1') {
+                window.open('http://10.10.10.1/', '_blank');
+                return;
             }
 
-            const recovery = document.getElementById('nav-recovery-card');
-            const hint = document.getElementById('ip-unreachable-hint');
-            if (recovery) recovery.style.display = 'none';
-            if (hint) hint.style.display = 'none';
-            window.open('http://' + currentIp + '/', '_blank');
-            if (currentIp !== '10.10.10.1') {
-                setTimeout(() => {
+            const openBtnIcon = document.getElementById('open-btn-icon');
+            if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
+
+            // Hardware verification step before opening dashboard
+            const verify = await verifyDeviceLocal(currentIp, expectedMac, 1200);
+            if (openBtnIcon) openBtnIcon.style.animation = '';
+
+            if (verify.ok) {
+                if (!verify.matched && verify.actualMac) {
+                    console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
+                    showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)}). Запрашиваю облако...`);
+                    // Update the actual board that responded on this IP in registry
+                    setDeviceIp(verify.actualMac, currentIp, (verify.data && (verify.data.firmware || verify.data.version)));
+                    // Search cloud for our actual expected board
+                    await findControllerInCloud(true, true, 2500, expectedMac);
+                    return;
+                }
+
+                // Match confirmed: open window
+                const recovery = document.getElementById('nav-recovery-card');
+                const hint = document.getElementById('ip-unreachable-hint');
+                if (recovery) recovery.style.display = 'none';
+                if (hint) hint.style.display = 'none';
+                window.open('http://' + currentIp + '/', '_blank');
+                setTimeout(() => { checkFailedNavigation(); }, 800);
+            } else {
+                // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!
+                console.warn(`[Hardware Unreachable] Device did not answer on ${currentIp}. Querying cloud...`);
+                showToast(`📡 Плата не ответила на ${currentIp}. Поиск свежего IP в облаке...`);
+                const found = await findControllerInCloud(false, true, 2500, expectedMac);
+                if (found && currentIp && currentIp !== '--') {
+                    window.open('http://' + currentIp + '/', '_blank');
+                } else {
                     checkFailedNavigation();
-                }, 800);
+                }
             }
         }
 
@@ -1917,11 +1954,12 @@
         }
 
         function selectDevice(mac) {
-            setActiveMac(mac);
+            const cMac = cleanMac(mac);
+            setActiveMac(cMac);
             toggleDeviceModal();
-            showToast(`Выбрана плата: ${formatMac(mac)}`);
-            // Automatically query Firebase to ensure IP is current for this specific board
-            findControllerInCloud(false, true, 2000);
+            showToast(`Выбрана плата: ${formatMac(cMac)}`);
+            // Query Firebase strictly for this specific board
+            findControllerInCloud(false, true, 2500, cMac);
         }
 
         function removeDevice(mac) {
@@ -1946,12 +1984,8 @@
 
         function addNewDeviceSearch() {
             toggleDeviceModal();
-            // Clear active MAC marker to initiate wide search for any newly powered board
-            localStorage.removeItem('bms_active_mac');
-            currentIp = '';
-            currentMac = '';
-            updateUI();
-            findControllerInCloud(false, true, 3000);
+            openAndScrollToStep3();
+            showToast("Для подключения новой платы подключитесь к её Wi-Fi (Bms_Setup) или выполните синхронизацию.");
         }
 
         function clearDeviceRegistry() {
@@ -2007,14 +2041,31 @@
         // ==========================================
         const RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
         let discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
+        let activeCloudAbortController = null;
 
-        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 2000) {
+        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 2500, specificMac = null) {
             const t = I18N[currentLang] || I18N.ru;
             const searchIcon = document.getElementById('cloud-search-icon');
             const searchLabel = document.getElementById('t-btn-cloud-search');
             const guideSyncBtn = document.getElementById('btn-guide-sync');
             const cloudBadge = document.getElementById('cloud-status-badge');
 
+            const targetMac = cleanMac(specificMac || getActiveMac());
+            if (!targetMac || targetMac.length < 6) {
+                if (isUserInitiated) {
+                    showToast("⚠️ Плата не привязана. Подключитесь к сети Bms_Setup для первичной настройки.");
+                }
+                return false;
+            }
+
+            // Cancel any previous in-flight request to prevent race conditions when switching boards quickly
+            if (activeCloudAbortController) {
+                try { activeCloudAbortController.abort(); } catch (e) {}
+                activeCloudAbortController = null;
+            }
+
+            const abortCtrl = new AbortController();
+            activeCloudAbortController = abortCtrl;
             const thisEpoch = ++discoveryEpoch;
 
             if (isUserInitiated) {
@@ -2028,68 +2079,37 @@
             let foundMac = null;
             let foundVersion = null;
 
-            const activeMac = getActiveMac();
-
             try {
-                // Strategy 1: Targeted fetch by known active MAC (if bound to a specific board)
-                if (activeMac && activeMac.length >= 6) {
-                    const targetedUrl = `${RTDB_URL}/boards/${activeMac}.json?nocache=${Date.now()}`;
-                    try {
-                        const targetCtrl = new AbortController();
-                        const targetTid = setTimeout(() => targetCtrl.abort(), timeoutMs);
-                        const targetRes = await fetch(targetedUrl, { signal: targetCtrl.signal });
-                        clearTimeout(targetTid);
-                        if (targetRes.ok) {
-                            const data = await targetRes.json();
-                            if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
-                                foundIp = data.ip;
-                                foundMac = data.mac || activeMac;
-                                foundVersion = data.version || '';
-                            }
-                        }
-                    } catch (e) {
-                        console.warn("[RTDB Discovery] Targeted fetch failed, falling back to global:", e);
-                    }
+                // Strict targeted query: O(1) single board lookup in RTDB (NO global /boards.json fallback!)
+                const targetedUrl = `${RTDB_URL}/boards/${targetMac}.json?nocache=${Date.now()}`;
+                const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
+
+                let res = null;
+                try {
+                    res = await fetch(targetedUrl, { signal: abortCtrl.signal });
+                } finally {
+                    clearTimeout(timeoutId);
                 }
 
-                // Strategy 2: Global query if no active MAC or targeted query returned no fresh data
-                if (!foundIp) {
-                    const queryUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
-                    const globalCtrl = new AbortController();
-                    const globalTid = setTimeout(() => globalCtrl.abort(), timeoutMs);
-                    try {
-                        const queryRes = await fetch(queryUrl, { signal: globalCtrl.signal });
-                        clearTimeout(globalTid);
-                        if (queryRes.ok) {
-                            const boards = await queryRes.json();
-                            if (boards && typeof boards === 'object') {
-                                const validBoards = Object.entries(boards)
-                                    .map(([key, item]) => ({ key, ...item }))
-                                    .filter(item => item && item.ip && isValidIp(item.ip) && item.ip !== '0.0.0.0' && item.ip !== '1.2.3.4' && item.ip !== '192.168.43.99')
-                                    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
-
-                                if (validBoards.length > 0) {
-                                    // If we have an activeMac, try to find it first in the list
-                                    let matchedBoard = activeMac ? validBoards.find(b => cleanMac(b.mac || b.key) === activeMac) : null;
-                                    if (!matchedBoard) {
-                                        // Pick the most recently active board
-                                        matchedBoard = validBoards[0];
-                                    }
-                                    foundIp = matchedBoard.ip;
-                                    foundMac = matchedBoard.mac || matchedBoard.key;
-                                    foundVersion = matchedBoard.version || '';
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.warn("[RTDB Discovery] Global query failed or aborted:", e);
-                    }
-                }
-
-                // Check for Race Conditions: If a newer discovery request was launched, ignore this result
-                if (thisEpoch !== discoveryEpoch) {
-                    console.log("[RTDB Discovery] Stale epoch response ignored");
+                // If aborted or newer request was launched while waiting, abort silently
+                if (abortCtrl.signal.aborted || thisEpoch !== discoveryEpoch) {
+                    console.log(`[RTDB Discovery] Request aborted or stale epoch (${thisEpoch} vs ${discoveryEpoch})`);
                     return false;
+                }
+
+                // Guard: If active MAC was changed by user during request, ignore
+                if (targetMac !== getActiveMac()) {
+                    console.log(`[RTDB Discovery] Stale targetMac ${targetMac} ignored (active is ${getActiveMac()})`);
+                    return false;
+                }
+
+                if (res && res.ok) {
+                    const data = await res.json();
+                    if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
+                        foundIp = data.ip.trim();
+                        foundMac = data.mac || targetMac;
+                        foundVersion = data.version || '';
+                    }
                 }
 
                 if (foundIp && foundMac) {
@@ -2108,16 +2128,23 @@
                     if (autoOpen) {
                         setTimeout(() => {
                             openDashboard();
-                        }, 400);
+                        }, 300);
                     }
                     return true;
                 } else {
+                    if (cloudBadge) {
+                        cloudBadge.style.display = 'none';
+                    }
                     if (isUserInitiated) {
                         showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
                     }
                     return false;
                 }
             } catch (err) {
+                if (err.name === 'AbortError') {
+                    console.log("[Cloud Discovery] Request aborted cleanly");
+                    return false;
+                }
                 console.error("[Cloud Discovery] Error:", err);
                 if (isUserInitiated) {
                     showToast(t.cloudError || "⚠️ Ошибка связи с облаком. Проверьте интернет на телефоне.");
@@ -2128,15 +2155,21 @@
                     if (searchIcon) searchIcon.style.animation = '';
                     if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
                     if (guideSyncBtn) guideSyncBtn.disabled = false;
+                    if (activeCloudAbortController === abortCtrl) {
+                        activeCloudAbortController = null;
+                    }
                 }
             }
         }
 
         // On page load: If active device is cached and valid, do not query cloud (Double Cache / Zero-Cloud).
-        // If no device or IP is cached, query cloud automatically.
+        // If device has active MAC but no valid IP, query cloud automatically for that MAC.
         window.addEventListener('DOMContentLoaded', () => {
             if (!justLinkedFromUrl && (!currentIp || currentIp === '--')) {
-                findControllerInCloud(false, false, 1200);
+                const aMac = getActiveMac();
+                if (aMac) {
+                    findControllerInCloud(false, false, 1500, aMac);
+                }
             }
         });
 
