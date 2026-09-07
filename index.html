@@ -1836,6 +1836,12 @@
             const verify = await verifyDeviceLocal(currentIp, expectedMac, 1200);
             if (openBtnIcon) openBtnIcon.style.animation = '';
 
+            // Guard: If user switched active device while verification was running, do not open
+            if (expectedMac && expectedMac !== getActiveMac()) {
+                console.log(`[Dashboard] Expected MAC ${expectedMac} no longer active (${getActiveMac()}), aborting open`);
+                return;
+            }
+
             if (verify.ok) {
                 if (!verify.matched && verify.actualMac) {
                     console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
@@ -1859,6 +1865,9 @@
                 console.warn(`[Hardware Unreachable] Device did not answer on ${currentIp}. Querying cloud...`);
                 showToast(`📡 Плата не ответила на ${currentIp}. Поиск свежего IP в облаке...`);
                 const found = await findControllerInCloud(false, true, 2500, expectedMac);
+                if (expectedMac && expectedMac !== getActiveMac()) {
+                    return;
+                }
                 if (found && currentIp && currentIp !== '--') {
                     window.open('http://' + currentIp + '/', '_blank');
                 } else {
@@ -1953,13 +1962,31 @@
             listEl.innerHTML = html;
         }
 
-        function selectDevice(mac) {
+        async function selectDevice(mac) {
             const cMac = cleanMac(mac);
             setActiveMac(cMac);
             toggleDeviceModal();
             showToast(`Выбрана плата: ${formatMac(cMac)}`);
-            // Query Firebase strictly for this specific board
-            findControllerInCloud(false, true, 2500, cMac);
+
+            const dev = getActiveDevice();
+            const savedIp = dev ? dev.ip : '';
+            if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                // Direct-First: check if board is immediately available locally
+                const verify = await verifyDeviceLocal(savedIp, cMac, 600);
+                if (cMac !== getActiveMac()) return; // User switched board again
+                if (verify.ok && verify.matched) {
+                    console.log(`[Direct-First] Board ${cMac} verified locally on ${savedIp}. Cloud query bypassed.`);
+                    const cloudBadge = document.getElementById('cloud-status-badge');
+                    if (cloudBadge) {
+                        cloudBadge.style.display = 'block';
+                        cloudBadge.innerText = `🟢 В сети (Локально)`;
+                    }
+                    updateUI();
+                    return;
+                }
+            }
+            // If not reachable locally on last known IP, query Firebase for this specific board
+            findControllerInCloud(false, false, 2500, cMac);
         }
 
         function removeDevice(mac) {
@@ -2056,6 +2083,28 @@
                     showToast("⚠️ Плата не привязана. Подключитесь к сети Bms_Setup для первичной настройки.");
                 }
                 return false;
+            }
+
+            // DIRECT-FIRST: Check if the device is already directly accessible locally on lastKnownIP
+            const activeDev = getActiveDevice();
+            const lastKnownIp = (activeDev && activeDev.cleanMac === targetMac) ? activeDev.ip : currentIp;
+            if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
+                const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 600);
+                if (targetMac !== getActiveMac()) return false;
+                if (localCheck.ok && localCheck.matched) {
+                    console.log(`[Direct-First] Device ${targetMac} answered locally on ${lastKnownIp}. Bypassing Firebase!`);
+                    if (cloudBadge) {
+                        cloudBadge.style.display = 'block';
+                        cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Локально)`;
+                    }
+                    if (isUserInitiated) {
+                        showToast(`✅ Контроллер на связи локально (${lastKnownIp})`);
+                    }
+                    if (autoOpen) {
+                        setTimeout(() => { openDashboard(); }, 200);
+                    }
+                    return true;
+                }
             }
 
             // Cancel any previous in-flight request to prevent race conditions when switching boards quickly
@@ -2162,13 +2211,32 @@
             }
         }
 
-        // On page load: If active device is cached and valid, do not query cloud (Double Cache / Zero-Cloud).
-        // If device has active MAC but no valid IP, query cloud automatically for that MAC.
+        // On page load: Direct-First local check.
+        // If active device is verified locally on lastKnownIP -> zero cloud requests!
+        // If device IP is missing or unresponsive -> query cloud for this specific MAC.
         window.addEventListener('DOMContentLoaded', () => {
-            if (!justLinkedFromUrl && (!currentIp || currentIp === '--')) {
+            if (!justLinkedFromUrl) {
                 const aMac = getActiveMac();
                 if (aMac) {
-                    findControllerInCloud(false, false, 1500, aMac);
+                    const dev = getActiveDevice();
+                    const savedIp = (dev && dev.ip) ? dev.ip : currentIp;
+                    if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                        verifyDeviceLocal(savedIp, aMac, 600).then(verify => {
+                            if (aMac !== getActiveMac()) return;
+                            const cloudBadge = document.getElementById('cloud-status-badge');
+                            if (verify.ok && verify.matched) {
+                                if (cloudBadge) {
+                                    cloudBadge.style.display = 'block';
+                                    cloudBadge.innerText = `🟢 ${I18N[currentLang]?.ipStatusOnline || "В сети"} (Локально)`;
+                                }
+                            } else {
+                                // IP not responsive locally -> query cloud
+                                findControllerInCloud(false, false, 2000, aMac);
+                            }
+                        });
+                    } else if (!currentIp || currentIp === '--') {
+                        findControllerInCloud(false, false, 2000, aMac);
+                    }
                 }
             }
         });
