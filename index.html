@@ -1733,15 +1733,46 @@
             let foundVersion = null;
 
             try {
-                // Method 1: Direct fetch by known saved MAC (fastest)
-                if (currentMac && currentMac.trim().length > 4) {
+                // Method 1: Query boards collection for the most recently active board (Active Board Priority)
+                const queryUrl = `${RTDB_URL}/boards.json`;
+                const controller = new AbortController();
+                const tid = setTimeout(() => controller.abort(), timeoutMs);
+                try {
+                    const queryRes = await fetch(queryUrl, { signal: controller.signal });
+                    clearTimeout(tid);
+                    if (queryRes.ok) {
+                        const boards = await queryRes.json();
+                        if (boards && typeof boards === 'object') {
+                            const validBoards = Object.entries(boards)
+                                .map(([key, item]) => ({ key, ...item }))
+                                .filter(item => item && item.ip && isValidIp(item.ip) && item.ip !== '0.0.0.0' && item.ip !== '1.2.3.4' && item.ip !== '192.168.43.99')
+                                .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+                            if (validBoards.length > 0) {
+                                // Если пользователь сам нажал кнопку поиска (isUserInitiated),
+                                // или если у нас ещё нет сохраненной платы,
+                                // или если самая свежая плата выходила на связь недавно (за последние 30 мин),
+                                // выбираем самую свежую активную плату:
+                                const topBoard = validBoards[0];
+                                foundIp = topBoard.ip;
+                                foundMac = topBoard.mac || topBoard.key;
+                                foundVersion = topBoard.version || '';
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn("[RTDB Discovery] Global query failed or aborted, falling back to direct MAC:", e);
+                }
+
+                // Method 2: Fallback to direct fetch by known saved MAC if global query was empty or offline
+                if (!foundIp && currentMac && currentMac.trim().length > 4) {
                     const cleanMac = currentMac.replace(/[^a-zA-Z0-9]/g, '');
                     const directUrl = `${RTDB_URL}/boards/${cleanMac}.json`;
                     try {
-                        const controller = new AbortController();
-                        const tid = setTimeout(() => controller.abort(), timeoutMs);
-                        const directRes = await fetch(directUrl, { signal: controller.signal });
-                        clearTimeout(tid);
+                        const directCtrl = new AbortController();
+                        const directTid = setTimeout(() => directCtrl.abort(), timeoutMs);
+                        const directRes = await fetch(directUrl, { signal: directCtrl.signal });
+                        clearTimeout(directTid);
                         if (directRes.ok) {
                             const data = await directRes.json();
                             if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
@@ -1752,34 +1783,6 @@
                         }
                     } catch (e) {
                         console.warn("[RTDB Discovery] Direct fetch failed or aborted:", e);
-                    }
-                }
-
-                // Method 2: Query boards collection for the most active board
-                if (!foundIp) {
-                    const queryUrl = `${RTDB_URL}/boards.json`;
-                    const controller = new AbortController();
-                    const tid = setTimeout(() => controller.abort(), timeoutMs);
-                    try {
-                        const queryRes = await fetch(queryUrl, { signal: controller.signal });
-                        clearTimeout(tid);
-                        if (queryRes.ok) {
-                            const boards = await queryRes.json();
-                            if (boards && typeof boards === 'object') {
-                                const validBoards = Object.entries(boards)
-                                    .map(([key, item]) => ({ key, ...item }))
-                                    .filter(item => item && item.ip && isValidIp(item.ip) && item.ip !== '0.0.0.0' && item.ip !== '1.2.3.4' && item.ip !== '192.168.43.99')
-                                    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
-
-                                if (validBoards.length > 0) {
-                                    foundIp = validBoards[0].ip;
-                                    foundMac = validBoards[0].mac || validBoards[0].key;
-                                    foundVersion = validBoards[0].version || '';
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.warn("[RTDB Discovery] Query failed or aborted:", e);
                     }
                 }
 
