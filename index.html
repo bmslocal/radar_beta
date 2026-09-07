@@ -1211,7 +1211,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Версия Радара:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v76-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v77-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">ID устройства (MAC):</span>
@@ -1246,7 +1246,9 @@
                 btnApkToggle: "Android App",
                 badgeRecommended: "🔥 RECOMMENDED",
                 ipLabel: "Controller IP Address",
-                ipStatusOnline: "Online (Telemetry Active)",
+                ipStatusOnline: "Online (Ignition ON)",
+                ipStatusRecent: "Online recently",
+                ipStatusStale: "Offline (Ignition OFF)",
                 ipStatusOffline: "Offline / Standby",
                 ipStatusChecking: "Checking status...",
                 firstRunTip: "First-time setup: follow the guide below 👇",
@@ -1347,7 +1349,9 @@
                 btnApkToggle: "Android 应用",
                 badgeRecommended: "🔥 推荐",
                 ipLabel: "控制器 IP 地址",
-                ipStatusOnline: "在线 (遥测正常)",
+                ipStatusOnline: "在线 (点火已开启)",
+                ipStatusRecent: "最近在线",
+                ipStatusStale: "离线 (请开启点火)",
                 ipStatusOffline: "离线 / 待机",
                 ipStatusChecking: "检查状态中...",
                 firstRunTip: "首次设置：请按照下方指南操作 👇",
@@ -1448,7 +1452,9 @@
                 btnApkToggle: "Android 앱",
                 badgeRecommended: "🔥 추천",
                 ipLabel: "컨트롤러 IP 주소",
-                ipStatusOnline: "온라인 (원격 제어 활성)",
+                ipStatusOnline: "온라인 (시동 켜짐)",
+                ipStatusRecent: "최근 온라인",
+                ipStatusStale: "오프라인 (시동을 켜세요)",
                 ipStatusOffline: "오프라인 / 대기",
                 ipStatusChecking: "상태 확인 중...",
                 firstRunTip: "최초 설정: 아래 가이드에 따라 진행하세요 👇",
@@ -1549,7 +1555,9 @@
                 btnApkToggle: "Android App",
                 badgeRecommended: "🔥 РЕКОМЕНДУЕМ",
                 ipLabel: "IP адрес контроллера",
-                ipStatusOnline: "В сети (Телеметрия активна)",
+                ipStatusOnline: "В сети (Зажигание включено)",
+                ipStatusRecent: "В сети недавно",
+                ipStatusStale: "Не в сети (Зажигание выключено)",
                 ipStatusOffline: "Не в сети / Ожидание",
                 ipStatusChecking: "Проверка связи...",
                 firstRunTip: "Первый запуск: следуйте инструкции ниже 👇",
@@ -1650,7 +1658,9 @@
                 btnApkToggle: "Android アプリ",
                 badgeRecommended: "🔥 おすすめ",
                 ipLabel: "コントローラー IP アドレス",
-                ipStatusOnline: "オンライン (通信中)",
+                ipStatusOnline: "オンライン (READY ON)",
+                ipStatusRecent: "最近オンライン",
+                ipStatusStale: "オフライン (READYにしてください)",
                 ipStatusOffline: "オフライン / 待機",
                 ipStatusChecking: "接続確認中...",
                 firstRunTip: "初期設定：下のガイドに従ってください 👇",
@@ -2148,7 +2158,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v76-beta',
+                'Radar Version: v77-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2182,13 +2192,26 @@
             }
         }
 
+        function safeNavigateToDashboard(ip) {
+            if (!ip || !isValidIp(ip)) return;
+            try {
+                const win = window.open('http://' + ip + '/', '_blank');
+                if (!win || win.closed || typeof win.closed === 'undefined') {
+                    // Mobile popup blocker fallback: navigate directly
+                    window.location.href = 'http://' + ip + '/';
+                }
+            } catch (e) {
+                window.location.href = 'http://' + ip + '/';
+            }
+        }
+
         let isDiscovering = false;
         async function startOneTapDiscovery(forceSearch = false) {
             if (isDiscovering) return;
 
             // If we already have a valid active IP and not forcing a re-search, open dashboard immediately
             if (!forceSearch && currentIp && currentIp !== '--' && isValidIp(currentIp)) {
-                window.open('http://' + currentIp + '/', '_blank');
+                safeNavigateToDashboard(currentIp);
                 return;
             }
 
@@ -2208,44 +2231,48 @@
             if (btnIcon) btnIcon.style.animation = 'spin 0.8s linear infinite';
             if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
             if (statusDot) statusDot.innerText = '🟡';
-            if (statusText) statusText.innerText = t.statusSearchingLocal || 'Поиск контроллера в сети...';
 
             const active = getActiveDevice();
             const targetMac = cleanMac((active && active.cleanMac) || currentMac || getActiveMac());
+            const isHttps = (window.location.protocol === 'https:');
 
             try {
-                // Phase 1: Local check on lastKnownIp
-                const lastKnownIp = (active && active.ip) ? active.ip : currentIp;
-                if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
-                    const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 800);
-                    if (localCheck.ok && localCheck.matched) {
-                        if (statusDot) statusDot.innerText = '🟢';
-                        if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
-                        setDeviceIp(localCheck.actualMac || targetMac, lastKnownIp, (localCheck.data && (localCheck.data.firmware || localCheck.data.version)));
-                        updateUI();
-                        showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (${lastKnownIp})`);
-                        setTimeout(() => {
-                            window.open('http://' + lastKnownIp + '/', '_blank');
-                        }, 250);
-                        return;
+                // In HTTPS mode, skip Phase 1 and 2 (which would fail on Mixed Content) and query cloud immediately!
+                if (!isHttps) {
+                    if (statusText) statusText.innerText = t.statusSearchingLocal || 'Поиск контроллера в сети...';
+                    // Phase 1: Local check on lastKnownIp
+                    const lastKnownIp = (active && active.ip) ? active.ip : currentIp;
+                    if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
+                        const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 800);
+                        if (localCheck.ok && localCheck.matched) {
+                            if (statusDot) statusDot.innerText = '🟢';
+                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                            setDeviceIp(localCheck.actualMac || targetMac, lastKnownIp, (localCheck.data && (localCheck.data.firmware || localCheck.data.version)));
+                            updateUI();
+                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (${lastKnownIp})`);
+                            setTimeout(() => {
+                                safeNavigateToDashboard(lastKnownIp);
+                            }, 200);
+                            return;
+                        }
                     }
-                }
 
-                // Phase 2: Probe standard gateway IP (192.168.4.1)
-                try {
-                    const probe = await verifyDeviceLocal('192.168.4.1', targetMac, 600);
-                    if (probe.ok && probe.matched) {
-                        if (statusDot) statusDot.innerText = '🟢';
-                        if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
-                        setDeviceIp(probe.actualMac || targetMac, '192.168.4.1', (probe.data && (probe.data.firmware || probe.data.version)));
-                        updateUI();
-                        showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (192.168.4.1)`);
-                        setTimeout(() => {
-                            window.open('http://192.168.4.1/', '_blank');
-                        }, 250);
-                        return;
-                    }
-                } catch (e) {}
+                    // Phase 2: Probe standard gateway IP (192.168.4.1)
+                    try {
+                        const probe = await verifyDeviceLocal('192.168.4.1', targetMac, 600);
+                        if (probe.ok && probe.matched) {
+                            if (statusDot) statusDot.innerText = '🟢';
+                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                            setDeviceIp(probe.actualMac || targetMac, '192.168.4.1', (probe.data && (probe.data.firmware || probe.data.version)));
+                            updateUI();
+                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (192.168.4.1)`);
+                            setTimeout(() => {
+                                safeNavigateToDashboard('192.168.4.1');
+                            }, 200);
+                            return;
+                        }
+                    } catch (e) {}
+                }
 
                 // Phase 3: Firebase RTDB Cloud lookup (works with known MAC or auto-discovers freshest on first run!)
                 if (statusText) statusText.innerText = t.statusSearchingCloud || 'Запрос адреса из облака...';
@@ -2256,8 +2283,8 @@
                     updateUI();
                     showToast(`✅ ${t.statusFound || 'Контроллер найден!'} (${currentIp})`);
                     setTimeout(() => {
-                        window.open('http://' + currentIp + '/', '_blank');
-                    }, 250);
+                        safeNavigateToDashboard(currentIp);
+                    }, 200);
                     return;
                 }
 
@@ -2421,6 +2448,10 @@
         // Hardware-level verification via local /api/info or /status endpoint
         async function verifyDeviceLocal(ip, expectedMac = '', timeoutMs = 1200) {
             if (!isValidIp(ip)) return { ok: false, error: 'invalid_ip' };
+            if (window.location.protocol === 'https:') {
+                // HTTPS origin blocks fetch('http://...') as Mixed Content
+                return { ok: false, error: 'mixed_content_prevented' };
+            }
             const controller = new AbortController();
             const tid = setTimeout(() => controller.abort(), timeoutMs);
             try {
@@ -2465,14 +2496,21 @@
             }
 
             if (currentIp === '10.10.10.1') {
-                window.open('http://10.10.10.1/', '_blank');
+                safeNavigateToDashboard('10.10.10.1');
+                return;
+            }
+
+            const isHttps = (window.location.protocol === 'https:');
+            if (isHttps) {
+                // On HTTPS, direct navigation without async delay protects against mobile popup blockers
+                safeNavigateToDashboard(currentIp);
                 return;
             }
 
             const openBtnIcon = document.getElementById('open-btn-icon');
             if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
 
-            // Hardware verification step before opening dashboard
+            // Hardware verification step before opening dashboard (HTTP only)
             const verify = await verifyDeviceLocal(currentIp, expectedMac, 1200);
             if (openBtnIcon) openBtnIcon.style.animation = '';
 
@@ -2498,7 +2536,7 @@
                 const hint = document.getElementById('ip-unreachable-hint');
                 if (recovery) recovery.style.display = 'none';
                 if (hint) hint.style.display = 'none';
-                window.open('http://' + currentIp + '/', '_blank');
+                safeNavigateToDashboard(currentIp);
                 setTimeout(() => { checkFailedNavigation(); }, 800);
             } else {
                 // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!
@@ -2509,7 +2547,7 @@
                     return;
                 }
                 if (found && currentIp && currentIp !== '--') {
-                    window.open('http://' + currentIp + '/', '_blank');
+                    safeNavigateToDashboard(currentIp);
                 } else {
                     checkFailedNavigation();
                 }
@@ -2718,9 +2756,10 @@
             const cloudBadge = document.getElementById('cloud-status-badge');
 
             const targetMac = cleanMac(specificMac || getActiveMac());
+            const isHttps = (window.location.protocol === 'https:');
 
-            // DIRECT-FIRST: Check if the device is already directly accessible locally on lastKnownIP
-            if (targetMac && targetMac.length >= 6) {
+            // DIRECT-FIRST: Check if the device is already directly accessible locally on lastKnownIP (HTTP only)
+            if (!isHttps && targetMac && targetMac.length >= 6) {
                 const activeDev = getActiveDevice();
                 const lastKnownIp = (activeDev && activeDev.cleanMac === targetMac) ? activeDev.ip : currentIp;
                 if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
@@ -2736,7 +2775,7 @@
                             showToast(`✅ Контроллер на связи локально (${lastKnownIp})`);
                         }
                         if (autoOpen) {
-                            setTimeout(() => { openDashboard(); }, 200);
+                            setTimeout(() => { safeNavigateToDashboard(lastKnownIp); }, 200);
                         }
                         return true;
                     }
@@ -2763,6 +2802,7 @@
             let foundIp = null;
             let foundMac = null;
             let foundVersion = null;
+            let foundTs = 0;
 
             try {
                 const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
@@ -2778,6 +2818,7 @@
                                 foundIp = data.ip.trim();
                                 foundMac = data.mac || targetMac;
                                 foundVersion = data.version || '';
+                                foundTs = Number(data.ts) || 0;
                             }
                         }
                     }
@@ -2795,7 +2836,7 @@
                                         keyMac: key,
                                         mac: (val && val.mac) || key,
                                         ip: val && val.ip,
-                                        ts: (val && val.ts) || 0,
+                                        ts: Number((val && val.ts) || 0),
                                         version: val && val.version
                                     }))
                                     .filter(b => b.ip && isValidIp(b.ip) && b.ip !== '0.0.0.0' && b.ip !== '1.2.3.4' && b.ip !== '192.168.43.99');
@@ -2806,6 +2847,7 @@
                                     foundIp = validBoards[0].ip.trim();
                                     foundMac = validBoards[0].mac || validBoards[0].keyMac;
                                     foundVersion = validBoards[0].version || '';
+                                    foundTs = validBoards[0].ts;
                                     console.log(`[Cloud Discovery] Auto-discovered freshest board: ${foundMac} on ${foundIp} (ts: ${validBoards[0].ts})`);
                                 }
                             }
@@ -2822,23 +2864,45 @@
                 }
 
                 if (foundIp && foundMac) {
-                    console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac);
+                    console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs);
                     setDeviceIp(foundMac, foundIp, foundVersion);
                     updateUI();
 
+                    const now = Date.now();
+                    const ageMs = (foundTs > 0 && foundTs <= now) ? (now - foundTs) : 0;
+                    const isVeryFresh = (foundTs > 0) && (ageMs < 15 * 60 * 1000); // < 15 min
+                    const isRecent = (foundTs > 0) && (ageMs >= 15 * 60 * 1000 && ageMs < 4 * 3600 * 1000); // 15m to 4h
+                    const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
+
                     if (cloudBadge) {
                         cloudBadge.style.display = 'block';
-                        cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Облако)`;
+                        if (isStale) {
+                            const hours = Math.round(ageMs / 3600000);
+                            cloudBadge.innerText = `⚪ ${t.ipStatusStale || "Не в сети"} (${hours} ч назад)`;
+                        } else if (isRecent) {
+                            const mins = Math.round(ageMs / 60000);
+                            cloudBadge.innerText = `🟡 ${t.ipStatusRecent || "В сети недавно"} (${mins} мин)`;
+                        } else {
+                            cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Облако)`;
+                        }
                     }
 
                     if (isUserInitiated) {
-                        showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
+                        if (isStale) {
+                            showToast(`⚠️ Запись в облаке устарела (${Math.round(ageMs / 3600000)} ч назад). Включите зажигание (READY)`);
+                        } else {
+                            showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
+                        }
                     }
 
                     if (autoOpen) {
-                        setTimeout(() => {
-                            openDashboard();
-                        }, 300);
+                        if (!isStale) {
+                            setTimeout(() => {
+                                safeNavigateToDashboard(foundIp);
+                            }, 200);
+                        } else {
+                            console.log("[Cloud Discovery] Board is stale, skipping autoOpen");
+                        }
                     }
                     return true;
                 } else {
@@ -2878,10 +2942,11 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (!justLinkedFromUrl) {
                 const aMac = getActiveMac();
+                const isHttps = (window.location.protocol === 'https:');
                 if (aMac) {
                     const dev = getActiveDevice();
                     const savedIp = (dev && dev.ip) ? dev.ip : currentIp;
-                    if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                    if (!isHttps && savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
                         verifyDeviceLocal(savedIp, aMac, 600).then(verify => {
                             if (aMac !== getActiveMac()) return;
                             const cloudBadge = document.getElementById('cloud-status-badge');
@@ -2895,8 +2960,9 @@
                                 findControllerInCloud(false, false, 2000, aMac);
                             }
                         });
-                    } else if (!currentIp || currentIp === '--') {
-                        findControllerInCloud(false, false, 2000, aMac);
+                    } else {
+                        // On HTTPS, query cloud immediately with zero delay
+                        findControllerInCloud(false, false, 2500, aMac);
                     }
                 } else if (!currentIp || currentIp === '--') {
                     // First time user: no active MAC saved yet -> auto query cloud for freshest board!

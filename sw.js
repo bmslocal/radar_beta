@@ -1,4 +1,4 @@
-const CACHE_NAME = 'live-radar-v76-beta';
+const CACHE_NAME = 'live-radar-v77-beta';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
