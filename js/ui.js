@@ -94,7 +94,7 @@ function copySupportInfo() {
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v90-beta',
+                'Radar Version: v91-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -228,6 +228,41 @@ function openAndScrollToGuide() {
             }
         }
 
+let lastDashboardAttemptTs = 0;
+
+function registerDashboardNavigationAttempt() {
+    lastDashboardAttemptTs = Date.now();
+    setTimeout(() => {
+        showHotspotUnreachableHint();
+    }, 700);
+}
+
+function showHotspotUnreachableHint() {
+    const hint = document.getElementById('ip-unreachable-hint');
+    if (hint && currentIp && currentIp !== '--' && currentIp !== '10.10.10.1') {
+        hint.style.display = 'flex';
+    }
+}
+
+function hideHotspotUnreachableHint() {
+    lastDashboardAttemptTs = 0;
+    const hint = document.getElementById('ip-unreachable-hint');
+    if (hint) hint.style.display = 'none';
+    const recovery = document.getElementById('nav-recovery-card');
+    if (recovery) recovery.style.display = 'none';
+}
+
+function openAndScrollToStep1() {
+    switchSetupTab('cloud');
+    openAndScrollToGuide();
+    const step1El = document.getElementById('guide-step-1');
+    if (step1El) {
+        setTimeout(() => {
+            step1El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 120);
+    }
+}
+
 function openAndScrollToStep3() {
             switchSetupTab('search');
             openAndScrollToGuide();
@@ -245,21 +280,20 @@ function goToSetupSync() {
 
 function checkFailedNavigation() {
             const recovery = document.getElementById('nav-recovery-card');
-            const hint = document.getElementById('ip-unreachable-hint');
             if (recovery && currentIp !== '10.10.10.1') {
                 recovery.style.display = 'block';
             }
-            if (hint && currentIp !== '10.10.10.1') {
-                hint.style.display = 'flex';
-            }
+            showHotspotUnreachableHint();
         }
 
 async function handleIpUnreachable() {
             const t = I18N[currentLang] || I18N.ru;
             showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
-            const found = await findControllerInCloud(true, true, 1500);
+            const found = await findControllerInCloud(true, true, 2000);
             if (!found) {
-                openAndScrollToStep3();
+                openAndScrollToStep1();
+            } else {
+                hideHotspotUnreachableHint();
             }
         }
 

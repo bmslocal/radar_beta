@@ -99,3 +99,24 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
+// 4. Tab Visibility & Reconnect Handler
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        if (typeof lastDashboardAttemptTs !== 'undefined' && lastDashboardAttemptTs > 0) {
+            const timeSinceAttempt = Date.now() - lastDashboardAttemptTs;
+            if (timeSinceAttempt < 180000) {
+                if (typeof showHotspotUnreachableHint === 'function') {
+                    showHotspotUnreachableHint();
+                }
+                if (typeof findControllerInCloud === 'function') {
+                    findControllerInCloud(false, false, 2000).then(found => {
+                        if (found && typeof hideHotspotUnreachableHint === 'function') {
+                            hideHotspotUnreachableHint();
+                        }
+                    }).catch(() => {});
+                }
+            }
+        }
+    }
+});

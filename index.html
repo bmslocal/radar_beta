@@ -106,9 +106,9 @@
             </button>
 
             <!-- IP Unreachable Hint (shows if user clicks dashboard but board IP is changed/unreachable) -->
-            <div id="ip-unreachable-hint" class="ip-unreachable-hint" onclick="openAndScrollToStep3()" style="display: none;">
-                <span style="font-size: 16px;">💡</span>
-                <span id="t-ip-unreachable-text">Не открывается? Нажмите сюда для автопоиска контроллера</span>
+            <div id="ip-unreachable-hint" class="ip-unreachable-hint" onclick="handleIpUnreachable()" style="display: none;">
+                <span style="font-size: 16px; flex-shrink: 0;">⚠️</span>
+                <span id="t-ip-unreachable-text">Не открывается? Включите Точку доступа на телефоне (сеть Bms, 2.4 ГГц)</span>
             </div>
 
             <!-- Android App Collapsible Button (shown on Android / Desktop) -->
@@ -187,7 +187,7 @@
                     ⚡ <b>Рекомендуемый и самый простой способ:</b> автоматическое подключение в один клик. Если не удается найти через облако — используйте вкладку <b>«Поиск»</b>.
                 </div>
 
-                <div class="guide-step">
+                <div class="guide-step" id="guide-step-1">
                     <div class="step-header">
                         <span class="step-num">1</span>
                         <span class="step-title" id="t-step1-title">Turn ON Phone Hotspot</span>
@@ -423,14 +423,14 @@
             <div class="support-header" onclick="toggleSupportInfo()">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <span>ℹ️</span>
-                    <span id="t-support-title">Device Information</span>
+                    <span id="t-support-title">Служебная информация</span>
                 </div>
                 <span id="support-arrow" class="support-arrow">▼</span>
             </div>
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v90-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v91-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
@@ -444,14 +444,6 @@
                     <span class="support-label" id="t-sup-board-fw">Board Firmware:</span>
                     <span class="support-val mono" id="sup-board-fw">--</span>
                 </div>
-                <button type="button" class="btn-copy-support" onclick="resetActiveDevice()" style="margin-top: 6px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.35); color: #fca5a5;">
-                    <span>🔄</span>
-                    <span id="t-btn-reset-dev">Switch / Forget Current Board</span>
-                </button>
-                <button type="button" class="btn-copy-support" onclick="copySupportInfo()" style="margin-top: 6px;">
-                    <span>📋</span>
-                    <span id="t-btn-copy-support">Copy Support Data</span>
-                </button>
             </div>
         </div>
 

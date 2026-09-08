@@ -21,7 +21,7 @@ var I18N = {
                 ipStatusChecking: "Checking status...",
                 firstRunTip: "First-time setup: follow the guide below 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "No connection. Turn on Mobile Hotspot. If it's already on, tap here to find IP.",
+                ipUnreachableText: "⚠️ <b>Not opening?</b> Turn ON <b>Personal Hotspot</b> on phone (network <code>Bms</code>, 2.4 GHz)",
                 btnSync: "Find Controller",
                                 btnManual: "Set IP Manually",
                 step3Or: "Or enter controller IP manually:",
@@ -139,7 +139,7 @@ var I18N = {
                 statusSearchingCloud: "Querying cloud for IP...",
                 statusFound: "Controller found! Opening...",
                 statusNotFound: "Controller not found. Check the steps above.",
-                supportTitle: "Service Information (Support)",
+                supportTitle: "Service Information",
                 supRadarVer: "Radar Version:",
                 supDevMac: "Device ID (MAC):",
                 supDevIp: "Controller IP:",
@@ -165,7 +165,7 @@ var I18N = {
                 ipStatusChecking: "检查状态中...",
                 firstRunTip: "首次设置：请按照下方指南操作 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "无法连接。请开启手机热点。如果已开启，请点击此处查找新 IP。",
+                ipUnreachableText: "⚠️ <b>打不开？</b>请开启手机<b>个人热点</b>（网络 <code>Bms</code>，2.4 GHz）",
                 btnSync: "查找控制器",
                 btnManual: "手动设置 IP",
                 step3Or: "或手动输入控制器 IP：",
@@ -272,7 +272,7 @@ var I18N = {
                 statusSearchingCloud: "正在向云端请求 IP...",
                 statusFound: "已找到控制器！正在打开...",
                 statusNotFound: "未找到控制器。请检查上方步骤。",
-                supportTitle: "服务信息（供支持人员使用）",
+                supportTitle: "服务信息",
                 supRadarVer: "雷达版本：",
                 supDevMac: "设备 ID (MAC)：",
                 supDevIp: "控制器 IP：",
@@ -298,7 +298,7 @@ var I18N = {
                 ipStatusChecking: "상태 확인 중...",
                 firstRunTip: "최초 설정: 아래 가이드에 따라 진행하세요 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "연결 없음. 모바일 핫스팟을 켜세요. 켜져 있다면 여기를 눌러 IP를 찾으세요.",
+                ipUnreachableText: "⚠️ <b>열리지 않나요?</b> 스마트폰에서 <b>개인용 핫스팟</b>을 켜세요 (네트워크 <code>Bms</code>, 2.4 GHz)",
                 btnSync: "컨트롤러 찾기",
                 btnManual: "수동으로 IP 입력",
                 step3Or: "또는 수동으로 IP 입력:",
@@ -402,7 +402,7 @@ var I18N = {
                 statusSearchingCloud: "클라우드에서 IP 조회 중...",
                 statusFound: "컨트롤러를 찾았습니다! 실행 중...",
                 statusNotFound: "컨트롤러를 찾을 수 없습니다. 위의 단계를 확인하세요.",
-                supportTitle: "서비스 정보 (고객 지원용)",
+                supportTitle: "서비스 정보",
                 supRadarVer: "레이더 버전:",
                 supDevMac: "기기 ID (MAC):",
                 supDevIp: "컨트롤러 IP:",
@@ -428,7 +428,7 @@ var I18N = {
                 ipStatusChecking: "Проверка связи...",
                 firstRunTip: "Первый запуск: следуйте инструкции ниже 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "Нет связи. Включите Точку доступа. Если она включена — нажмите сюда для поиска IP-адреса.",
+                ipUnreachableText: "⚠️ <b>Не открывается?</b> Включите <b>Точку доступа</b> на телефоне (сеть <code>Bms</code>, 2.4 ГГц)",
                 btnSync: "Найти контроллер",
                 btnManual: "Ввести IP-адрес вручную",
                 step3Or: "Укажите IP-адрес вручную:",
@@ -546,7 +546,7 @@ var I18N = {
                 statusSearchingCloud: "Запрос свежего адреса из облака...",
                 statusFound: "Контроллер найден! Открываем...",
                 statusNotFound: "Контроллер не найден. Проверьте шаги 1–2 выше.",
-                supportTitle: "Служебная информация (для мастера)",
+                supportTitle: "Служебная информация",
                 supRadarVer: "Версия Радара:",
                 supDevMac: "ID устройства (MAC):",
                 supDevIp: "IP-адрес контроллера:",
@@ -572,7 +572,7 @@ var I18N = {
                 ipStatusChecking: "接続確認中...",
                 firstRunTip: "初期設定：下のガイドに従ってください 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "接続できません。テザリングをONにしてください。",
+                ipUnreachableText: "⚠️ <b>開かない場合：</b>スマホの<b>テザリング</b>をONにしてください（ネットワーク <code>Bms</code>, 2.4 GHz）",
                 btnSync: "コントローラーを検出",
                 btnManual: "IP手動設定",
                 step3Or: "またはIPを手動入力:",
@@ -646,7 +646,7 @@ var I18N = {
                 statusSearchingCloud: "クラウドからIPを検索中...",
                 statusFound: "コントローラーが見つかりました！開いています...",
                 statusNotFound: "コントローラーが見つかりません。上記の手順を確認してください。",
-                supportTitle: "サービス情報 (サポート用)",
+                supportTitle: "サービス情報",
                 supRadarVer: "レーダーバージョン:",
                 supDevMac: "デバイス ID (MAC):",
                 supDevIp: "コントローラー IP:",
@@ -764,7 +764,7 @@ function applyLanguage() {
             if (document.getElementById('t-modal-reset-confirm')) document.getElementById('t-modal-reset-confirm').innerText = t.modalResetConfirm || 'Забыть и сбросить';
 
             // Support Card
-            if (document.getElementById('t-support-title')) document.getElementById('t-support-title').innerText = t.supportTitle || 'Служебная информация (для мастера)';
+            if (document.getElementById('t-support-title')) document.getElementById('t-support-title').innerText = t.supportTitle || 'Служебная информация';
             if (document.getElementById('t-sup-radar-ver')) document.getElementById('t-sup-radar-ver').innerText = t.supRadarVer || 'Версия Радара:';
             if (document.getElementById('t-sup-dev-mac')) document.getElementById('t-sup-dev-mac').innerText = t.supDevMac || 'ID устройства (MAC):';
             if (document.getElementById('t-sup-dev-ip')) document.getElementById('t-sup-dev-ip').innerText = t.supDevIp || 'IP-адрес контроллера:';
@@ -781,7 +781,7 @@ function applyLanguage() {
             if (document.getElementById('t-first-run-tip')) document.getElementById('t-first-run-tip').innerText = t.firstRunTip;
             if (document.getElementById('t-btn-open')) document.getElementById('t-btn-open').innerText = t.btnOpen;
             if (document.getElementById('t-btn-cloud-search') && t.btnCloudSearch) document.getElementById('t-btn-cloud-search').innerText = t.btnCloudSearch;
-            if (document.getElementById('t-ip-unreachable-text') && t.ipUnreachableText) document.getElementById('t-ip-unreachable-text').innerText = t.ipUnreachableText;
+            if (document.getElementById('t-ip-unreachable-text') && t.ipUnreachableText) document.getElementById('t-ip-unreachable-text').innerHTML = t.ipUnreachableText;
             if (document.getElementById('t-btn-sync')) document.getElementById('t-btn-sync').innerText = t.btnSync;
                         if (document.getElementById('t-btn-manual')) document.getElementById('t-btn-manual').innerText = t.btnManual;
             if (document.getElementById('t-manual-ip-hint')) document.getElementById('t-manual-ip-hint').innerText = t.manualIpHint;
