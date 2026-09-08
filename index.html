@@ -1096,6 +1096,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Option C: Reset / Change Board -->
+                    <div style="margin-top: 12px; border-top: 1px dashed #3f3f46; padding-top: 12px;">
+                        <div style="font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px;" id="t-step3-reset-title">Сменили плату или второе авто?</div>
+                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 8px; line-height: 1.4;" id="t-step3-reset-desc">Если вы подключили другую плату, нажмите кнопку ниже, чтобы Радар забыл старый IP и сразу нашел новую плату.</div>
+                        <button type="button" class="btn-ghost" onclick="resetActiveDevice()" style="width: 100%; padding: 8px 10px; margin: 0; font-size: 13.5px; justify-content: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5;">
+                            <span>🔄</span>
+                            <span id="t-btn-step3-reset">Сбросить память и найти новую плату</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1211,7 +1221,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Версия Радара:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v78-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v80-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">ID устройства (MAC):</span>
@@ -1263,6 +1273,9 @@
                 step3Or: "Or enter controller IP manually:",
                 step3AdvancedTitle: "For advanced users",
                 step3AdvancedDesc: "Where to find the IP address? Go to the 'Connected devices' section in your phone's hotspot settings.",
+                step3ResetTitle: "Changed board or second car?",
+                step3ResetDesc: "If you connected another board, tap below to clear saved device memory and discover the new board.",
+                btnStep3Reset: "Reset memory & find new board",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "Save",
                 autoText: "<b>Controller operates fully autonomously.</b> Phone is used only for monitoring and settings.",
@@ -1367,6 +1380,9 @@
                 step3Or: "或手动输入控制器 IP：",
                 step3AdvancedTitle: "对于高级用户",
                 step3AdvancedDesc: "哪里可以找到 IP 地址？进入手机热点设置的“已连接设备”部分。",
+                step3ResetTitle: "更换了电路板或第二辆车？",
+                step3ResetDesc: "如果连接了另一块电路板，请点击下方重置已保存的设备内存并发现新板。",
+                btnStep3Reset: "重置内存并查找新板",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "保存",
                 autoText: "<b>控制器完全自主运行。</b> 手机仅用于监控与设置。",
@@ -1575,6 +1591,9 @@
                 step3Or: "Укажите IP-адрес вручную:",
                 step3AdvancedTitle: "Для продвинутых пользователей",
                 step3AdvancedDesc: "Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».",
+                step3ResetTitle: "Сменили плату или второе авто?",
+                step3ResetDesc: "Если вы подключили другую плату, нажмите кнопку ниже, чтобы Радар забыл старый IP и сразу нашел новую плату.",
+                btnStep3Reset: "Сбросить память и найти новую плату",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "Сохранить",
                 autoText: "<b>Контроллер работает полностью автономно.</b> Телефон используется только для мониторинга и настройки.",
@@ -1679,6 +1698,9 @@
                 step3Or: "またはIPを手動入力:",
                 step3AdvancedTitle: "上級者向け",
                 step3AdvancedDesc: "テザリングの「接続中の端末」一覧でIPを確認できます。",
+                step3ResetTitle: "ボードの変更または2台目の車両？",
+                step3ResetDesc: "別のボードを接続した場合は、下のボタンを押して保存されたメモリをリセットし、新しいボードを検出してください。",
+                btnStep3Reset: "メモリをリセットして新しいボードを検出",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "保存",
                 autoText: "<b>コントローラーは完全自律型です。</b> スマホは設定と確認時のみ使用します。",
@@ -1977,6 +1999,9 @@
             if (document.getElementById('t-step3-or') && t.step3Or) document.getElementById('t-step3-or').innerText = t.step3Or;
             if (document.getElementById('t-step3-advanced-title') && t.step3AdvancedTitle) document.getElementById('t-step3-advanced-title').innerHTML = t.step3AdvancedTitle;
             if (document.getElementById('t-step3-advanced-desc') && t.step3AdvancedDesc) document.getElementById('t-step3-advanced-desc').innerHTML = t.step3AdvancedDesc;
+            if (document.getElementById('t-step3-reset-title') && t.step3ResetTitle) document.getElementById('t-step3-reset-title').innerText = t.step3ResetTitle;
+            if (document.getElementById('t-step3-reset-desc') && t.step3ResetDesc) document.getElementById('t-step3-reset-desc').innerText = t.step3ResetDesc;
+            if (document.getElementById('t-btn-step3-reset') && t.btnStep3Reset) document.getElementById('t-btn-step3-reset').innerText = t.btnStep3Reset;
             if (document.getElementById('t-step4-btn') && t.step4Btn) document.getElementById('t-step4-btn').innerHTML = t.step4Btn;
 
             if (document.getElementById('t-apk-title')) document.getElementById('t-apk-title').innerText = t.apkTitle;
@@ -2054,10 +2079,12 @@
             }
         } catch (e) {}
 
-        // PWA Service Worker Registration
+        // PWA Service Worker Registration with active update check
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(() => {});
+                navigator.serviceWorker.register('./sw.js').then((reg) => {
+                    reg.update();
+                }).catch(() => {});
             });
         }
 
@@ -2168,7 +2195,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v78-beta',
+                'Radar Version: v80-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2189,13 +2216,19 @@
             localStorage.removeItem('bms_active_mac');
             localStorage.removeItem('bms_saved_ip');
             localStorage.removeItem('bms_saved_mac');
+            localStorage.removeItem('bms_device_registry');
             currentIp = '';
             currentMac = '';
             lastCloudFetchTime = 0;
             lastCloudSuccessData = null;
+            inFlightCloudPromise = null;
+            if (activeCloudAbortController) {
+                try { activeCloudAbortController.abort(); } catch (e) {}
+                activeCloudAbortController = null;
+            }
             updateUI();
             showToast("Память платы сброшена. Поиск активной платы в сети...");
-            findControllerInCloud(false, true, 3000, null, true);
+            findControllerInCloud(false, true, 3500, null, true);
         }
 
         function toggleQuickGuide() {
