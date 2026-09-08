@@ -2191,9 +2191,11 @@
             localStorage.removeItem('bms_saved_mac');
             currentIp = '';
             currentMac = '';
+            lastCloudFetchTime = 0;
+            lastCloudSuccessData = null;
             updateUI();
             showToast("Память платы сброшена. Поиск активной платы в сети...");
-            findControllerInCloud(false, true, 3000);
+            findControllerInCloud(false, true, 3000, null, true);
         }
 
         function toggleQuickGuide() {
@@ -2691,7 +2693,9 @@
                 }
             }
             // If not reachable locally on last known IP, query Firebase for this specific board
-            findControllerInCloud(false, false, 2500, cMac);
+            lastCloudFetchTime = 0;
+            lastCloudSuccessData = null;
+            findControllerInCloud(false, false, 2500, cMac, true);
         }
 
         function removeDevice(mac) {
@@ -2728,6 +2732,8 @@
                 localStorage.removeItem('bms_saved_mac');
                 currentIp = '';
                 currentMac = '';
+                lastCloudFetchTime = 0;
+                lastCloudSuccessData = null;
                 updateUI();
                 toggleDeviceModal();
                 showToast("Список устройств очищен");
@@ -2775,8 +2781,13 @@
         let discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
         let activeCloudAbortController = null;
         let initialCloudPromise = null;
+        let inFlightCloudPromise = null;
+        let lastCloudFetchTime = 0;
+        let lastCloudSuccessData = null; // { ip, mac, version, ts }
+        const CLOUD_CACHE_TTL_MS = 15000; // 15 seconds in-memory cooldown for duplicate requests
+        const BOARD_FRESH_THRESHOLD_MS = 15 * 60 * 1000; // 15 minutes freshness threshold for 1-board targeted mode
 
-        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 3500, specificMac = null) {
+        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 3500, specificMac = null, force = false) {
             const t = I18N[currentLang] || I18N.ru;
             const searchIcon = document.getElementById('cloud-search-icon');
             const searchLabel = document.getElementById('t-btn-cloud-search');
@@ -2810,165 +2821,235 @@
                 }
             }
 
-            // Cancel any previous in-flight request to prevent race conditions when switching boards quickly
-            if (activeCloudAbortController) {
-                try { activeCloudAbortController.abort(); } catch (e) {}
-                activeCloudAbortController = null;
+            // 1. IN-MEMORY CACHE: Return fresh memory result if queried less than 15s ago
+            if (!force && lastCloudSuccessData && (Date.now() - lastCloudFetchTime < CLOUD_CACHE_TTL_MS)) {
+                console.log(`[Cloud Discovery] Cache hit (${Math.round((Date.now() - lastCloudFetchTime)/1000)}s old). Bypassing Firebase REST!`);
+                if (isUserInitiated) {
+                    showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${lastCloudSuccessData.ip}`);
+                }
+                if (autoOpen && lastCloudSuccessData.ip && isValidIp(lastCloudSuccessData.ip)) {
+                    setTimeout(() => { safeNavigateToDashboard(lastCloudSuccessData.ip); }, 150);
+                }
+                return true;
             }
 
-            const abortCtrl = new AbortController();
-            activeCloudAbortController = abortCtrl;
-            const thisEpoch = ++discoveryEpoch;
-
-            if (isUserInitiated) {
-                if (searchIcon) searchIcon.style.animation = 'spin 0.8s linear infinite';
-                if (searchLabel) searchLabel.innerText = t.cloudSearching || "Поиск...";
-                if (guideSyncBtn) guideSyncBtn.disabled = true;
-                showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+            // 2. IN-FLIGHT DEDUPLICATION: If request is already running, join existing promise
+            if (!force && inFlightCloudPromise) {
+                console.log("[Cloud Discovery] In-flight cloud request already in progress, joining existing promise...");
+                const res = await inFlightCloudPromise;
+                if (isUserInitiated && res && currentIp && isValidIp(currentIp)) {
+                    showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${currentIp}`);
+                }
+                if (autoOpen && res && currentIp && isValidIp(currentIp)) {
+                    setTimeout(() => { safeNavigateToDashboard(currentIp); }, 150);
+                }
+                return res;
             }
 
-            let foundIp = null;
-            let foundMac = null;
-            let foundVersion = null;
-            let foundTs = 0;
+            // 3. EXECUTE NETWORK FETCH
+            const executeFetch = async () => {
+                // Cancel any previous in-flight request to prevent race conditions
+                if (activeCloudAbortController) {
+                    try { activeCloudAbortController.abort(); } catch (e) {}
+                    activeCloudAbortController = null;
+                }
 
-            try {
-                const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
+                const abortCtrl = new AbortController();
+                activeCloudAbortController = abortCtrl;
+                const thisEpoch = ++discoveryEpoch;
+
+                if (isUserInitiated) {
+                    if (searchIcon) searchIcon.style.animation = 'spin 0.8s linear infinite';
+                    if (searchLabel) searchLabel.innerText = t.cloudSearching || "Поиск...";
+                    if (guideSyncBtn) guideSyncBtn.disabled = true;
+                    showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+                }
+
+                let foundIp = null;
+                let foundMac = null;
+                let foundVersion = null;
+                let foundTs = 0;
+                let candidateIp = null;
+                let candidateMac = null;
+                let candidateVersion = null;
+                let candidateTs = 0;
 
                 try {
-                    // Strategy 1: Targeted query ONLY if specificMac is explicitly requested (e.g. from Device Modal)
-                    if (specificMac && cleanMac(specificMac).length >= 6) {
-                        const targetCleanMac = cleanMac(specificMac);
-                        const targetedUrl = `${RTDB_URL}/boards/${targetCleanMac}.json?nocache=${Date.now()}`;
-                        const res = await fetch(targetedUrl, { signal: abortCtrl.signal });
-                        if (res && res.ok) {
-                            const data = await res.json();
-                            if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
-                                foundIp = data.ip.trim();
-                                foundMac = data.mac || targetCleanMac;
-                                foundVersion = data.version || '';
-                                foundTs = Number(data.ts) || 0;
-                            }
-                        }
-                    } else {
-                        // Strategy 2: Global query of ALL boards. Always pick the freshest online board!
-                        const globalUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
-                        const res = await fetch(globalUrl, { signal: abortCtrl.signal });
-                        if (res && res.ok) {
-                            const allBoards = await res.json();
-                            if (allBoards && typeof allBoards === 'object') {
-                                const validBoards = Object.entries(allBoards)
-                                    .map(([key, val]) => ({
-                                        keyMac: cleanMac(key),
-                                        mac: (val && val.mac) ? cleanMac(val.mac) : cleanMac(key),
-                                        ip: val && val.ip && val.ip.trim(),
-                                        ts: Number((val && val.ts) || 0),
-                                        version: (val && val.version) || ''
-                                    }))
-                                    .filter(b => b.ip && isValidIp(b.ip) && b.ip !== '0.0.0.0' && b.ip !== '1.2.3.4' && b.ip !== '192.168.43.99');
+                    const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
 
-                                validBoards.sort((a, b) => b.ts - a.ts);
+                    try {
+                        const targetCleanMac = cleanMac(specificMac || getActiveMac());
 
-                                if (validBoards.length > 0) {
-                                    foundIp = validBoards[0].ip.trim();
-                                    foundMac = validBoards[0].mac || validBoards[0].keyMac;
-                                    foundVersion = validBoards[0].version || '';
-                                    foundTs = validBoards[0].ts;
-                                    console.log(`[Cloud Discovery] Auto-discovered freshest board: ${foundMac} on ${foundIp} (ts: ${validBoards[0].ts})`);
+                        // Level 1: Targeted Query (~110 bytes) if targetCleanMac is known
+                        if (targetCleanMac && targetCleanMac.length >= 6) {
+                            const targetedUrl = `${RTDB_URL}/boards/${targetCleanMac}.json?nocache=${Date.now()}`;
+                            const res = await fetch(targetedUrl, { signal: abortCtrl.signal });
+                            if (res && res.ok) {
+                                const data = await res.json();
+                                if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
+                                    const bTs = Number(data.ts) || 0;
+                                    const now = Date.now();
+                                    const ageMs = (bTs > 0 && bTs <= now) ? (now - bTs) : Infinity;
+
+                                    if (ageMs <= BOARD_FRESH_THRESHOLD_MS) {
+                                        // 1 Board active user: fresh handshake!
+                                        foundIp = data.ip.trim();
+                                        foundMac = data.mac ? cleanMac(data.mac) : targetCleanMac;
+                                        foundVersion = data.version || '';
+                                        foundTs = bTs;
+                                        console.log(`[Cloud Discovery] Targeted board ${foundMac} is fresh (${Math.round(ageMs/60000)}m ago). Bypassing global scan! (~110 bytes)`);
+                                    } else {
+                                        // Saved board is stale (>15m). Might be replaced by 2nd board!
+                                        console.log(`[Cloud Discovery] Targeted board ${targetCleanMac} is stale (${Math.round(ageMs/60000)}m ago). Fallback to global scan...`);
+                                        candidateIp = data.ip.trim();
+                                        candidateMac = data.mac ? cleanMac(data.mac) : targetCleanMac;
+                                        candidateVersion = data.version || '';
+                                        candidateTs = bTs;
+                                    }
                                 }
                             }
                         }
+
+                        // Level 2: Global query (/boards.json) ONLY if targeted query didn't find a fresh board
+                        if (!foundIp) {
+                            const globalUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
+                            const res = await fetch(globalUrl, { signal: abortCtrl.signal });
+                            if (res && res.ok) {
+                                const allBoards = await res.json();
+                                if (allBoards && typeof allBoards === 'object') {
+                                    const validBoards = Object.entries(allBoards)
+                                        .map(([key, val]) => ({
+                                            keyMac: cleanMac(key),
+                                            mac: (val && val.mac) ? cleanMac(val.mac) : cleanMac(key),
+                                            ip: val && val.ip && val.ip.trim(),
+                                            ts: Number((val && val.ts) || 0),
+                                            version: (val && val.version) || ''
+                                        }))
+                                        .filter(b => b.ip && isValidIp(b.ip) && b.ip !== '0.0.0.0' && b.ip !== '1.2.3.4' && b.ip !== '192.168.43.99');
+
+                                    validBoards.sort((a, b) => b.ts - a.ts);
+
+                                    if (validBoards.length > 0) {
+                                        if (validBoards[0].ts >= candidateTs) {
+                                            foundIp = validBoards[0].ip.trim();
+                                            foundMac = validBoards[0].mac || validBoards[0].keyMac;
+                                            foundVersion = validBoards[0].version || '';
+                                            foundTs = validBoards[0].ts;
+                                            console.log(`[Cloud Discovery] Global scan selected freshest active board: ${foundMac} on ${foundIp} (ts: ${foundTs})`);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Fallback to stale candidate if nothing newer was found in global
+                            if (!foundIp && candidateIp) {
+                                foundIp = candidateIp;
+                                foundMac = candidateMac;
+                                foundVersion = candidateVersion;
+                                foundTs = candidateTs;
+                            }
+                        }
+                    } finally {
+                        clearTimeout(timeoutId);
                     }
+
+                    // Stale check
+                    if (abortCtrl.signal.aborted || thisEpoch !== discoveryEpoch) {
+                        console.log(`[RTDB Discovery] Request aborted or stale epoch (${thisEpoch} vs ${discoveryEpoch})`);
+                        return false;
+                    }
+
+                    if (foundIp && foundMac) {
+                        console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs);
+                        const previousMac = getActiveMac();
+                        const cleanPrev = cleanMac(previousMac);
+                        const cleanNew = cleanMac(foundMac);
+                        const isBoardSwitched = cleanPrev && (cleanPrev !== cleanNew);
+
+                        setActiveMac(cleanNew);
+                        setDeviceIp(cleanNew, foundIp, foundVersion);
+                        updateUI();
+
+                        // Cache in memory
+                        lastCloudFetchTime = Date.now();
+                        lastCloudSuccessData = { ip: foundIp, mac: cleanNew, version: foundVersion, ts: foundTs };
+
+                        const now = Date.now();
+                        const ageMs = (foundTs > 0 && foundTs <= now) ? (now - foundTs) : 0;
+                        const isVeryFresh = (foundTs > 0) && (ageMs < 15 * 60 * 1000); // < 15 min
+                        const isRecent = (foundTs > 0) && (ageMs >= 15 * 60 * 1000 && ageMs < 4 * 3600 * 1000); // 15m to 4h
+                        const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
+
+                        if (cloudBadge) {
+                            cloudBadge.style.display = 'block';
+                            if (isStale) {
+                                const hours = Math.round(ageMs / 3600000);
+                                cloudBadge.innerText = `⚪ ${t.ipStatusStale || "Не в сети"} (${hours} ч назад)`;
+                            } else if (isRecent) {
+                                const mins = Math.round(ageMs / 60000);
+                                cloudBadge.innerText = `🟡 ${t.ipStatusRecent || "В сети недавно"} (${mins} мин)`;
+                            } else {
+                                cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Облако)`;
+                            }
+                        }
+
+                        if (isUserInitiated) {
+                            if (isStale) {
+                                showToast(`⚠️ Запись в облаке устарела (${Math.round(ageMs / 3600000)} ч назад). Включите зажигание (READY)`);
+                            } else if (isBoardSwitched) {
+                                showToast(`✅ Обнаружена активная плата: ${formatMac(cleanNew)} (${foundIp})`);
+                            } else {
+                                showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
+                            }
+                        }
+
+                        if (autoOpen) {
+                            if (!isStale) {
+                                setTimeout(() => {
+                                    safeNavigateToDashboard(foundIp);
+                                }, 200);
+                            } else {
+                                console.log("[Cloud Discovery] Board is stale, skipping autoOpen");
+                            }
+                        }
+                        return true;
+                    } else {
+                        if (cloudBadge) {
+                            cloudBadge.style.display = 'block';
+                            cloudBadge.innerText = `⚪ ${t.ipStatusOffline || "Не в сети"}`;
+                        }
+                        if (isUserInitiated) {
+                            showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
+                        }
+                        return false;
+                    }
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        console.log("[Cloud Discovery] Request aborted cleanly");
+                        return false;
+                    }
+                    console.error("[Cloud Discovery] Error:", err);
+                    if (isUserInitiated) {
+                        showToast(t.cloudError || "⚠️ Ошибка связи с облаком. Проверьте интернет на телефоне.");
+                    }
+                    return false;
                 } finally {
-                    clearTimeout(timeoutId);
-                }
-
-                // If aborted or newer request was launched while waiting, abort silently
-                if (abortCtrl.signal.aborted || thisEpoch !== discoveryEpoch) {
-                    console.log(`[RTDB Discovery] Request aborted or stale epoch (${thisEpoch} vs ${discoveryEpoch})`);
-                    return false;
-                }
-
-                if (foundIp && foundMac) {
-                    console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs);
-                    const previousMac = getActiveMac();
-                    const cleanPrev = cleanMac(previousMac);
-                    const cleanNew = cleanMac(foundMac);
-                    const isBoardSwitched = cleanPrev && (cleanPrev !== cleanNew);
-
-                    // Always ensure the freshest board is set as active
-                    setActiveMac(cleanNew);
-                    setDeviceIp(cleanNew, foundIp, foundVersion);
-                    updateUI();
-
-                    const now = Date.now();
-                    const ageMs = (foundTs > 0 && foundTs <= now) ? (now - foundTs) : 0;
-                    const isVeryFresh = (foundTs > 0) && (ageMs < 15 * 60 * 1000); // < 15 min
-                    const isRecent = (foundTs > 0) && (ageMs >= 15 * 60 * 1000 && ageMs < 4 * 3600 * 1000); // 15m to 4h
-                    const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
-
-                    if (cloudBadge) {
-                        cloudBadge.style.display = 'block';
-                        if (isStale) {
-                            const hours = Math.round(ageMs / 3600000);
-                            cloudBadge.innerText = `⚪ ${t.ipStatusStale || "Не в сети"} (${hours} ч назад)`;
-                        } else if (isRecent) {
-                            const mins = Math.round(ageMs / 60000);
-                            cloudBadge.innerText = `🟡 ${t.ipStatusRecent || "В сети недавно"} (${mins} мин)`;
-                        } else {
-                            cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Облако)`;
+                    if (thisEpoch === discoveryEpoch) {
+                        if (searchIcon) searchIcon.style.animation = '';
+                        if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
+                        if (guideSyncBtn) guideSyncBtn.disabled = false;
+                        if (activeCloudAbortController === abortCtrl) {
+                            activeCloudAbortController = null;
                         }
                     }
+                }
+            };
 
-                    if (isUserInitiated) {
-                        if (isStale) {
-                            showToast(`⚠️ Запись в облаке устарела (${Math.round(ageMs / 3600000)} ч назад). Включите зажигание (READY)`);
-                        } else if (isBoardSwitched) {
-                            showToast(`✅ Обнаружена активная плата: ${formatMac(cleanNew)} (${foundIp})`);
-                        } else {
-                            showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
-                        }
-                    }
-
-                    if (autoOpen) {
-                        if (!isStale) {
-                            setTimeout(() => {
-                                safeNavigateToDashboard(foundIp);
-                            }, 200);
-                        } else {
-                            console.log("[Cloud Discovery] Board is stale, skipping autoOpen");
-                        }
-                    }
-                    return true;
-                } else {
-                    if (cloudBadge) {
-                        cloudBadge.style.display = 'block';
-                        cloudBadge.innerText = `⚪ ${t.ipStatusOffline || "Не в сети"}`;
-                    }
-                    if (isUserInitiated) {
-                        showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
-                    }
-                    return false;
-                }
-            } catch (err) {
-                if (err.name === 'AbortError') {
-                    console.log("[Cloud Discovery] Request aborted cleanly");
-                    return false;
-                }
-                console.error("[Cloud Discovery] Error:", err);
-                if (isUserInitiated) {
-                    showToast(t.cloudError || "⚠️ Ошибка связи с облаком. Проверьте интернет на телефоне.");
-                }
-                return false;
+            inFlightCloudPromise = executeFetch();
+            try {
+                return await inFlightCloudPromise;
             } finally {
-                if (thisEpoch === discoveryEpoch) {
-                    if (searchIcon) searchIcon.style.animation = '';
-                    if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
-                    if (guideSyncBtn) guideSyncBtn.disabled = false;
-                    if (activeCloudAbortController === abortCtrl) {
-                        activeCloudAbortController = null;
-                    }
-                }
+                inFlightCloudPromise = null;
             }
         }
 
