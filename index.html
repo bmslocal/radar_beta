@@ -1033,7 +1033,7 @@
         <!-- 2-Step Quick Guide -->
         <div class="quick-guide" id="quick-guide">
             <div class="quick-guide-title" id="t-quick-guide-title">
-                <span>📋</span> <span>Быстрый старт (2 шага):</span>
+                <span>📋</span> <span>Быстрый старт (3 шага):</span>
             </div>
             <div class="quick-steps-list">
                 <div class="quick-step-item">
@@ -1046,6 +1046,12 @@
                     <div class="quick-step-badge">2</div>
                     <div class="quick-step-text" id="t-qstep-2">
                         Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).
+                    </div>
+                </div>
+                <div class="quick-step-item">
+                    <div class="quick-step-badge">3</div>
+                    <div class="quick-step-text" id="t-qstep-3">
+                        Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.
                     </div>
                 </div>
             </div>
@@ -1061,24 +1067,10 @@
         <div class="card" id="main-card">
             <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 8px;">
                 <div class="ip-label" id="t-ip-label" style="margin-bottom: 0;">Controller IP Address</div>
-                <!-- Reset Board Button next to IP Label -->
-                <button type="button" id="btn-quick-reset-icon" onclick="confirmResetDevice()" style="display: none; background: transparent; border: none; padding: 4px; cursor: pointer; color: #71717a; transition: color 0.2s;" title="Сменить плату">
-                    <span style="font-size: 14px;">🔄</span>
-                </button>
+                
             </div>
             
             <div id="display-ip" class="ip-value">--</div>
-
-            <!-- Optional status dot from cloud/local verification -->
-            <div id="cloud-status-badge" style="display: none; font-size: 12.5px; font-weight: 600; color: #fbbf24; margin-top: -10px; margin-bottom: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); align-items: center; justify-content: center; padding: 4px 10px; border-radius: 12px; gap: 6px; width: max-content; margin-left: auto; margin-right: auto;">
-                <span id="cloud-status-dot">🟠</span> 
-                <span id="t-cloud-status-text">Найдена в Облаке</span>
-            </div>
-
-            <div id="connect-status-text" class="connect-status" style="margin-top: -8px; margin-bottom: 16px;">
-                <span id="status-dot">⚪</span>
-                <span id="t-status-idle">Нажмите для поиска и подключения</span>
-            </div>
 
             <div id="first-run-tip" class="first-run-tip" onclick="openAndScrollToGuide()">
                 <span style="font-size: 16px; line-height: 1;">📖</span>
@@ -1196,13 +1188,26 @@
                 <div class="guide-step" style="margin-bottom: 4px;">
                     <div class="step-header">
                         <span class="step-num">3</span>
-                        <span class="step-title" id="t-step3-reset-title">Changed board or second car?</span>
+                        <span class="step-title" id="t-step3-title">Подключиться к контроллеру</span>
                     </div>
                     <div class="step-body">
-                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.4;" id="t-step3-reset-desc">If you connected another board or moved the adapter to another vehicle, tap below to clear saved device memory and discover the new board.</div>
+                        <button type="button" class="btn-main-connect" onclick="startOneTapDiscovery()" style="width: 100%; font-size: 14.5px; padding: 12px; margin-top: 4px; display: flex;">
+                            <span style="font-size: 17px; margin-top: -1px;">🚀</span>
+                            <span id="t-btn-main-connect-dup">Подключиться к контроллеру</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="guide-step" style="margin-bottom: 4px; border: 1px dashed rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.02);">
+                    <div class="step-header" style="margin-bottom: 8px;">
+                        <span style="font-size: 16px; margin-right: 8px;">🛠️</span>
+                        <span class="step-title" id="t-step3-reset-title" style="color: #fca5a5;">Проблемы с подключением или сменили плату?</span>
+                    </div>
+                    <div class="step-body">
+                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 12px; line-height: 1.45;" id="t-step3-reset-desc">Если контроллер не подключается, или вы подключили другую плату — очистите память радара.</div>
                         <button type="button" class="btn-ghost" onclick="confirmResetDevice()" style="width: 100%; padding: 10px; margin: 0; font-size: 13.5px; font-weight: 600; justify-content: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; border-radius: 8px; cursor: pointer;">
                             <span>🔄</span>
-                            <span id="t-btn-step3-reset">Reset memory & find new board</span>
+                            <span id="t-btn-step3-reset">Сбросить память и найти новую плату</span>
                         </button>
                     </div>
                 </div>
@@ -1345,7 +1350,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v81-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v85-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
@@ -1417,8 +1422,8 @@
                 step3Or: "Or enter controller IP manually:",
                 step3AdvancedTitle: "For advanced users",
                 step3AdvancedDesc: "Where to find the IP address? Go to the 'Connected devices' section in your phone's hotspot settings.",
-                step3ResetTitle: "Changed board or second car?",
-                step3ResetDesc: "If you connected another board, tap below to clear saved device memory and discover the new board.",
+                step3ResetTitle: "Проблемы с подключением или сменили плату?",
+                step3ResetDesc: "Если контроллер не подключается, или вы подключили другую плату — очистите память радара.",
                 btnStep3Reset: "Reset memory & find new board",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "Save",
@@ -1482,9 +1487,10 @@
                 cloudFound: "Controller found:",
                 cloudNotFound: "Controller not connected to cloud yet. Turn on phone hotspot.",
                 cloudError: "Cloud error. Check phone internet connection.",
-                quickGuideTitle: "Quick Start (2 Steps):",
+                quickGuideTitle: "Quick Start (3 Steps):",
                 qstep1: "Turn ON phone Hotspot (Network: <code>Bms</code>, Password: <code>bmslocal</code>, Band: <b>2.4 GHz</b>).",
                 qstep2: "Plug adapter into vehicle's <b>OBD2</b> port and power ON (<b>READY</b> mode).",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
                 tabCloud: "⚡ Quick Start (Cloud)",
                 tabManual: "🛠️ Backup (Bms_Setup)",
                 modalResetTitle: "Switch Controller Board?",
@@ -1607,9 +1613,10 @@
                 cloudFound: "已找到控制器：",
                 cloudNotFound: "控制器尚未连接到云端。请开启手机热点。",
                 cloudError: "云端连接错误，请检查手机网络。",
-                quickGuideTitle: "快速上手（2步）：",
+                quickGuideTitle: "快速上手（3步）：",
                 qstep1: "开启手机热点（网络：<code>Bms</code>，密码：<code>bmslocal</code>，频段：<b>2.4 GHz</b>）。",
                 qstep2: "将适配器插入车辆 <b>OBD2</b> 接口并启动车辆（<b>READY</b> 模式）。",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
                 deviceLabel: "设备：",
                 btnQuickReset: "更换设备",
                 toastResetDone: "设备缓存已清除。请开启车辆电源 (READY) 以绑定新设备。",
@@ -1716,9 +1723,10 @@
                 cloudFound: "컨트롤러를 찾았습니다:",
                 cloudNotFound: "컨트롤러가 아직 연결되지 않았습니다. 스마트폰 핫스팟을 켜주세요.",
                 cloudError: "클라우드 오류입니다. 스마트폰 인터넷을 확인하세요.",
-                quickGuideTitle: "빠른 시작 (2단계):",
+                quickGuideTitle: "빠른 시작 (3단계):",
                 qstep1: "스마트폰 핫스팟을 켭니다 (네트워크: <code>Bms</code>, 비밀번호: <code>bmslocal</code>, 대역: <b>2.4 GHz</b>).",
                 qstep2: "차량 <b>OBD2</b> 단자에 어댑터를 연결하고 시동을 켭니다 (<b>READY</b> 모드).",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
                 deviceLabel: "보드:",
                 btnQuickReset: "보드 전환",
                 toastResetDone: "보드 메모리가 초기화되었습니다. 새 보드를 연결하려면 차량 시동을 켜세요(READY).",
@@ -1828,9 +1836,10 @@
                 cloudFound: "Контроллер найден:",
                 cloudNotFound: "Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.",
                 cloudError: "Ошибка связи с облаком. Проверьте интернет на телефоне.",
-                quickGuideTitle: "Быстрый старт (2 шага):",
+                quickGuideTitle: "Быстрый старт (3 шага):",
                 qstep1: "Включите точку доступа на телефоне (сеть: <code>Bms</code>, пароль: <code>bmslocal</code>, частота: <b>2.4 ГГц</b>).",
                 qstep2: "Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
                 tabCloud: "⚡ Быстрый старт (Облако)",
                 tabManual: "🛠️ Резервный (Bms_Setup)",
                 modalResetTitle: "Сменить плату контроллера?",
@@ -1909,9 +1918,10 @@
                 btnInstall: "インストール",
                 installTitleIos: "📲 iPhone に追加",
                 installDescIos: "Safariの共有ボタン ⎋ をタップし、「ホーム画面に追加」➕ を選択してください。",
-                quickGuideTitle: "クイックスタート (2ステップ):",
+                quickGuideTitle: "クイックスタート (3ステップ):",
                 qstep1: "スマホのテザリングをONにします（SSID: <code>Bms</code>, パスワード: <code>bmslocal</code>, 帯域: <b>2.4GHz</b>）。",
                 qstep2: "アダプターを車両の <b>OBD2</b> ポートに差し込み、車両を <b>READY</b> モードにします。",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
                 tabCloud: "⚡ クイックスタート（クラウド）",
                 tabManual: "🛠️ バックアップ（Bms_Setup）",
                 modalResetTitle: "コントローラー基板を変更しますか？",
@@ -2168,7 +2178,7 @@
             if (document.getElementById('t-step-backup-b-desc')) document.getElementById('t-step-backup-b-desc').innerHTML = t.stepBackupBDesc || '';
             if (document.getElementById('t-step-backup-c-title')) document.getElementById('t-step-backup-c-title').innerText = t.stepBackupCTitle || 'Ручной ввод IP-адреса';
             if (document.getElementById('t-step-backup-c-desc')) document.getElementById('t-step-backup-c-desc').innerText = t.stepBackupCDesc || '';
-            if (document.getElementById('t-quick-guide-title')) document.getElementById('t-quick-guide-title').innerHTML = `<span>📋</span> <span>${t.quickGuideTitle || 'Быстрый старт (2 шага):'}</span>`;
+            if (document.getElementById('t-quick-guide-title')) document.getElementById('t-quick-guide-title').innerHTML = `<span>📋</span> <span>${t.quickGuideTitle || 'Быстрый старт (3 шага):'}</span>`;
             if (document.getElementById('t-qstep-1')) document.getElementById('t-qstep-1').innerHTML = t.qstep1 || '';
             if (document.getElementById('t-qstep-2')) document.getElementById('t-qstep-2').innerHTML = t.qstep2 || '';
             if (document.getElementById('t-qstep-3')) document.getElementById('t-qstep-3').innerHTML = t.qstep3 || '';
@@ -2421,7 +2431,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v82-beta',
+                'Radar Version: v85-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2561,6 +2571,7 @@
             }
 
             isDiscovering = true;
+            localStorage.removeItem('bms_ignored_mac'); // Clear ignore list on manual connect
 
             const t = I18N[currentLang] || I18N.en;
             const btn = document.getElementById('btn-main-connect');
@@ -2729,6 +2740,8 @@
                 if (cloudStatusBadge) cloudStatusBadge.style.display = 'none';
 
                 if (tBtnMainConnect && !isDiscovering) tBtnMainConnect.innerText = t.btnMainConnect || 'Подключиться к контроллеру';
+                const tBtnDup = document.getElementById('t-btn-main-connect-dup');
+                if (tBtnDup && !isDiscovering) tBtnDup.innerText = t.btnMainConnect || 'Подключиться к контроллеру';
                 if (mainConnectIcon && !isDiscovering) mainConnectIcon.innerText = '🚀';
 
                 // Always show quick guide when disconnected
