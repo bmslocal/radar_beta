@@ -228,74 +228,84 @@ function openAndScrollToGuide() {
             }
         }
 
-let lastDashboardAttemptTs = 0;
-
-function registerDashboardNavigationAttempt() {
-    lastDashboardAttemptTs = Date.now();
-    setTimeout(() => {
-        showHotspotUnreachableHint();
-    }, 700);
-}
-
-function showHotspotUnreachableHint() {
-    const hint = document.getElementById('ip-unreachable-hint');
-    if (hint && currentIp && currentIp !== '--' && currentIp !== '10.10.10.1') {
-        hint.style.display = 'flex';
+function showMonitorHelper(ip) {
+    const modal = document.getElementById('monitor-helper-modal');
+    const ipVal = document.getElementById('helper-ip-val');
+    const targetIp = ip || currentIp || '--';
+    if (ipVal) {
+        ipVal.innerText = targetIp;
+    }
+    if (modal) {
+        modal.style.display = 'flex';
     }
 }
 
-function hideHotspotUnreachableHint() {
-    lastDashboardAttemptTs = 0;
-    const hint = document.getElementById('ip-unreachable-hint');
-    if (hint) hint.style.display = 'none';
-    const recovery = document.getElementById('nav-recovery-card');
-    if (recovery) recovery.style.display = 'none';
+function closeMonitorHelper(e) {
+    if (e && e.target && e.target !== document.getElementById('monitor-helper-modal')) return;
+    const modal = document.getElementById('monitor-helper-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
-function openAndScrollToStep1() {
-    switchSetupTab('cloud');
-    openAndScrollToGuide();
-    const step1El = document.getElementById('guide-step-1');
-    if (step1El) {
-        setTimeout(() => {
-            step1El.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 120);
+function reopenDashboardFromHelper() {
+    const targetIp = (currentIp && currentIp !== '--') ? currentIp : (document.getElementById('helper-ip-val') ? document.getElementById('helper-ip-val').innerText : '');
+    if (targetIp && targetIp !== '--' && isValidIp(targetIp)) {
+        try {
+            const win = window.open('http://' + targetIp + '/', '_blank');
+            if (!win || win.closed || typeof win.closed === 'undefined') {
+                window.location.href = 'http://' + targetIp + '/';
+            }
+        } catch (e) {
+            window.location.href = 'http://' + targetIp + '/';
+        }
+    } else {
+        openDashboard();
+    }
+}
+
+async function checkControllerFromHelper() {
+    const icon = document.getElementById('helper-spin-icon');
+    if (icon) icon.style.animation = 'spin 0.8s linear infinite';
+    const t = I18N[currentLang] || I18N.ru;
+    showToast(t.statusSearchingCloud || 'Запрос статуса контроллера в облаке...');
+    try {
+        const found = await findControllerInCloud(true, false, 3000);
+        if (found && currentIp && currentIp !== '--') {
+            const ipVal = document.getElementById('helper-ip-val');
+            if (ipVal) ipVal.innerText = currentIp;
+            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (${currentIp})`);
+        } else {
+            showToast(`⚠️ ${t.statusNotFound || 'Контроллер не отвечает в облаке. Проверьте точку доступа.'}`);
+        }
+    } catch (e) {
+        showToast('⚠️ Ошибка запроса к облаку');
+    } finally {
+        if (icon) icon.style.animation = '';
     }
 }
 
 function openAndScrollToStep3() {
-            switchSetupTab('search');
-            openAndScrollToGuide();
-            const step3El = document.getElementById('guide-step-3');
-            if (step3El) {
-                setTimeout(() => {
-                    step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 120);
-            }
-        }
+    switchSetupTab('search');
+    openAndScrollToGuide();
+    const step3El = document.getElementById('guide-step-3');
+    if (step3El) {
+        setTimeout(() => {
+            step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 120);
+    }
+}
 
 function goToSetupSync() {
-            openAndScrollToStep3();
-        }
+    openAndScrollToStep3();
+}
 
 function checkFailedNavigation() {
-            const recovery = document.getElementById('nav-recovery-card');
-            if (recovery && currentIp !== '10.10.10.1') {
-                recovery.style.display = 'block';
-            }
-            showHotspotUnreachableHint();
-        }
-
-async function handleIpUnreachable() {
-            const t = I18N[currentLang] || I18N.ru;
-            showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
-            const found = await findControllerInCloud(true, true, 2000);
-            if (!found) {
-                openAndScrollToStep1();
-            } else {
-                hideHotspotUnreachableHint();
-            }
-        }
+    const recovery = document.getElementById('nav-recovery-card');
+    if (recovery && currentIp !== '10.10.10.1') {
+        recovery.style.display = 'block';
+    }
+}
 
 function toggleEditIp() {
             const row = document.getElementById('edit-row');

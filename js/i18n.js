@@ -21,7 +21,15 @@ var I18N = {
                 ipStatusChecking: "Checking status...",
                 firstRunTip: "First-time setup: follow the guide below 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "⚠️ <b>Not opening?</b> Turn ON <b>Personal Hotspot</b> on phone (network <code>Bms</code>, 2.4 GHz)",
+                helperTitle: "Live Monitor",
+                helperIpLabel: "Monitor Address:",
+                helperWarnTitle: "Page not opening?",
+                helperStep1: "1. Turn ON <b>Personal Hotspot</b> on phone (network <code>Bms</code>, password <code>bms.local</code>, <b>2.4 GHz</b>).",
+                helperStep2: "2. Turn ON hybrid (mode <b>READY</b>) so the controller gets power.",
+                helperStep3: "3. Wait 5–10 seconds for the controller to connect to your phone network.",
+                helperBtnReopen: "Open Again",
+                helperBtnCheck: "Check Cloud Status",
+                helperBtnClose: "Close",
                 btnSync: "Find Controller",
                                 btnManual: "Set IP Manually",
                 step3Or: "Or enter controller IP manually:",
@@ -165,7 +173,15 @@ var I18N = {
                 ipStatusChecking: "检查状态中...",
                 firstRunTip: "首次设置：请按照下方指南操作 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "⚠️ <b>打不开？</b>请开启手机<b>个人热点</b>（网络 <code>Bms</code>，2.4 GHz）",
+                helperTitle: "实时监视器 (Live Monitor)",
+                helperIpLabel: "监视器地址：",
+                helperWarnTitle: "页面无法打开？",
+                helperStep1: "1. 请开启手机<b>个人热点</b>（网络 <code>Bms</code>，密码 <code>bms.local</code>，<b>2.4 GHz</b>）。",
+                helperStep2: "2. 启动混合动力汽车（<b>READY</b> 模式），为控制器供电。",
+                helperStep3: "3. 等待 5-10 秒，直到控制器连接到您的热点网络。",
+                helperBtnReopen: "重新打开",
+                helperBtnCheck: "检查云端连接",
+                helperBtnClose: "关闭",
                 btnSync: "查找控制器",
                 btnManual: "手动设置 IP",
                 step3Or: "或手动输入控制器 IP：",
@@ -298,7 +314,15 @@ var I18N = {
                 ipStatusChecking: "상태 확인 중...",
                 firstRunTip: "최초 설정: 아래 가이드에 따라 진행하세요 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "⚠️ <b>열리지 않나요?</b> 스마트폰에서 <b>개인용 핫스팟</b>을 켜세요 (네트워크 <code>Bms</code>, 2.4 GHz)",
+                helperTitle: "실시간 모니터 (Live Monitor)",
+                helperIpLabel: "모니터 주소:",
+                helperWarnTitle: "페이지가 열리지 않나요?",
+                helperStep1: "1. 스마트폰에서 <b>개인용 핫스팟</b>을 켜세요 (네트워크 <code>Bms</code>, 비밀번호 <code>bms.local</code>, <b>2.4 GHz</b>).",
+                helperStep2: "2. 하이브리드 시동을 켜서(<b>READY</b> 모드) 컨트롤러에 전원을 공급하세요.",
+                helperStep3: "3. 컨트롤러가 핫스팟에 연결될 때까지 5~10초 정도 기다리세요.",
+                helperBtnReopen: "다시 열기",
+                helperBtnCheck: "클라우드 연결 확인",
+                helperBtnClose: "닫기",
                 btnSync: "컨트롤러 찾기",
                 btnManual: "수동으로 IP 입력",
                 step3Or: "또는 수동으로 IP 입력:",
@@ -428,7 +452,15 @@ var I18N = {
                 ipStatusChecking: "Проверка связи...",
                 firstRunTip: "Первый запуск: следуйте инструкции ниже 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "⚠️ <b>Не открывается?</b> Включите <b>Точку доступа</b> на телефоне (сеть <code>Bms</code>, 2.4 ГГц)",
+                helperTitle: "Live Monitor",
+                helperIpLabel: "Адрес монитора:",
+                helperWarnTitle: "Не открывается страница?",
+                helperStep1: "1. Включите <b>Точку доступа</b> на телефоне (сеть <code>Bms</code>, пароль <code>bms.local</code>, частота <b>2.4 ГГц</b>).",
+                helperStep2: "2. Включите зажигание гибрида (режим <b>READY</b>), чтобы плата получала питание.",
+                helperStep3: "3. Подождите 5–10 секунд, пока контроллер подключится к вашей сети.",
+                helperBtnReopen: "Открыть снова",
+                helperBtnCheck: "Проверить связь в облаке",
+                helperBtnClose: "Закрыть",
                 btnSync: "Найти контроллер",
                 btnManual: "Ввести IP-адрес вручную",
                 step3Or: "Укажите IP-адрес вручную:",
@@ -572,7 +604,15 @@ var I18N = {
                 ipStatusChecking: "接続確認中...",
                 firstRunTip: "初期設定：下のガイドに従ってください 👇",
                 btnOpen: "Live Monitor",
-                ipUnreachableText: "⚠️ <b>開かない場合：</b>スマホの<b>テザリング</b>をONにしてください（ネットワーク <code>Bms</code>, 2.4 GHz）",
+                helperTitle: "Live Monitor",
+                helperIpLabel: "モニターアドレス:",
+                helperWarnTitle: "ページが開きませんか？",
+                helperStep1: "1. スマホの<b>テザリング</b>をONにしてください（ネットワーク <code>Bms</code>、パスワード <code>bms.local</code>、<b>2.4 GHz</b>）。",
+                helperStep2: "2. ハイブリッドの電源をON（<b>READY</b>モード）にして通電させてください。",
+                helperStep3: "3. コントローラーがテザリングに接続するまで5〜10秒お待ちください。",
+                helperBtnReopen: "もう一度開く",
+                helperBtnCheck: "クラウド接続を確認",
+                helperBtnClose: "閉じる",
                 btnSync: "コントローラーを検出",
                 btnManual: "IP手動設定",
                 step3Or: "またはIPを手動入力:",
@@ -781,7 +821,18 @@ function applyLanguage() {
             if (document.getElementById('t-first-run-tip')) document.getElementById('t-first-run-tip').innerText = t.firstRunTip;
             if (document.getElementById('t-btn-open')) document.getElementById('t-btn-open').innerText = t.btnOpen;
             if (document.getElementById('t-btn-cloud-search') && t.btnCloudSearch) document.getElementById('t-btn-cloud-search').innerText = t.btnCloudSearch;
-            if (document.getElementById('t-ip-unreachable-text') && t.ipUnreachableText) document.getElementById('t-ip-unreachable-text').innerHTML = t.ipUnreachableText;
+            
+            // Helper Modal (Live Monitor Guidance)
+            if (document.getElementById('t-helper-title')) document.getElementById('t-helper-title').innerText = t.helperTitle || 'Live Monitor';
+            if (document.getElementById('t-helper-ip-label')) document.getElementById('t-helper-ip-label').innerText = t.helperIpLabel || 'Адрес монитора:';
+            if (document.getElementById('t-helper-warn-title')) document.getElementById('t-helper-warn-title').innerText = t.helperWarnTitle || 'Не открывается страница?';
+            if (document.getElementById('t-helper-step-1')) document.getElementById('t-helper-step-1').innerHTML = t.helperStep1 || '';
+            if (document.getElementById('t-helper-step-2')) document.getElementById('t-helper-step-2').innerHTML = t.helperStep2 || '';
+            if (document.getElementById('t-helper-step-3')) document.getElementById('t-helper-step-3').innerHTML = t.helperStep3 || '';
+            if (document.getElementById('t-helper-btn-reopen')) document.getElementById('t-helper-btn-reopen').innerText = t.helperBtnReopen || 'Открыть снова';
+            if (document.getElementById('t-helper-btn-check')) document.getElementById('t-helper-btn-check').innerText = t.helperBtnCheck || 'Проверить связь в облаке';
+            if (document.getElementById('t-helper-btn-close')) document.getElementById('t-helper-btn-close').innerText = t.helperBtnClose || 'Закрыть';
+
             if (document.getElementById('t-btn-sync')) document.getElementById('t-btn-sync').innerText = t.btnSync;
                         if (document.getElementById('t-btn-manual')) document.getElementById('t-btn-manual').innerText = t.btnManual;
             if (document.getElementById('t-manual-ip-hint')) document.getElementById('t-manual-ip-hint').innerText = t.manualIpHint;

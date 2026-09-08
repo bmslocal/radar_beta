@@ -4,6 +4,9 @@
 
 function safeNavigateToDashboard(ip) {
             if (!ip || !isValidIp(ip)) return;
+            if (ip !== '10.10.10.1' && typeof showMonitorHelper === 'function') {
+                showMonitorHelper(ip);
+            }
             try {
                 const win = window.open('http://' + ip + '/', '_blank');
                 if (!win || win.closed || typeof win.closed === 'undefined') {
@@ -310,14 +313,10 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                             }
                         }
 
-                        if (!isStale) {
-                            if (typeof hideHotspotUnreachableHint === 'function') hideHotspotUnreachableHint();
-                        }
                         if (autoOpen) {
                             if (!isStale) {
                                 setTimeout(() => {
                                     safeNavigateToDashboard(foundIp);
-                                    if (typeof registerDashboardNavigationAttempt === 'function') registerDashboardNavigationAttempt();
                                 }, 200);
                             } else {
                                 console.log("[Cloud Discovery] Board is stale, skipping autoOpen");
@@ -378,9 +377,7 @@ async function startOneTapDiscovery(forceSearch = false) {
 
             // If we already have a valid active IP and not forcing a re-search, open dashboard immediately
             if (!forceSearch && currentIp && currentIp !== '--' && isValidIp(currentIp)) {
-                if (typeof hideHotspotUnreachableHint === 'function') hideHotspotUnreachableHint();
                 safeNavigateToDashboard(currentIp);
-                if (typeof registerDashboardNavigationAttempt === 'function') registerDashboardNavigationAttempt();
                 return;
             }
 
@@ -500,9 +497,7 @@ async function openDashboard() {
             const isHttps = (window.location.protocol === 'https:');
             if (isHttps) {
                 // On HTTPS, direct navigation without async delay protects against mobile popup blockers
-                if (typeof hideHotspotUnreachableHint === 'function') hideHotspotUnreachableHint();
                 safeNavigateToDashboard(currentIp);
-                if (typeof registerDashboardNavigationAttempt === 'function') registerDashboardNavigationAttempt();
                 return;
             }
 
@@ -531,9 +526,7 @@ async function openDashboard() {
                 }
 
                 // Match confirmed: open window
-                if (typeof hideHotspotUnreachableHint === 'function') hideHotspotUnreachableHint();
                 safeNavigateToDashboard(currentIp);
-                if (typeof registerDashboardNavigationAttempt === 'function') registerDashboardNavigationAttempt();
                 setTimeout(() => { checkFailedNavigation(); }, 800);
             } else {
                 // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!

@@ -100,23 +100,16 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-// 4. Tab Visibility & Reconnect Handler
+// 4. Tab Visibility & Background State Refresh
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-        if (typeof lastDashboardAttemptTs !== 'undefined' && lastDashboardAttemptTs > 0) {
-            const timeSinceAttempt = Date.now() - lastDashboardAttemptTs;
-            if (timeSinceAttempt < 180000) {
-                if (typeof showHotspotUnreachableHint === 'function') {
-                    showHotspotUnreachableHint();
+        if (typeof findControllerInCloud === 'function') {
+            findControllerInCloud(false, false, 2500).then(found => {
+                if (found && currentIp && currentIp !== '--') {
+                    const ipVal = document.getElementById('helper-ip-val');
+                    if (ipVal) ipVal.innerText = currentIp;
                 }
-                if (typeof findControllerInCloud === 'function') {
-                    findControllerInCloud(false, false, 2000).then(found => {
-                        if (found && typeof hideHotspotUnreachableHint === 'function') {
-                            hideHotspotUnreachableHint();
-                        }
-                    }).catch(() => {});
-                }
-            }
+            }).catch(() => {});
         }
     }
 });

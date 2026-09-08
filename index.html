@@ -105,12 +105,6 @@
                 <span id="t-btn-open">Live Monitor</span>
             </button>
 
-            <!-- IP Unreachable Hint (shows if user clicks dashboard but board IP is changed/unreachable) -->
-            <div id="ip-unreachable-hint" class="ip-unreachable-hint" onclick="handleIpUnreachable()" style="display: none;">
-                <span style="font-size: 16px; flex-shrink: 0;">⚠️</span>
-                <span id="t-ip-unreachable-text">Не открывается? Включите Точку доступа на телефоне (сеть Bms, 2.4 ГГц)</span>
-            </div>
-
             <!-- Android App Collapsible Button (shown on Android / Desktop) -->
             <button type="button" id="btn-toggle-apk" class="btn-secondary" onclick="toggleApkDetails()" style="display: none; justify-content: space-between; padding: 12px 14px; border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.08); margin-top: 14px;">
                 <div style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #fde68a; white-space: nowrap;">
@@ -430,7 +424,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v91-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v92-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
@@ -447,6 +441,50 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Live Monitor Connection Guidance Modal -->
+    <div id="monitor-helper-modal" class="modal-overlay" style="display: none;" onclick="closeMonitorHelper(event)">
+        <div class="modal-card" style="max-width: 380px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div class="modal-title" style="margin-bottom: 0;">
+                    <span>📊</span>
+                    <span id="t-helper-title">Live Monitor</span>
+                </div>
+                <button type="button" onclick="closeMonitorHelper()" style="background: none; border: none; color: #a1a1aa; font-size: 20px; cursor: pointer; padding: 4px 8px; line-height: 1;" aria-label="Close">✕</button>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #27272a; padding: 9px 12px; border-radius: 8px; margin-bottom: 14px; border: 1px solid #3f3f46;">
+                <span style="font-size: 13px; color: #a1a1aa;" id="t-helper-ip-label">Адрес монитора:</span>
+                <span id="helper-ip-val" class="mono" style="font-size: 14px; font-weight: 700; color: #38bdf8;">--</span>
+            </div>
+
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 700; color: #fbbf24; margin-bottom: 8px;">
+                    <span>⚠️</span>
+                    <span id="t-helper-warn-title">Не открывается страница?</span>
+                </div>
+                <div style="font-size: 12.5px; line-height: 1.55; color: #e4e4e7; display: flex; flex-direction: column; gap: 7px;">
+                    <div id="t-helper-step-1">1. Включите <b>Точку доступа</b> на телефоне (сеть <code>Bms</code>, пароль <code>bms.local</code>, частота <b>2.4 ГГц</b>).</div>
+                    <div id="t-helper-step-2">2. Включите зажигание гибрида (режим <b>READY</b>), чтобы плата получала питание.</div>
+                    <div id="t-helper-step-3">3. Подождите 5–10 секунд, пока контроллер подключится к вашей сети.</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button type="button" class="btn-primary" onclick="reopenDashboardFromHelper()" style="width: 100%; padding: 11px 16px; font-size: 14px; margin-bottom: 0;">
+                    <span>🚀</span>
+                    <span id="t-helper-btn-reopen">Открыть Live Monitor</span>
+                </button>
+                <button type="button" class="btn-secondary" onclick="checkControllerFromHelper()" style="width: 100%; padding: 10px 14px; font-size: 13.5px; background: #27272a; border-color: #3f3f46; color: #e4e4e7;">
+                    <span id="helper-spin-icon">🔄</span>
+                    <span id="t-helper-btn-check">Проверить связь в облаке</span>
+                </button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeMonitorHelper()" style="margin-top: 4px; padding: 8px 12px; font-size: 13px;">
+                    <span id="t-helper-btn-close">Закрыть</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Confirmation Modal for Forget / Switch Board -->
