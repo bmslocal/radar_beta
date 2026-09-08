@@ -2490,7 +2490,7 @@
             localStorage.removeItem('bms_saved_ip');
             localStorage.removeItem('bms_saved_mac');
             localStorage.removeItem('bms_device_registry');
-            currentIp = '';
+            currentIp = '--';
             currentMac = '';
             lastCloudFetchTime = 0;
             lastCloudSuccessData = null;
@@ -2499,9 +2499,14 @@
                 try { activeCloudAbortController.abort(); } catch (e) {}
                 activeCloudAbortController = null;
             }
+            
+            // Force immediate UI reset
             updateUI();
+            
             const t = I18N[currentLang] || I18N.ru;
             showToast(t.toastResetDone || "Память платы сброшена. Поиск новой активной платы...");
+            
+            // Initiate a background discovery without auto-opening, but UI is already clean
             findControllerInCloud(false, true, 3500, null, true);
         }
 
@@ -2711,7 +2716,7 @@
             } else {
                 if (displayEl) displayEl.innerText = '--';
                 if (manualIpInput) manualIpInput.value = '';
-                if (firstRunTip) firstRunTip.style.display = 'flex';
+                if (firstRunTip) firstRunTip.style.display = 'none'; // Replaced redundant tip with the integrated quick guide
                 if (setupTitle) setupTitle.innerText = t.accordionSetupFirst;
                 if (setupIcon) setupIcon.innerText = '🚀';
                 if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
@@ -3271,6 +3276,15 @@
                                                     return false;
                                                 }
                                             }
+
+                                            // Global discovery freshness threshold
+                                            // We must NOT auto-connect to arbitrary stale boards from the global database if we are finding a NEW board.
+                                            // 10 minutes = 600,000 ms. If older than 10 mins, do not auto-adopt globally.
+                                            const ageMs = Date.now() - b.ts;
+                                            if (ageMs > 10 * 60 * 1000) {
+                                                return false;
+                                            }
+
                                             return true;
                                         });
 
