@@ -1350,7 +1350,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v86-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v87-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
@@ -2431,7 +2431,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v86-beta',
+                'Radar Version: v87-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2571,9 +2571,6 @@
             }
 
             isDiscovering = true;
-            if (!forceSearch) {
-                localStorage.removeItem('bms_ignored_mac'); // Clear ignore list ONLY on manual connect, not on reset
-            }
 
             const t = I18N[currentLang] || I18N.en;
             const btn = document.getElementById('btn-main-connect');
@@ -3246,7 +3243,7 @@
                                     const now = Date.now();
                                     const ageMs = (bTs > 0 && bTs <= now) ? (now - bTs) : Infinity;
 
-                                    if (targetCleanMac === ignoredMac && bTs <= resetTs) {
+                                    if (targetCleanMac === ignoredMac && bTs <= resetTs + 60000) {
                                         console.log(`[Cloud Discovery] Targeted record for ${targetCleanMac} is older than reset time (${bTs} <= ${resetTs}). Ignored.`);
                                     } else if (ageMs <= BOARD_FRESH_THRESHOLD_MS) {
                                         // 1 Board active user: fresh handshake!
@@ -3286,7 +3283,7 @@
                                             if (!b.ip || !isValidIp(b.ip) || b.ip === '0.0.0.0' || b.ip === '1.2.3.4' || b.ip === '192.168.43.99') return false;
                                             // Blacklist filter: Ignore reset board unless it published fresh telemetry AFTER the reset
                                             if (ignoredMac && (b.keyMac === ignoredMac || b.mac === ignoredMac)) {
-                                                if (b.ts <= resetTs) {
+                                                if (b.ts <= resetTs + 60000) {
                                                     console.log(`[Cloud Discovery] Filtered out blacklisted stale board: ${b.mac} (ts: ${b.ts} <= reset: ${resetTs})`);
                                                     return false;
                                                 }
@@ -3344,7 +3341,7 @@
                         const cleanNew = cleanMac(foundMac);
                         const isBoardSwitched = cleanPrev && (cleanPrev !== cleanNew);
 
-                        if (cleanNew !== ignoredMac || (foundTs > resetTs && resetTs > 0)) {
+                        if (cleanNew !== ignoredMac) {
                             try {
                                 localStorage.removeItem('bms_ignored_mac');
                                 localStorage.removeItem('bms_reset_timestamp');
