@@ -167,6 +167,9 @@
 
         let toastTimeout = null;
 
+initState();
+applyLanguage();
+
 window.addEventListener('DOMContentLoaded', () => {
             if (!justLinkedFromUrl) {
                 const aMac = getActiveMac();

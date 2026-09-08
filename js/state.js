@@ -112,9 +112,15 @@
             }
         }
 
-        // Initialize state from Registry or LocalStorage
-        let currentIp = '';
-        let currentMac = '';
+        
+let currentIp = '';
+let currentMac = '';
+let justLinkedFromUrl = false;
+
+function initState() {
+// Initialize state from Registry or LocalStorage
+        
+        
         const initActive = getActiveDevice();
         if (initActive && initActive.ip) {
             currentIp = initActive.ip;
@@ -126,7 +132,7 @@
 
         const queryIp = urlParams.get('ip');
         const queryMac = urlParams.get('mac');
-        let justLinkedFromUrl = false;
+        
 
         if (queryMac && queryMac.length >= 6) {
             const cQueryMac = cleanMac(queryMac);
@@ -151,3 +157,5 @@
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
+
+}

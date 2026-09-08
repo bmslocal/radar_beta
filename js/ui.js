@@ -8,7 +8,7 @@
         }
 
         // Apply language as soon as defined
-        applyLanguage();
+        // applyLanguage moved to main.js
 
         // Autonomous Card Dismissal
         function dismissAutoCard(event) {
