@@ -247,20 +247,39 @@
                 <div class="guide-step">
                     <div class="step-header">
                         <span class="step-num">1</span>
-                        <span class="step-title" id="t-search-step1-title">Подключитесь к сети Bms_Setup</span>
+                        <span class="step-title" id="t-search-step1-title">Включите раздачу с телефона</span>
                     </div>
                     <div class="step-body">
                         <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-search-step1-desc">
+                            Включите <b>Точку доступа</b> на телефоне со следующими параметрами:
+                        </div>
+                        <div class="cred-row" style="margin-bottom: 8px;">
+                            <span id="t-search-step1-net">Имя сети: <code>Bms</code></span>
+                            <span id="t-search-step1-pwd">Пароль: <code>bmslocal</code></span>
+                        </div>
+                        <div class="option-note" id="t-search-step1-note" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px 10px; margin: 0; color: #e4e4e7; font-size: 12.5px; line-height: 1.4;">
+                            ⚠️ <b>Важно:</b> Поддерживается только <b>2.4GHz Wi-Fi</b>. На iPhone включите «Максимальная совместимость».
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-step">
+                    <div class="step-header">
+                        <span class="step-num">2</span>
+                        <span class="step-title" id="t-search-step2-title">Подключитесь к сети Bms_Setup</span>
+                    </div>
+                    <div class="step-body">
+                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-search-step2-desc">
                             Подключите Wi-Fi телефона к сервисной сети контроллера:
                         </div>
                         <div class="cred-row" style="margin-bottom: 8px;">
-                            <span id="t-search-step1-net">Имя сети: <code>Bms_Setup</code></span>
-                            <span id="t-search-step1-pwd">Пароль: <code>bmslocal</code></span>
+                            <span id="t-search-step2-net">Имя сети: <code>Bms_Setup</code></span>
+                            <span id="t-search-step2-pwd">Пароль: <code>bmslocal</code></span>
                         </div>
-                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4; margin-bottom: 6px;" id="t-search-step1-tip">
+                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4; margin-bottom: 6px;" id="t-search-step2-tip">
                             💡 Если сеть <code>Bms_Setup</code> не отображается, выключите раздачу на телефоне на 15 секунд — контроллер создаст её автоматически.
                         </div>
-                        <div class="option-note" id="t-search-step1-warn" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px 10px; margin: 6px 0 0 0; color: #e4e4e7; font-size: 12.5px; line-height: 1.4;">
+                        <div class="option-note" id="t-search-step2-warn" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px 10px; margin: 6px 0 0 0; color: #e4e4e7; font-size: 12.5px; line-height: 1.4;">
                             ⚠️ В настройках сети <code>Bms_Setup</code> выключите «Автоподключение». При появлении окна «Нет интернета» выберите «Оставаться подключенным».
                         </div>
                     </div>
@@ -268,15 +287,15 @@
 
                 <div class="guide-step" id="guide-step-3" style="margin-bottom: 8px;">
                     <div class="step-header">
-                        <span class="step-num">2</span>
-                        <span class="step-title" id="t-search-step2-title">Определение IP-адреса</span>
+                        <span class="step-num">3</span>
+                        <span class="step-title" id="t-search-step3-title">Определение IP-адреса</span>
                     </div>
                     <div class="step-body">
                         <button type="button" class="btn-sync" id="btn-guide-sync" onclick="syncWithBoard()" style="margin-top: 4px; margin-bottom: 8px; width: 100%;">
                             <span id="guide-sync-icon" style="font-size: 18px;">📡</span>
                             <span id="t-btn-sync" style="font-size: 14.5px; font-weight: 700;">Найти контроллер (Автопоиск)</span>
                         </button>
-                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4;" id="t-search-step2-note">
+                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4;" id="t-search-step3-note">
                             Контроллер передаст свой IP-адрес Радару, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с сохраненным IP-адресом.
                         </div>
                     </div>
@@ -424,7 +443,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v92-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v93-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
@@ -465,7 +484,7 @@
                     <span id="t-helper-warn-title">Не открывается страница?</span>
                 </div>
                 <div style="font-size: 12.5px; line-height: 1.55; color: #e4e4e7; display: flex; flex-direction: column; gap: 7px;">
-                    <div id="t-helper-step-1">1. Включите <b>Точку доступа</b> на телефоне (сеть <code>Bms</code>, пароль <code>bms.local</code>, частота <b>2.4 ГГц</b>).</div>
+                    <div id="t-helper-step-1">1. Включите <b>Точку доступа</b> на телефоне (сеть <code>Bms</code>, пароль <code>bmslocal</code>, частота <b>2.4 ГГц</b>).</div>
                     <div id="t-helper-step-2">2. Включите зажигание гибрида (режим <b>READY</b>), чтобы плата получала питание.</div>
                     <div id="t-helper-step-3">3. Подождите 5–10 секунд, пока контроллер подключится к вашей сети.</div>
                 </div>
