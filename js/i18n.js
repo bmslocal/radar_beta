@@ -95,9 +95,26 @@ var I18N = {
                 quickGuideTitle: "Quick Start (3 Steps):",
                 qstep1: "Turn ON phone Hotspot (Network: <code>Bms</code>, Password: <code>bmslocal</code>, Band: <b>2.4 GHz</b>).",
                 qstep2: "Plug adapter into vehicle's <b>OBD2</b> port and power ON (<b>READY</b> mode).",
-                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
-                tabCloud: "⚡ Quick Start (Cloud)",
-                tabManual: "🛠️ Backup (Bms_Setup)",
+                qstep3: "Tap the green «Connect to Controller» button below.",
+                tabCloud: "⚡ Cloud",
+                tabSearch: "🔍 Search",
+                tabOffline: "📡 Offline",
+                searchIntro: "💡 <b>Local auto-search without internet:</b> the controller sends its IP directly to Radar via service Wi-Fi.",
+                searchStep1Title: "Connect to Bms_Setup Wi-Fi",
+                searchStep1Desc: "Connect your phone to controller's service Wi-Fi network:",
+                searchStep1Tip: "💡 If <code>Bms_Setup</code> does not appear, turn off phone hotspot for 15 seconds — controller will create it automatically.",
+                searchStep1Warn: "⚠️ In <code>Bms_Setup</code> network settings turn off «Auto-Join». If prompted «No internet», choose «Keep connection».",
+                searchStep2Title: "Automatic IP Discovery",
+                searchStep2Note: "The controller sends its IP to Radar, turns off <code>Bms_Setup</code>, and redirects you back with saved IP.",
+                manualIpTitle: "Enter IP Manually (Advanced)",
+                manualIpAdvDesc: "Where to find IP? In phone hotspot settings under «Connected devices».",
+                offlineWarn: "⚠️ <b>Mobile internet is unavailable</b> while connected directly to controller Wi-Fi <code>Bms_Setup</code>.",
+                offlineStepATitle: "Wi-Fi Network Bms_Setup",
+                offlineStepADesc: "Turn off phone hotspot for 15 seconds. The controller creates a backup network for direct connection:",
+                offlineStepBTitle: "Direct Controller Access",
+                offlineStepBDesc: "Connect phone to <code>Bms_Setup</code> Wi-Fi and open controller interface directly:",
+                btnOpenDirect: "Open http://10.10.10.1",
+                offlineStepBNote: "In web interface you can view telemetry or configure Wi-Fi credentials for your phone hotspot.",
                 modalResetTitle: "Switch Controller Board?",
                 modalResetDesc: "Radar will forget the saved address of the current board. You will be able to connect another board or transfer the adapter to another vehicle.",
                 modalResetConfirm: "Forget & Find New",
@@ -221,7 +238,26 @@ var I18N = {
                 quickGuideTitle: "快速上手（3步）：",
                 qstep1: "开启手机热点（网络：<code>Bms</code>，密码：<code>bmslocal</code>，频段：<b>2.4 GHz</b>）。",
                 qstep2: "将适配器插入车辆 <b>OBD2</b> 接口并启动车辆（<b>READY</b> 模式）。",
-                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                qstep3: "点击下方绿色“连接到控制器”按钮。",
+                tabCloud: "⚡ 云端",
+                tabSearch: "🔍 搜索",
+                tabOffline: "📡 离线",
+                searchIntro: "💡 <b>无网络本地自动搜索：</b>控制器通过服务 Wi-Fi 直接向雷达发送 IP 地址。",
+                searchStep1Title: "连接到 Bms_Setup Wi-Fi",
+                searchStep1Desc: "将手机连接到控制器的服务 Wi-Fi 网络：",
+                searchStep1Tip: "💡 如果未出现 <code>Bms_Setup</code>，请关闭手机热点 15 秒 — 控制器将自动开启服务网络。",
+                searchStep1Warn: "⚠️ 在 <code>Bms_Setup</code> 设置中关闭“自动加入”。若提示“无互联网连接”，请选择“保持连接”。",
+                searchStep2Title: "自动获取 IP 地址",
+                searchStep2Note: "控制器将自动将 IP 发送给雷达，关闭临时热点，并带您返回主屏（已保存 IP）。",
+                manualIpTitle: "手动输入 IP（高级）",
+                manualIpAdvDesc: "从手机热点设置的“已连接设备”中查找 IP 地址。",
+                offlineWarn: "⚠️ <b>注意：直接连接控制器 Wi-Fi 期间无法使用蜂窝移动网络。</b>",
+                offlineStepATitle: "Wi-Fi 网络 Bms_Setup",
+                offlineStepADesc: "关闭手机热点 15 秒，控制器将创建备用网络以供直接访问：",
+                offlineStepBTitle: "直接访问控制器",
+                offlineStepBDesc: "连接手机至 <code>Bms_Setup</code> Wi-Fi 并直接在浏览器中打开控制器地址：",
+                btnOpenDirect: "打开 http://10.10.10.1",
+                offlineStepBNote: "在控制器界面中可查看电池遥测并配置手机热点 Wi-Fi 参数。",
                 deviceLabel: "设备：",
                 btnQuickReset: "更换设备",
                 toastResetDone: "设备缓存已清除。请开启车辆电源 (READY) 以绑定新设备。",
@@ -331,7 +367,26 @@ var I18N = {
                 quickGuideTitle: "빠른 시작 (3단계):",
                 qstep1: "스마트폰 핫스팟을 켭니다 (네트워크: <code>Bms</code>, 비밀번호: <code>bmslocal</code>, 대역: <b>2.4 GHz</b>).",
                 qstep2: "차량 <b>OBD2</b> 단자에 어댑터를 연결하고 시동을 켭니다 (<b>READY</b> 모드).",
-                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                qstep3: "아래 초록색 «컨트롤러에 연결» 버튼을 누르세요.",
+                tabCloud: "⚡ 클라우드",
+                tabSearch: "🔍 검색",
+                tabOffline: "📡 오프라인",
+                searchIntro: "💡 <b>인터넷 없는 로컬 자동 검색:</b> 컨트롤러가 서비스 Wi-Fi를 통해 레이더로 직접 IP를 전송합니다.",
+                searchStep1Title: "Bms_Setup Wi-Fi 연결",
+                searchStep1Desc: "스마트폰을 컨트롤러의 서비스 Wi-Fi 네트워크에 연결하세요:",
+                searchStep1Tip: "💡 <code>Bms_Setup</code>이 표시되지 않으면 스마트폰 핫스팟을 15초간 끄세요. 컨트롤러가 자동으로 생성합니다.",
+                searchStep1Warn: "⚠️ <code>Bms_Setup</code> 설정에서 «자동 연결»을 끄세요. «인터넷 없음» 안내 시 «연결 유지»를 선택하세요.",
+                searchStep2Title: "자동 IP 수신",
+                searchStep2Note: "컨트롤러가 레이더로 IP를 전달하고 <code>Bms_Setup</code>을 종료한 뒤 IP가 저장된 상태로 복귀합니다.",
+                manualIpTitle: "수동 IP 입력 (고급)",
+                manualIpAdvDesc: "IP 주소는 스마트폰 핫스팟 설정의 «연결된 기기» 목록에서 확인할 수 있습니다.",
+                offlineWarn: "⚠️ <b>컨트롤러 Wi-Fi에 직접 연결된 동안에는 모바일 인터넷을 사용할 수 없습니다.</b>",
+                offlineStepATitle: "Wi-Fi 네트워크 Bms_Setup",
+                offlineStepADesc: "스마트폰 핫스팟을 15초간 끕니다. 컨트롤러가 직접 접속용 백업 네트워크를 생성합니다:",
+                offlineStepBTitle: "컨트롤러 직접 접속",
+                offlineStepBDesc: "<code>Bms_Setup</code> Wi-Fi에 연결하고 브라우저에서 컨트롤러 주소를 직접 엽니다:",
+                btnOpenDirect: "http://10.10.10.1 열기",
+                offlineStepBNote: "웹 화면에서 배터리 상태를 확인하거나 핫스팟 Wi-Fi 정보를 설정할 수 있습니다.",
                 deviceLabel: "보드:",
                 btnQuickReset: "보드 전환",
                 toastResetDone: "보드 메모리가 초기화되었습니다. 새 보드를 연결하려면 차량 시동을 켜세요(READY).",
@@ -445,8 +500,25 @@ var I18N = {
                 qstep1: "Включите точку доступа на телефоне (сеть: <code>Bms</code>, пароль: <code>bmslocal</code>, частота: <b>2.4 ГГц</b>).",
                 qstep2: "Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).",
                 qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
-                tabCloud: "⚡ Быстрый старт (Облако)",
-                tabManual: "🛠️ Резервный (Bms_Setup)",
+                tabCloud: "⚡ Облако",
+                tabSearch: "🔍 Поиск",
+                tabOffline: "📡 Офлайн",
+                searchIntro: "💡 <b>Локальный автопоиск без интернета:</b> контроллер сам передаст свой IP в Радар через сервисную сеть.",
+                searchStep1Title: "Подключение к Wi-Fi сети Bms_Setup",
+                searchStep1Desc: "Подключите Wi-Fi на телефоне к сервисной сети контроллера:",
+                searchStep1Tip: "💡 Если сеть <code>Bms_Setup</code> не появилась, выключите раздачу на телефоне на 15 секунд — контроллер поднимет её автоматически.",
+                searchStep1Warn: "⚠️ В свойствах сети <code>Bms_Setup</code> отключите «Автоподключение». Если появится запрос «Без доступа к интернету» — выберите «Сохранять подключение».",
+                searchStep2Title: "Получение IP-адреса",
+                searchStep2Note: "Контроллер передаст свой адрес в Радар, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с сохраненным адресом.",
+                manualIpTitle: "Ввести IP вручную (для продвинутых)",
+                manualIpAdvDesc: "Где узнать IP? В настройках точки доступа телефона в списке «Подключенные устройства».",
+                offlineWarn: "⚠️ <b>Мобильный интернет не будет работать</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>.",
+                offlineStepATitle: "Wi-Fi сеть Bms_Setup",
+                offlineStepADesc: "Выключите точку доступа на телефоне на 15 секунд. Контроллер создаст резервную сеть для прямого входа:",
+                offlineStepBTitle: "Прямой вход в контроллер",
+                offlineStepBDesc: "Подключитесь к Wi-Fi сети <code>Bms_Setup</code> и откройте адрес контроллера напрямую:",
+                btnOpenDirect: "Открыть http://10.10.10.1",
+                offlineStepBNote: "В веб-интерфейсе можно смотреть телеметрию и прописать параметры вашей точки доступа Wi-Fi.",
                 modalResetTitle: "Сменить плату контроллера?",
                 modalResetDesc: "Радар забудет сохраненный адрес текущей платы. Вы сможете подключить другую плату или перенести контроллер в другой автомобиль.",
                 modalResetConfirm: "Забыть и искать новую",
@@ -526,9 +598,26 @@ var I18N = {
                 quickGuideTitle: "クイックスタート (3ステップ):",
                 qstep1: "スマホのテザリングをONにします（SSID: <code>Bms</code>, パスワード: <code>bmslocal</code>, 帯域: <b>2.4GHz</b>）。",
                 qstep2: "アダプターを車両の <b>OBD2</b> ポートに差し込み、車両を <b>READY</b> モードにします。",
-                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
-                tabCloud: "⚡ クイックスタート（クラウド）",
-                tabManual: "🛠️ バックアップ（Bms_Setup）",
+                qstep3: "下の緑色の「コントローラーに接続」ボタンをタップします。",
+                tabCloud: "⚡ クラウド",
+                tabSearch: "🔍 検索",
+                tabOffline: "📡 オフライン",
+                searchIntro: "💡 <b>ネット不要のローカル自動検索：</b>コントローラーが設定用Wi-Fi経由でレーダーにIPを直接通知します。",
+                searchStep1Title: "Wi-Fi Bms_Setup に接続",
+                searchStep1Desc: "スマホのWi-Fiをコントローラーの設定用ネットワークに接続します：",
+                searchStep1Tip: "💡 <code>Bms_Setup</code> が表示されない場合は、テザリングを15秒間OFFにしてください。自動で起動します。",
+                searchStep1Warn: "⚠️ <code>Bms_Setup</code> の設定で「自動接続」をOFFにしてください。「インターネット未接続」と出た場合は「接続を維持」を選択してください。",
+                searchStep2Title: "IPアドレスの自動取得",
+                searchStep2Note: "コントローラーがIPをレーダーに送信し、<code>Bms_Setup</code> を停止して保存済みIPで復帰します。",
+                manualIpTitle: "手動IP入力 (上級者向け)",
+                manualIpAdvDesc: "IPアドレスはスマホのテザリング設定「接続中の機器」一覧で確認できます。",
+                offlineWarn: "⚠️ <b>コントローラーWi-Fiに接続中はモバイルデータ通信（ネット）は利用できません。</b>",
+                offlineStepATitle: "Wi-Fi ネットワーク Bms_Setup",
+                offlineStepADesc: "テザリングを15秒間OFFにすると、直接接続用のバックアップネットワークが起動します：",
+                offlineStepBTitle: "コントローラー直接アクセス",
+                offlineStepBDesc: "<code>Bms_Setup</code> Wi-Fi に接続し、ブラウザで直接コントローラーを開きます：",
+                btnOpenDirect: "http://10.10.10.1 を開く",
+                offlineStepBNote: "Web画面でバッテリー情報を確認したり、テザリング用Wi-Fi設定を行えます。",
                 modalResetTitle: "コントローラー基板を変更しますか？",
                 modalResetDesc: "レーダーは現在の基板のアドレスを消去します。別の基板に接続するか、別車両への載せ替えが可能です。",
                 modalResetConfirm: "消去して新規検索",
@@ -616,8 +705,30 @@ function applyLanguage() {
 
             // Text elements
             if (document.getElementById('t-app-title')) document.getElementById('t-app-title').innerText = t.appTitle;
-            if (document.getElementById('t-tab-cloud')) document.getElementById('t-tab-cloud').innerText = t.tabCloud || '⚡ Быстрый старт (Облако)';
-            if (document.getElementById('t-tab-manual')) document.getElementById('t-tab-manual').innerText = t.tabManual || '🛠️ Резервный (Bms_Setup)';
+            if (document.getElementById('t-tab-cloud')) document.getElementById('t-tab-cloud').innerText = t.tabCloud || '⚡ Облако';
+            if (document.getElementById('t-tab-search')) document.getElementById('t-tab-search').innerText = t.tabSearch || '🔍 Поиск';
+            if (document.getElementById('t-tab-offline')) document.getElementById('t-tab-offline').innerText = t.tabOffline || '📡 Офлайн';
+
+            // Tab 2 (Search) elements
+            if (document.getElementById('t-search-intro')) document.getElementById('t-search-intro').innerHTML = t.searchIntro || '';
+            if (document.getElementById('t-search-step1-title')) document.getElementById('t-search-step1-title').innerText = t.searchStep1Title || '';
+            if (document.getElementById('t-search-step1-desc')) document.getElementById('t-search-step1-desc').innerText = t.searchStep1Desc || '';
+            if (document.getElementById('t-search-step1-tip')) document.getElementById('t-search-step1-tip').innerHTML = t.searchStep1Tip || '';
+            if (document.getElementById('t-search-step1-warn')) document.getElementById('t-search-step1-warn').innerHTML = t.searchStep1Warn || '';
+            if (document.getElementById('t-search-step2-title')) document.getElementById('t-search-step2-title').innerText = t.searchStep2Title || '';
+            if (document.getElementById('t-search-step2-note')) document.getElementById('t-search-step2-note').innerHTML = t.searchStep2Note || '';
+            if (document.getElementById('t-manual-ip-title')) document.getElementById('t-manual-ip-title').innerText = t.manualIpTitle || 'Ввести IP вручную (для продвинутых)';
+            if (document.getElementById('t-manual-ip-adv-desc')) document.getElementById('t-manual-ip-adv-desc').innerText = t.manualIpAdvDesc || '';
+
+            // Tab 3 (Offline) elements
+            if (document.getElementById('t-offline-warn')) document.getElementById('t-offline-warn').innerHTML = t.offlineWarn || '';
+            if (document.getElementById('t-offline-step-a-title')) document.getElementById('t-offline-step-a-title').innerText = t.offlineStepATitle || '';
+            if (document.getElementById('t-offline-step-a-desc')) document.getElementById('t-offline-step-a-desc').innerText = t.offlineStepADesc || '';
+            if (document.getElementById('t-offline-step-b-title')) document.getElementById('t-offline-step-b-title').innerText = t.offlineStepBTitle || '';
+            if (document.getElementById('t-offline-step-b-desc')) document.getElementById('t-offline-step-b-desc').innerText = t.offlineStepBDesc || '';
+            if (document.getElementById('t-btn-open-direct')) document.getElementById('t-btn-open-direct').innerText = t.btnOpenDirect || 'Открыть http://10.10.10.1';
+            if (document.getElementById('t-offline-step-b-note')) document.getElementById('t-offline-step-b-note').innerText = t.offlineStepBNote || '';
+
             if (document.getElementById('t-modal-reset-title')) document.getElementById('t-modal-reset-title').innerText = t.modalResetTitle || 'Сменить плату контроллера?';
             if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerText = t.modalResetDesc || 'Радар забудет сохраненный адрес текущей платы.';
             if (document.getElementById('t-modal-reset-confirm')) document.getElementById('t-modal-reset-confirm').innerText = t.modalResetConfirm || 'Забыть и искать новую';

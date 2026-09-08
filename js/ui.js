@@ -94,7 +94,7 @@ function copySupportInfo() {
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v87-beta',
+                'Radar Version: v88-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -112,22 +112,32 @@ function copySupportInfo() {
         }
 
 function switchSetupTab(tab) {
-            const tabCloudBtn = document.getElementById('tab-btn-cloud');
-            const tabManualBtn = document.getElementById('tab-btn-manual');
-            const panelCloud = document.getElementById('setup-tab-cloud');
-            const panelManual = document.getElementById('setup-tab-manual');
+            if (tab === 'manual') tab = 'search';
 
-            if (tab === 'manual') {
-                if (tabCloudBtn) tabCloudBtn.classList.remove('active');
-                if (tabManualBtn) tabManualBtn.classList.add('active');
-                if (panelCloud) panelCloud.style.display = 'none';
-                if (panelManual) panelManual.style.display = 'block';
-            } else {
-                if (tabCloudBtn) tabCloudBtn.classList.add('active');
-                if (tabManualBtn) tabManualBtn.classList.remove('active');
-                if (panelCloud) panelCloud.style.display = 'block';
-                if (panelManual) panelManual.style.display = 'none';
-            }
+            const tabCloudBtn = document.getElementById('tab-btn-cloud');
+            const tabSearchBtn = document.getElementById('tab-btn-search');
+            const tabOfflineBtn = document.getElementById('tab-btn-offline');
+
+            const panelCloud = document.getElementById('setup-tab-cloud');
+            const panelSearch = document.getElementById('setup-tab-search');
+            const panelOffline = document.getElementById('setup-tab-offline');
+
+            if (tabCloudBtn) tabCloudBtn.classList.toggle('active', tab === 'cloud');
+            if (tabSearchBtn) tabSearchBtn.classList.toggle('active', tab === 'search');
+            if (tabOfflineBtn) tabOfflineBtn.classList.toggle('active', tab === 'offline');
+
+            if (panelCloud) panelCloud.style.display = (tab === 'cloud' ? 'block' : 'none');
+            if (panelSearch) panelSearch.style.display = (tab === 'search' ? 'block' : 'none');
+            if (panelOffline) panelOffline.style.display = (tab === 'offline' ? 'block' : 'none');
+        }
+
+function toggleManualIpSpoiler() {
+            const box = document.getElementById('manual-ip-box');
+            const arrow = document.getElementById('manual-ip-arrow');
+            if (!box) return;
+            const isHidden = (box.style.display === 'none' || !box.style.display);
+            box.style.display = isHidden ? 'block' : 'none';
+            if (arrow) arrow.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
         }
 
 function confirmResetDevice() {
@@ -219,12 +229,13 @@ function openAndScrollToGuide() {
         }
 
 function openAndScrollToStep3() {
+            switchSetupTab('search');
             openAndScrollToGuide();
             const step3El = document.getElementById('guide-step-3');
             if (step3El) {
                 setTimeout(() => {
                     step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
+                }, 120);
             }
         }
 

@@ -456,15 +456,9 @@ async function startOneTapDiscovery(forceSearch = false) {
                 // If not found in any phase:
                 if (statusDot) statusDot.innerText = '🔴';
                 if (statusText) statusText.innerText = t.statusNotFound || 'Контроллер не найден. Проверьте шаги выше.';
-                showToast('⚠️ Контроллер не ответил. Убедитесь, что включена точка доступа (2.4 ГГц) и режим READY');
+                showToast('⚠️ Контроллер не ответил в облаке. Переключаем на локальный автопоиск...');
 
-                const guide = document.getElementById('quick-guide');
-                const toggleGuideBtn = document.getElementById('btn-toggle-guide');
-                if (guide) {
-                    guide.style.display = 'block';
-                    if (toggleGuideBtn) toggleGuideBtn.style.display = 'none';
-                    guide.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                openAndScrollToStep3();
             } catch (err) {
                 console.error('[One-Tap Discovery Error]', err);
                 if (statusDot) statusDot.innerText = '🔴';
@@ -548,7 +542,9 @@ async function openDashboard() {
                 if (found && currentIp && currentIp !== '--') {
                     safeNavigateToDashboard(currentIp);
                 } else {
+                    showToast('⚠️ Контроллер не ответил. Попробуйте локальный автопоиск');
                     checkFailedNavigation();
+                    openAndScrollToStep3();
                 }
             }
         }

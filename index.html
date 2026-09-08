@@ -105,6 +105,12 @@
                 <span id="t-btn-open">Live Monitor</span>
             </button>
 
+            <!-- IP Unreachable Hint (shows if user clicks dashboard but board IP is changed/unreachable) -->
+            <div id="ip-unreachable-hint" class="ip-unreachable-hint" onclick="openAndScrollToStep3()" style="display: none;">
+                <span style="font-size: 16px;">💡</span>
+                <span id="t-ip-unreachable-text">Не открывается? Нажмите сюда для автопоиска контроллера</span>
+            </div>
+
             <!-- Android App Collapsible Button (shown on Android / Desktop) -->
             <button type="button" id="btn-toggle-apk" class="btn-secondary" onclick="toggleApkDetails()" style="display: none; justify-content: space-between; padding: 12px 14px; border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.08); margin-top: 14px;">
                 <div style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #fde68a; white-space: nowrap;">
@@ -162,13 +168,16 @@
 
         <!-- Content Panel 1: Connection & Settings Guide -->
         <div id="setup-content" class="bento-content">
-            <!-- Setup Sub-Tabs: Cloud vs Manual -->
+            <!-- Setup Sub-Tabs: Cloud vs Search vs Offline -->
             <div class="setup-tabs">
                 <button type="button" id="tab-btn-cloud" class="setup-tab-btn active" onclick="switchSetupTab('cloud')">
-                    <span id="t-tab-cloud">⚡ Быстрый старт (Облако)</span>
+                    <span id="t-tab-cloud">⚡ Облако</span>
                 </button>
-                <button type="button" id="tab-btn-manual" class="setup-tab-btn" onclick="switchSetupTab('manual')">
-                    <span id="t-tab-manual">🛠️ Резервный (Bms_Setup)</span>
+                <button type="button" id="tab-btn-search" class="setup-tab-btn" onclick="switchSetupTab('search')">
+                    <span id="t-tab-search">🔍 Поиск</span>
+                </button>
+                <button type="button" id="tab-btn-offline" class="setup-tab-btn" onclick="switchSetupTab('offline')">
+                    <span id="t-tab-offline">📡 Офлайн</span>
                 </button>
             </div>
 
@@ -231,57 +240,106 @@
                 </div>
             </div>
 
-            <!-- Panel 2: Manual / Bms_Setup Backup Setup -->
-            <div id="setup-tab-manual" style="display: none;">
-                <div style="font-size: 13px; color: #cbd5e1; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.45;" id="t-manual-intro">
-                    💡 <b>Резервный способ:</b> используйте, если телефон не раздает интернет или нет мобильной сети.
+            <!-- Panel 2: Local Auto-Search (Bms_Setup) -->
+            <div id="setup-tab-search" style="display: none;">
+                <div style="font-size: 13px; color: #cbd5e1; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.45;" id="t-search-intro">
+                    💡 <b>Локальный автопоиск без интернета:</b> контроллер сам передаст свой IP-адрес радару через сервисную сеть <code>Bms_Setup</code>.
+                </div>
+
+                <div class="guide-step">
+                    <div class="step-header">
+                        <span class="step-num">1</span>
+                        <span class="step-title" id="t-search-step1-title">Подключитесь к сети Bms_Setup</span>
+                    </div>
+                    <div class="step-body">
+                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-search-step1-desc">
+                            Подключите Wi-Fi телефона к сервисной сети контроллера:
+                        </div>
+                        <div class="cred-row" style="margin-bottom: 8px;">
+                            <span id="t-search-step1-net">Имя сети: <code>Bms_Setup</code></span>
+                            <span id="t-search-step1-pwd">Пароль: <code>bmslocal</code></span>
+                        </div>
+                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4; margin-bottom: 6px;" id="t-search-step1-tip">
+                            💡 Если сеть <code>Bms_Setup</code> не отображается, выключите раздачу на телефоне на 15 секунд — контроллер создаст её автоматически.
+                        </div>
+                        <div class="option-note" id="t-search-step1-warn" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px 10px; margin: 6px 0 0 0; color: #e4e4e7; font-size: 12.5px; line-height: 1.4;">
+                            ⚠️ В настройках сети <code>Bms_Setup</code> выключите «Автоподключение». При появлении окна «Нет интернета» выберите «Оставаться подключенным».
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-step" id="guide-step-3" style="margin-bottom: 8px;">
+                    <div class="step-header">
+                        <span class="step-num">2</span>
+                        <span class="step-title" id="t-search-step2-title">Определение IP-адреса</span>
+                    </div>
+                    <div class="step-body">
+                        <button type="button" class="btn-sync" id="btn-guide-sync" onclick="syncWithBoard()" style="margin-top: 4px; margin-bottom: 8px; width: 100%;">
+                            <span id="guide-sync-icon" style="font-size: 18px;">📡</span>
+                            <span id="t-btn-sync" style="font-size: 14.5px; font-weight: 700;">Найти контроллер (Автопоиск)</span>
+                        </button>
+                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4;" id="t-search-step2-note">
+                            Контроллер передаст свой IP-адрес Радару, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с сохраненным IP-адресом.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced spoiler: Manual IP -->
+                <div style="margin-top: 10px;">
+                    <button type="button" id="btn-toggle-manual-ip" class="btn-ghost" onclick="toggleManualIpSpoiler()" style="width: 100%; padding: 8px 12px; font-size: 13px; justify-content: space-between; background: rgba(255, 255, 255, 0.03); border: 1px dashed #3f3f46; border-radius: 8px; cursor: pointer;">
+                        <span>✏️ <span id="t-btn-manual-title">Ввести IP-адрес вручную</span></span>
+                        <span id="manual-ip-arrow" style="font-size: 10px; color: #a1a1aa; transition: transform 0.2s;">▼</span>
+                    </button>
+                    <div id="manual-ip-box" style="display: none; margin-top: 8px; padding: 12px; background: #202024; border: 1px solid #2d2d32; border-radius: 10px;">
+                        <div style="font-size: 12.5px; color: #a1a1aa; margin-bottom: 8px; line-height: 1.4;" id="t-manual-ip-adv-desc">
+                            Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="manual-ip" placeholder="10.48.33.187" class="mono" style="flex: 1; background: #18181b; border: 1px solid #3f3f46; color: #fafafa; padding: 10px 12px; border-radius: 8px; font-size: 14px;">
+                            <button type="button" class="btn-primary" onclick="saveManualIp()" style="width: auto; padding: 0 16px; min-height: unset;">
+                                <span id="t-btn-save-ip">Сохранить</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3: Direct Offline Access -->
+            <div id="setup-tab-offline" style="display: none;">
+                <div class="option-note" id="t-offline-warn" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; color: #fde68a; font-size: 13px; line-height: 1.5;">
+                    ⚠️ <b>Внимание: мобильный интернет будет недоступен</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>, так как контроллер не раздает выход в интернет.
                 </div>
 
                 <div class="guide-step">
                     <div class="step-header">
                         <span class="step-num">A</span>
-                        <span class="step-title" id="t-step-backup-a-title">Wi-Fi сеть Bms_Setup</span>
+                        <span class="step-title" id="t-offline-step-a-title">Wi-Fi сеть Bms_Setup</span>
                     </div>
                     <div class="step-body">
-                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-step-backup-a-desc">
-                            Выключите точку доступа на телефоне на 15 секунд. Контроллер сам создаст временную сеть для настройки:
+                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step-a-desc">
+                            Выключите точку доступа на телефоне на 15 секунд. Контроллер создаст резервную сеть для прямого входа:
                         </div>
-                        <div class="cred-row">
+                        <div class="cred-row" style="margin-bottom: 0;">
                             <span>Имя сети: <code>Bms_Setup</code></span>
                             <span>Пароль: <code>bmslocal</code></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="guide-step">
-                    <div class="step-header">
-                        <span class="step-num">B</span>
-                        <span class="step-title" id="t-step-backup-b-title">Прямой вход в контроллер</span>
-                    </div>
-                    <div class="step-body">
-                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 10px;" id="t-step-backup-b-desc">
-                            Подключитесь к Wi-Fi сети <code>Bms_Setup</code> и откройте адрес в браузере:
-                        </div>
-                        <a href="http://10.10.10.1/" target="_blank" class="btn-sync" style="text-decoration: none; margin-bottom: 8px; font-weight: 600;">
-                            <span>🌐</span> <span>Открыть http://10.10.10.1</span>
-                        </a>
-                    </div>
-                </div>
-
                 <div class="guide-step" style="margin-bottom: 4px;">
                     <div class="step-header">
-                        <span class="step-num">C</span>
-                        <span class="step-title" id="t-step-backup-c-title">Ручной ввод IP-адреса</span>
+                        <span class="step-num">B</span>
+                        <span class="step-title" id="t-offline-step-b-title">Прямой вход в контроллер</span>
                     </div>
                     <div class="step-body">
-                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.4;" id="t-step-backup-c-desc">
-                            Если вы знаете IP-адрес из списка подключенных устройств точки доступа:
+                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step-b-desc">
+                            Подключитесь к Wi-Fi сети <code>Bms_Setup</code> и откройте адрес контроллера напрямую:
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="manual-ip" placeholder="10.48.33.187" class="mono" style="flex: 1; background: #202024; border: 1px solid #3f3f46; color: #fafafa; padding: 10px 12px; border-radius: 8px; font-size: 14px;">
-                            <button type="button" class="btn-primary" onclick="saveManualIp()" style="width: auto; padding: 0 16px; min-height: unset;">
-                                <span id="t-btn-save-ip">Сохранить</span>
-                            </button>
+                        <a href="http://10.10.10.1/" target="_blank" class="btn-sync" style="text-decoration: none; margin-top: 4px; margin-bottom: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>🌐</span> <span id="t-btn-open-direct">Открыть http://10.10.10.1</span>
+                        </a>
+                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4; margin-top: 6px;" id="t-offline-step-b-note">
+                            В веб-интерфейсе контроллера доступен мониторинг батареи и раздел настроек Wi-Fi для подключения к вашей сети.
                         </div>
                     </div>
                 </div>
@@ -368,7 +426,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v87-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v88-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
