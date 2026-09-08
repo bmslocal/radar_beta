@@ -927,10 +927,10 @@
             <button type="button" class="auto-close-btn" onclick="dismissAutoCard(event)" title="Скрыть" aria-label="Скрыть">✕</button>
         </div>
 
-        <!-- 3-Step Quick Guide -->
+        <!-- 2-Step Quick Guide -->
         <div class="quick-guide" id="quick-guide">
             <div class="quick-guide-title" id="t-quick-guide-title">
-                <span>📋</span> <span>Быстрый старт (3 шага):</span>
+                <span>📋</span> <span>Быстрый старт (2 шага):</span>
             </div>
             <div class="quick-steps-list">
                 <div class="quick-step-item">
@@ -942,13 +942,7 @@
                 <div class="quick-step-item">
                     <div class="quick-step-badge">2</div>
                     <div class="quick-step-text" id="t-qstep-2">
-                        Вставьте адаптер в разъем <b>OBD2</b> автомобиля.
-                    </div>
-                </div>
-                <div class="quick-step-item">
-                    <div class="quick-step-badge">3</div>
-                    <div class="quick-step-text" id="t-qstep-3">
-                        Включите автомобиль в режим <b>READY</b> (зажигание).
+                        Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).
                     </div>
                 </div>
             </div>
@@ -969,6 +963,19 @@
             <div id="connect-status-text" class="connect-status">
                 <span id="status-dot">⚪</span>
                 <span id="t-status-idle">Нажмите для поиска и подключения</span>
+            </div>
+
+            <!-- Active Device Status Box with Prominent Reset Button -->
+            <div id="active-device-box" style="display: none; align-items: center; justify-content: space-between; margin-top: 12px; padding: 10px 14px; background: #202024; border: 1px solid #2d2d32; border-radius: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="device-status-dot">🟢</span>
+                    <span style="font-size: 13.5px; color: #a1a1aa;" id="t-device-label">Плата:</span>
+                    <span class="mono" id="display-ip" style="font-size: 14.5px; font-weight: 700; color: #4ade80;">--</span>
+                </div>
+                <button type="button" class="btn-ghost" onclick="resetActiveDevice()" style="margin: 0; padding: 6px 10px; font-size: 12.5px; color: #fca5a5; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Сменить плату или забыть сохраненный IP">
+                    <span>🔄</span>
+                    <span id="t-btn-quick-reset">Сменить плату</span>
+                </button>
             </div>
 
             <!-- Android App Collapsible Button (shown on Android / Desktop) -->
@@ -1053,74 +1060,20 @@
                     <span class="step-title" id="t-step2-title">Plug into Car & Power ON</span>
                 </div>
                 <div class="step-body" id="t-step2-body">
-                    Insert the controller into your vehicle's <b>OBD2 port</b> (under the steering wheel) and power on the car (<b>READY</b> mode).
+                    Insert the controller into your vehicle's <b>OBD2 port</b> (under the steering wheel) and power on the car (<b>READY</b> mode). The controller connects automatically in seconds.
                 </div>
             </div>
 
-            <div class="guide-step" id="guide-step-3">
+            <div class="guide-step" style="margin-bottom: 4px;">
                 <div class="step-header">
                     <span class="step-num">3</span>
-                    <span class="step-title" id="t-step3-title">IP Discovery (Auto-Sync)</span>
+                    <span class="step-title" id="t-step3-reset-title">Changed board or second car?</span>
                 </div>
                 <div class="step-body">
-                    <div style="border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; margin-bottom: 12px; overflow: hidden;">
-                        <div style="padding: 10px 10px 4px 10px;">
-                            <div id="t-step3-desc">Connect phone Wi-Fi to controller network with the following credentials:</div>
-                            <div class="cred-row" style="margin-bottom: 0;">
-                                <span id="t-step3-net">Network: <code>Bms_Setup</code></span>
-                                <span id="t-step3-pwd">Password: <code>bmslocal</code></span>
-                            </div>
-                        </div>
-                        <div class="option-note" id="t-step3-tips" style="background: rgba(245, 158, 11, 0.1); border-top: 1px solid rgba(245, 158, 11, 0.2); border-left: none; border-right: none; border-bottom: none; border-radius: 0; padding: 10px; margin: 0; color: #e4e4e7; font-size: 13.5px; line-height: 1.5;"></div>
-                    </div>
-                    
-                    <!-- Option A: Auto-Sync Button -->
-                    <button type="button" class="btn-sync" id="btn-guide-sync" onclick="findControllerInCloud(false, true)" style="margin-top: 10px; margin-bottom: 6px; width: 100%;">
-                        <span id="guide-sync-icon" style="font-size: 18px;">📡</span>
-                        <span id="t-btn-sync" style="font-size: 14.5px; font-weight: 700;">Найти контроллер</span>
-                    </button>
-                    <div class="option-note" id="t-step3-note">The controller will send its IP to Live Radar, disable Bms_Setup, and redirect you back with IP saved.</div>
-
-                    <!-- Option B: Manual IP Input in Step 3 -->
-                    <div style="margin-top: 12px; border-top: 1px dashed #3f3f46; padding-top: 12px;">
-                        <div style="font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px;" id="t-step3-advanced-title">Для продвинутых пользователей</div>
-                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 8px; line-height: 1.4;" id="t-step3-advanced-desc">Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства». Нажмите «Ввести IP-адрес вручную» и сохраните его.</div>
-                        <button type="button" class="btn-ghost" onclick="toggleEditIp()" style="width: 100%; padding: 8px 10px; margin: 0; font-size: 13.5px; justify-content: center; background: rgba(255, 255, 255, 0.03);">
-                            <span>✏️</span>
-                            <span id="t-btn-manual">Ввести IP-адрес вручную</span>
-                        </button>
-                        <div id="edit-row" class="edit-row" style="flex-direction: column; margin-top: 8px;">
-                            <div style="display: flex; width: 100%; gap: 8px;">
-                                <input type="text" id="manual-ip" class="input-ip" placeholder="10.48.33.187" inputmode="decimal" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="15">
-                                <button class="btn-save-ip" id="t-btn-save-ip" onclick="saveManualIp()">Save</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Option C: Reset / Change Board -->
-                    <div style="margin-top: 12px; border-top: 1px dashed #3f3f46; padding-top: 12px;">
-                        <div style="font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 4px;" id="t-step3-reset-title">Сменили плату или второе авто?</div>
-                        <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 8px; line-height: 1.4;" id="t-step3-reset-desc">Если вы подключили другую плату, нажмите кнопку ниже, чтобы Радар забыл старый IP и сразу нашел новую плату.</div>
-                        <button type="button" class="btn-ghost" onclick="resetActiveDevice()" style="width: 100%; padding: 8px 10px; margin: 0; font-size: 13.5px; justify-content: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5;">
-                            <span>🔄</span>
-                            <span id="t-btn-step3-reset">Сбросить память и найти новую плату</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="guide-step" style='margin-bottom: 4px;'>
-                <div class="step-header">
-                    <span class="step-num">4</span>
-                    <span class="step-title" id="t-step4-title">Launch Live Monitor</span>
-                </div>
-                <div class="step-body" id="t-step4-body">
-                    After obtaining the IP address, tap <b>«📊 Live Monitor»</b> above to view live telemetry.
-                </div>
-                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #3f3f46;">
-                    <button type="button" class="btn-primary" onclick="openDashboard()" style="margin: 0; width: 100%;">
-                        <span style="font-size: 16px; margin-right: 6px;">📊</span>
-                        <span id="t-step4-btn">Live Monitor</span>
+                    <div style="font-size: 13.5px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.4;" id="t-step3-reset-desc">If you connected another board or moved the adapter to another vehicle, tap below to clear saved device memory and discover the new board.</div>
+                    <button type="button" class="btn-ghost" onclick="resetActiveDevice()" style="width: 100%; padding: 10px; margin: 0; font-size: 13.5px; font-weight: 600; justify-content: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); color: #fca5a5; border-radius: 8px; cursor: pointer;">
+                        <span>🔄</span>
+                        <span id="t-btn-step3-reset">Reset memory & find new board</span>
                     </button>
                 </div>
             </div>
@@ -1155,14 +1108,21 @@
 
             <div class="trouble-item" onclick="toggleTrouble(this, event)">
                 <div class="trouble-header">
+                    <span class="trouble-q" id="t-tr-3-q">🟡 IP address changed or moved adapter?</span>
+                    <span class="trouble-arrow">▼</span>
+                </div>
+                <div class="trouble-a" id="t-tr-3-a">
+                    Thanks to smart cloud discovery, the board automatically updates its IP when connecting to your hotspot. If you switched boards, tap <b>«Switch / Reset Board»</b> on the main screen.
+                </div>
+            </div>
+
+            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+                <div class="trouble-header">
                     <span class="trouble-q" id="t-tr-custom-q">⚙️ How to connect controller to custom/home Wi-Fi?</span>
                     <span class="trouble-arrow">▼</span>
                 </div>
                 <div class="trouble-a" id="t-tr-custom-a">
-                    1. Turn off phone hotspot for 15s. The controller will launch its setup Wi-Fi <code>Bms_Setup</code> (password <code>bmslocal</code>).<br>
-                    2. Connect phone Wi-Fi to <code>Bms_Setup</code>, open <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>, or tap <b>«Auto-Sync»</b> above.<br>
-                    3. In the Wi-Fi settings section, enter your hotspot SSID and password, then save.<br>
-                    The controller will reconnect to your network automatically!
+                    Open Live Monitor while connected, navigate to Wi-Fi settings, enter your Wi-Fi SSID and password, and click save. The board will connect automatically!
                 </div>
             </div>
 
@@ -1172,39 +1132,17 @@
                     <span class="trouble-arrow">▼</span>
                 </div>
                 <div class="trouble-a" id="t-tr-4-a">
-                    No worries: turn off phone hotspot for 15 seconds. Since the controller cannot find the network, it will re-open <code>Bms_Setup</code> (password <code>bmslocal</code>), so you can enter new credentials via <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>.
+                    Turn off your phone hotspot for 15 seconds. If the controller cannot find the network, it opens emergency network <code>Bms_Setup</code> (password <code>bmslocal</code>) so you can enter new credentials.
                 </div>
             </div>
 
-            <div class="trouble-item" onclick="toggleTrouble(this, event)">
-                <div class="trouble-header">
-                    <span class="trouble-q" id="t-tr-2-q">📶 Tips for <code>Bms_Setup</code> Wi-Fi:</span>
-                    <span class="trouble-arrow">▼</span>
-                </div>
-                <div class="trouble-a" id="t-tr-2-a">
-                    • Turn <b>OFF</b> <i>«Auto-reconnect»</i> for Bms_Setup.<br>
-                    • If prompted <i>«No Internet»</i>, tap <b>«Keep Wi-Fi connection» / «Always connect»</b>.
-                </div>
-            </div>
-
-            <div class="trouble-item" onclick="toggleTrouble(this, event)">
+            <div class="trouble-item" onclick="toggleTrouble(this, event)" style="margin-bottom: 4px;">
                 <div class="trouble-header">
                     <span class="trouble-q" id="t-tr-android-q">🤖 Android Hotspot 2.4GHz Settings:</span>
                     <span class="trouble-arrow">▼</span>
                 </div>
                 <div class="trouble-a" id="t-tr-android-a">
                     In your Android phone settings ➔ <i>Portable Hotspot / Tethering</i> ➔ <i>Set up hotspot</i>, make sure <b>AP Band</b> is set to <b>2.4 GHz Band</b> (not 5.0 GHz preferred).
-                </div>
-            </div>
-
-            <div class="trouble-item" onclick="toggleTrouble(this, event)" style='margin-bottom: 4px;'>
-                <div class="trouble-header">
-                    <span class="trouble-q" id="t-tr-3-q">🟡 IP address changed?</span>
-                    <span class="trouble-arrow">▼</span>
-                </div>
-                <div class="trouble-a" id="t-tr-3-a">
-                    • Ensure phone Hotspot (2.4GHz) is ON and phone is connected to <code>Bms_Setup</code> Wi-Fi, then tap <b>«Auto-Sync»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(go to button)</a>.<br>
-                    • Or check phone Hotspot settings for the connected device IP and save it manually.
                 </div>
             </div>
         </div>
@@ -1214,38 +1152,34 @@
             <div class="support-header" onclick="toggleSupportInfo()">
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <span>ℹ️</span>
-                    <span id="t-support-title">Служебная информация (для мастера)</span>
+                    <span id="t-support-title">Device Information</span>
                 </div>
                 <span id="support-arrow" class="support-arrow">▼</span>
             </div>
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
-                    <span class="support-label" id="t-sup-radar-ver">Версия Радара:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v80-beta</span>
+                    <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
+                    <span class="support-val mono" id="sup-radar-ver">v81-beta</span>
                 </div>
                 <div class="support-row">
-                    <span class="support-label" id="t-sup-dev-mac">ID устройства (MAC):</span>
+                    <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
                     <span class="support-val mono" id="sup-device-mac">--</span>
                 </div>
                 <div class="support-row">
-                    <span class="support-label" id="t-sup-dev-ip">IP-адрес контроллера:</span>
+                    <span class="support-label" id="t-sup-dev-ip">Controller IP:</span>
                     <span class="support-val mono" id="sup-device-ip">--</span>
                 </div>
                 <div class="support-row">
-                    <span class="support-label" id="t-sup-board-fw">Прошивка платы:</span>
+                    <span class="support-label" id="t-sup-board-fw">Board Firmware:</span>
                     <span class="support-val mono" id="sup-board-fw">--</span>
-                </div>
-                <div class="support-row">
-                    <span class="support-label" id="t-sup-status">Статус связи:</span>
-                    <span class="support-val" id="sup-link-status">Ожидание</span>
                 </div>
                 <button type="button" class="btn-copy-support" onclick="resetActiveDevice()" style="margin-top: 6px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.35); color: #fca5a5;">
                     <span>🔄</span>
-                    <span id="t-btn-reset-dev">Сменить / забыть текущую плату</span>
+                    <span id="t-btn-reset-dev">Switch / Forget Current Board</span>
                 </button>
                 <button type="button" class="btn-copy-support" onclick="copySupportInfo()" style="margin-top: 6px;">
                     <span>📋</span>
-                    <span id="t-btn-copy-support">Скопировать данные для поддержки</span>
+                    <span id="t-btn-copy-support">Copy Support Data</span>
                 </button>
             </div>
         </div>
@@ -1338,10 +1272,12 @@
                 cloudFound: "Controller found:",
                 cloudNotFound: "Controller not connected to cloud yet. Turn on phone hotspot.",
                 cloudError: "Cloud error. Check phone internet connection.",
-                quickGuideTitle: "Quick Start (3 Steps):",
+                quickGuideTitle: "Quick Start (2 Steps):",
                 qstep1: "Turn ON phone Hotspot (Network: <code>Bms</code>, Password: <code>bmslocal</code>, Band: <b>2.4 GHz</b>).",
-                qstep2: "Plug the adapter into the vehicle's <b>OBD2</b> port.",
-                qstep3: "Turn ON the vehicle to <b>READY</b> mode (ignition).",
+                qstep2: "Plug adapter into vehicle's <b>OBD2</b> port and power ON (<b>READY</b> mode).",
+                deviceLabel: "Board:",
+                btnQuickReset: "Switch Board",
+                toastResetDone: "Board memory cleared. Turn on car ignition (READY) to pair new board.",
                 btnMainConnect: "Connect to Controller",
                 btnOpenDash: "Open Live Monitor",
                 toggleGuideShow: "Show Connection Steps ▼",
@@ -1376,7 +1312,7 @@
                 btnOpen: "Live Monitor",
                 ipUnreachableText: "无法连接。请开启手机热点。如果已开启，请点击此处查找新 IP。",
                 btnSync: "查找控制器",
-                                btnManual: "手动设置 IP",
+                btnManual: "手动设置 IP",
                 step3Or: "或手动输入控制器 IP：",
                 step3AdvancedTitle: "对于高级用户",
                 step3AdvancedDesc: "哪里可以找到 IP 地址？进入手机热点设置的“已连接设备”部分。",
@@ -1408,13 +1344,13 @@
                 step1Warn: "⚠️ <b>特别注意：</b> 仅支持 <b>2.4GHz Wi-Fi</b>。iPhone 用户请开启<i>“最大兼容性”</i>。",
                 step1Note: "",
                 step2Title: "插入车辆并通电",
-                step2Body: "将控制器插入车辆方向盘下方的 <b>OBD2 接口</b>，并将车辆启动至 <b>READY</b>模式。",
+                step2Body: "将控制器插入车辆方向盘下方的 <b>OBD2 接口</b>，并将车辆启动至 <b>READY</b> 模式。",
                 step3Title: "IP 检测（自动同步）",
                 step3Desc: "请在手机上连接控制器热点，参数如下：",
                 step3Net: "热点名称：<code>Bms_Setup</code>",
                 step3Pwd: "热点密码：<code>bmslocal</code>",
                 step3Tips: "<b style='color: #fde68a;'>⚠️ 重要提示：</b> 在此 Wi-Fi 网络的设置中，<b>关闭“自动连接”</b>。如果提示“无网络”，请选择<b>“保持连接”</b>。",
-                                btnGuideSync: "与控制器自动同步",
+                btnGuideSync: "与控制器自动同步",
                 step3Note: "控制器将自动将 IP 发送给雷达，关闭临时热点，并带您返回主屏（已保存 IP）。",
                 step4Title: "启动 Live Monitor",
                 step4Body: "获取 IP 地址后，点击<b>«📊 Live Monitor»</b>（此处或顶部均可）即可查看实时电池遥测数据。",
@@ -1445,10 +1381,12 @@
                 cloudFound: "已找到控制器：",
                 cloudNotFound: "控制器尚未连接到云端。请开启手机热点。",
                 cloudError: "云端连接错误，请检查手机网络。",
-                quickGuideTitle: "快速入门（3步）：",
+                quickGuideTitle: "快速上手（2步）：",
                 qstep1: "开启手机热点（网络：<code>Bms</code>，密码：<code>bmslocal</code>，频段：<b>2.4 GHz</b>）。",
-                qstep2: "将适配器插入车辆的 <b>OBD2</b> 接口。",
-                qstep3: "将车辆启动至 <b>READY</b> 模式（点火）。",
+                qstep2: "将适配器插入车辆 <b>OBD2</b> 接口并启动车辆（<b>READY</b> 模式）。",
+                deviceLabel: "设备：",
+                btnQuickReset: "更换设备",
+                toastResetDone: "设备缓存已清除。请开启车辆电源 (READY) 以绑定新设备。",
                 btnMainConnect: "连接到控制器",
                 btnOpenDash: "打开 Live Monitor",
                 toggleGuideShow: "显示连接步骤 ▼",
@@ -1483,7 +1421,7 @@
                 btnOpen: "Live Monitor",
                 ipUnreachableText: "연결 없음. 모바일 핫스팟을 켜세요. 켜져 있다면 여기를 눌러 IP를 찾으세요.",
                 btnSync: "컨트롤러 찾기",
-                                btnManual: "수동으로 IP 입력",
+                btnManual: "수동으로 IP 입력",
                 step3Or: "또는 수동으로 IP 입력:",
                 step3AdvancedTitle: "고급 사용자용",
                 step3AdvancedDesc: "IP 주소는 어디서 찾나요? 휴대폰 핫스팟 설정의 '연결된 기기' 섹션으로 이동하세요.",
@@ -1518,7 +1456,7 @@
                 step3Net: "네트워크 이름: <code>Bms_Setup</code>",
                 step3Pwd: "비밀번호: <code>bmslocal</code>",
                 step3Tips: "<b style='color: #fde68a;'>⚠️ 중요:</b> 이 Wi-Fi 네트워크 설정에서 <b>«자동 연결»</b>을 끕니다. 팝업 시 <b>«연결 유지»</b>를 선택합니다.",
-                                btnGuideSync: "컨트롤러와 자동 동기화",
+                btnGuideSync: "컨트롤러와 자동 동기화",
                 step3Note: "컨트롤러가 Live Radar로 IP 주소를 전송하고 Bms_Setup을 끈 후 IP가 저장된 상태로 돌아옵니다.",
                 step4Title: "Live Monitor 실행",
                 step4Body: "IP 주소를 가져온 후 <b>«📊 Live Monitor»</b>(여기 또는 맨 위)를 누르면 실시간 데이터를 볼 수 있습니다.",
@@ -1549,10 +1487,12 @@
                 cloudFound: "컨트롤러를 찾았습니다:",
                 cloudNotFound: "컨트롤러가 아직 연결되지 않았습니다. 스마트폰 핫스팟을 켜주세요.",
                 cloudError: "클라우드 오류입니다. 스마트폰 인터넷을 확인하세요.",
-                quickGuideTitle: "빠른 시작 (3단계):",
+                quickGuideTitle: "빠른 시작 (2단계):",
                 qstep1: "스마트폰 핫스팟을 켭니다 (네트워크: <code>Bms</code>, 비밀번호: <code>bmslocal</code>, 대역: <b>2.4 GHz</b>).",
-                qstep2: "차량의 <b>OBD2</b> 포트에 어댑터를 연결합니다.",
-                qstep3: "차량 시동을 <b>READY</b> 모드로 켭니다.",
+                qstep2: "차량 <b>OBD2</b> 단자에 어댑터를 연결하고 시동을 켭니다 (<b>READY</b> 모드).",
+                deviceLabel: "보드:",
+                btnQuickReset: "보드 전환",
+                toastResetDone: "보드 메모리가 초기화되었습니다. 새 보드를 연결하려면 차량 시동을 켜세요(READY).",
                 btnMainConnect: "컨트롤러에 연결",
                 btnOpenDash: "Live Monitor 열기",
                 toggleGuideShow: "연결 가이드 보기 ▼",
@@ -1587,7 +1527,7 @@
                 btnOpen: "Live Monitor",
                 ipUnreachableText: "Нет связи. Включите Точку доступа. Если она включена — нажмите сюда для поиска IP-адреса.",
                 btnSync: "Найти контроллер",
-                                btnManual: "Ввести IP-адрес вручную",
+                btnManual: "Ввести IP-адрес вручную",
                 step3Or: "Укажите IP-адрес вручную:",
                 step3AdvancedTitle: "Для продвинутых пользователей",
                 step3AdvancedDesc: "Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».",
@@ -1625,7 +1565,7 @@
                 step3Net: "Имя сети: <code>Bms_Setup</code>",
                 step3Pwd: "Пароль: <code>bmslocal</code>",
                 step3Tips: "<b style='color: #fde68a;'>⚠️ ВАЖНО:</b> В настройках этой Wi-Fi сети выключите <b>«Автоподключение»</b>. При окне «Нет интернета» выберите <b>«Оставаться подключенным»</b>.",
-                                btnGuideSync: "Найти контроллер (Автопоиск IP-адреса)",
+                btnGuideSync: "Найти контроллер (Автопоиск IP-адреса)",
                 step3Note: "Контроллер передаст свой IP-адрес Радару, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с уже сохраненным IP-адресом.",
                 step4Title: "Запуск Live Monitor",
                 step4Body: "После получения IP-адреса нажмите <b>«📊 Live Monitor»</b> (здесь или в самом верху) для перехода к телеметрии.",
@@ -1636,19 +1576,19 @@
                 tr2Q: "📶 Подсказки для сети Bms_Setup:",
                 tr2A: "• Выключите <i>«Автоподключение»</i> для <code>Bms_Setup</code>.<br>• При появлении окна <i>«Нет интернета»</i> выберите <i>«Оставаться подключенным»</i>.",
                 tr3Q: "🟡 Сменился IP-адрес?",
-                tr3A: "• Убедитесь, что на телефоне включена точка доступа (2.4 ГГц) и телефон подключен к Wi-Fi сети <code>Bms_Setup</code>, затем нажмите <b>«Найти контроллер»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(перейти к кнопке)</a>.<br>• Или посмотрите IP-адрес в настройках точки доступа телефона и введите вручную.",
+                tr3A: "• Благодаря умному автопоиску плата передает новый IP при подключении к вашей точке доступа.<br>• Если вы сменили плату, нажмите <b>«Сменить плату»</b> на главном экране.",
                 trAndroidQ: "🤖 Настройка 2.4GHz на телефонах Android:",
                 trAndroidA: "В меню <i>Настройки ➔ Точка доступа Wi-Fi ➔ Настройка точки доступа</i> переключите пункт <b>Диапазон частот (AP Band)</b> на <b>2.4 ГГц</b> (вместо 5 ГГц).",
                 trCustomQ: "⚙️ Как подключить контроллер к своей сети Wi-Fi (своё имя и пароль)?",
-                trCustomA: "1. Выключите раздачу с телефона на 15 сек — контроллер откроет временную сеть:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms_Setup</code></span><span>Пароль: <code>bmslocal</code></span></div><br>2. Подключитесь к Wi-Fi <code>Bms_Setup</code>, перейдите на <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> или <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>, или нажмите <b>«Найти контроллер»</b> выше.<br>3. В блоке настроек Wi-Fi введите SSID и пароль вашей точки доступа и сохраните.<br>После сохранения контроллер будет подключаться к вашей сети автоматически!",
+                trCustomA: "1. Откройте Live Monitor при подключении, перейдите в настройки Wi-Fi, введите SSID и пароль вашей точки доступа и сохраните.<br>После сохранения контроллер будет подключаться к вашей сети автоматически!",
                 tr4Q: "❓ Сменили телефон или ошиблись в пароле Wi-Fi?",
-                tr4A: "Не переживайте: выключите раздачу на телефоне на 15 секунд. Контроллер не найдет сеть и снова откроет сервисную сеть:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms_Setup</code></span><span>Пароль: <code>bmslocal</code></span></div> чтобы вы могли ввести новые данные через <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> или <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>.",
+                tr4A: "Не переживайте: выключите раздачу на телефоне на 15 секунд. Контроллер не найдет сеть и откроет сервисную сеть <code>Bms_Setup</code> (пароль <code>bmslocal</code>), чтобы вы могли ввести новые данные через Live Monitor.",
                 toastLinked: "✅ Контроллер привязан: ",
                 toastConnecting: "📡 Подключение (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">Убедитесь, что на телефоне включена точка доступа и вы подключены к Wi-Fi сети <code>Bms_Setup</code>!</small>",
                 toastSetupFirst: "Пожалуйста, выполните подключение по инструкции ниже",
                 btnConnecting: "Подключение...",
                 alertInvalidIp: "Неверный формат IP адреса (пример: 10.48.33.187)",
-                dashUnreachable: "⚠️ <b>Не удается открыть страницу контроллера.</b><br>• Проверьте, что на телефоне включена раздача (2.4GHz):<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms</code></span><span>Пароль: <code>bmslocal</code></span></div><br>• Убедитесь, что авто в режиме <b>READY</b>.<br>• Или подключитесь к Wi-Fi сети <code>Bms_Setup</code> и нажмите <b>«Найти контроллер»</b>.",
+                dashUnreachable: "⚠️ <b>Не удается открыть страницу контроллера.</b><br>• Проверьте, что на телефоне включена раздача (2.4GHz):<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms</code></span><span>Пароль: <code>bmslocal</code></span></div><br>• Убедитесь, что авто в режиме <b>READY</b>.",
                 errNoSetupNetwork: "⚠️ Сначала подключитесь к сети <code>Bms_Setup</code>",
                 manualIpHint: "Найдите IP-адрес в настройках точки доступа (например: 10.48.33.x)",
                 btnCloudSearch: "Найти контроллер в облаке",
@@ -1656,10 +1596,12 @@
                 cloudFound: "Контроллер найден:",
                 cloudNotFound: "Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.",
                 cloudError: "Ошибка связи с облаком. Проверьте интернет на телефоне.",
-                quickGuideTitle: "Быстрый старт (3 шага):",
+                quickGuideTitle: "Быстрый старт (2 шага):",
                 qstep1: "Включите точку доступа на телефоне (сеть: <code>Bms</code>, пароль: <code>bmslocal</code>, частота: <b>2.4 ГГц</b>).",
-                qstep2: "Вставьте адаптер в разъем <b>OBD2</b> автомобиля.",
-                qstep3: "Включите автомобиль в режим <b>READY</b> (зажигание).",
+                qstep2: "Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).",
+                deviceLabel: "Плата:",
+                btnQuickReset: "Сменить плату",
+                toastResetDone: "Память платы сброшена. Включите зажигание (READY) для привязки новой платы.",
                 btnMainConnect: "Подключиться к контроллеру",
                 btnOpenDash: "Открыть Live Monitor",
                 toggleGuideShow: "Показать шаги подключения ▼",
@@ -1668,7 +1610,7 @@
                 statusSearchingLocal: "Поиск контроллера в локальной сети...",
                 statusSearchingCloud: "Запрос свежего адреса из облака...",
                 statusFound: "Контроллер найден! Открываем...",
-                statusNotFound: "Контроллер не найден. Проверьте шаги 1–3 выше.",
+                statusNotFound: "Контроллер не найден. Проверьте шаги 1–2 выше.",
                 supportTitle: "Служебная информация (для мастера)",
                 supRadarVer: "Версия Радара:",
                 supDevMac: "ID устройства (MAC):",
@@ -1719,10 +1661,12 @@
                 btnInstall: "インストール",
                 installTitleIos: "📲 iPhone に追加",
                 installDescIos: "Safariの共有ボタン ⎋ をタップし、「ホーム画面に追加」➕ を選択してください。",
-                quickGuideTitle: "クイックスタート (3ステップ):",
+                quickGuideTitle: "クイックスタート (2ステップ):",
                 qstep1: "スマホのテザリングをONにします（SSID: <code>Bms</code>, パスワード: <code>bmslocal</code>, 帯域: <b>2.4GHz</b>）。",
-                qstep2: "アダプターを車両の <b>OBD2</b> ポートに差し込みます。",
-                qstep3: "車両を <b>READY</b> モード（イグニッションON）にします。",
+                qstep2: "アダプターを車両の <b>OBD2</b> ポートに差し込み、車両を <b>READY</b> モードにします。",
+                deviceLabel: "ボード:",
+                btnQuickReset: "ボード切替",
+                toastResetDone: "ボードのメモリを消去しました。新しいボードを登録するにはREADYをONにしてください。",
                 btnMainConnect: "コントローラーに接続",
                 btnOpenDash: "Live Monitor を開く",
                 toggleGuideShow: "接続手順を表示 ▼",
@@ -1950,10 +1894,12 @@
 
             // Text elements
             if (document.getElementById('t-app-title')) document.getElementById('t-app-title').innerText = t.appTitle;
-            if (document.getElementById('t-quick-guide-title')) document.getElementById('t-quick-guide-title').innerHTML = `<span>📋</span> <span>${t.quickGuideTitle || 'Быстрый старт (3 шага):'}</span>`;
+            if (document.getElementById('t-quick-guide-title')) document.getElementById('t-quick-guide-title').innerHTML = `<span>📋</span> <span>${t.quickGuideTitle || 'Быстрый старт (2 шага):'}</span>`;
             if (document.getElementById('t-qstep-1')) document.getElementById('t-qstep-1').innerHTML = t.qstep1 || '';
             if (document.getElementById('t-qstep-2')) document.getElementById('t-qstep-2').innerHTML = t.qstep2 || '';
             if (document.getElementById('t-qstep-3')) document.getElementById('t-qstep-3').innerHTML = t.qstep3 || '';
+            if (document.getElementById('t-device-label')) document.getElementById('t-device-label').innerText = t.deviceLabel || 'Плата:';
+            if (document.getElementById('t-btn-quick-reset')) document.getElementById('t-btn-quick-reset').innerText = t.btnQuickReset || 'Сменить плату';
             if (document.getElementById('t-btn-main-connect')) document.getElementById('t-btn-main-connect').innerText = t.btnMainConnect || 'Подключиться к контроллеру';
             if (document.getElementById('t-status-idle')) document.getElementById('t-status-idle').innerText = t.statusIdle || 'Нажмите для поиска и подключения';
 
@@ -2195,7 +2141,7 @@
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v80-beta',
+                'Radar Version: v81-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -2401,8 +2347,10 @@
                 if (displayMacEl) displayMacEl.innerText = '--';
             }
 
+            const activeDeviceBox = document.getElementById('active-device-box');
             if (currentIp && currentIp !== '--' && isValidIp(currentIp)) {
                 if (displayEl) displayEl.innerText = currentIp;
+                if (activeDeviceBox) activeDeviceBox.style.display = 'flex';
                 if (manualIpInput) manualIpInput.value = currentIp;
                 if (firstRunTip) firstRunTip.style.display = 'none';
                 if (setupTitle) setupTitle.innerText = t.accordionSetupConfig;
@@ -2422,6 +2370,7 @@
                 }
             } else {
                 if (displayEl) displayEl.innerText = '--';
+                if (activeDeviceBox) activeDeviceBox.style.display = 'none';
                 if (manualIpInput) manualIpInput.value = '';
                 if (firstRunTip) firstRunTip.style.display = 'flex';
                 if (setupTitle) setupTitle.innerText = t.accordionSetupFirst;
