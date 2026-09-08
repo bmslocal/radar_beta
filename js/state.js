@@ -8,7 +8,7 @@ var IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-
 var isDiscovering = false;
 
 // Firebase Realtime Database (RTDB) Configuration & State
-var RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com/boards";
+var RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
 var discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
 var activeCloudAbortController = null;
 var initialCloudPromise = null;
@@ -16,7 +16,7 @@ var inFlightCloudPromise = null;
 var lastCloudFetchTime = 0;
 var lastCloudSuccessData = null; // { ip, mac, version, ts }
 var CLOUD_CACHE_TTL_MS = 15000; // 15 seconds in-memory cooldown for redundant fetches
-var BOARD_FRESH_THRESHOLD_MS = 15 * 60 * 1000; // 15 minutes freshness threshold
+var BOARD_FRESH_THRESHOLD_MS = 4 * 60 * 60 * 1000; // 4 hours freshness threshold for automotive trips
 
 function cleanMac(mac) {
             return (mac || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();

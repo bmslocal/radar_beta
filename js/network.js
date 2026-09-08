@@ -207,11 +207,9 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                                                 }
                                             }
 
-                                            // Global discovery freshness threshold
-                                            // We must NOT auto-connect to arbitrary stale boards from the global database if we are finding a NEW board.
-                                            // 10 minutes = 600,000 ms. If older than 10 mins, do not auto-adopt globally.
+                                            // Global discovery freshness threshold (4 hours)
                                             const ageMs = Date.now() - b.ts;
-                                            if (ageMs > 10 * 60 * 1000) {
+                                            if (ageMs > BOARD_FRESH_THRESHOLD_MS) {
                                                 return false;
                                             }
 
