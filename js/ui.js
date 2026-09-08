@@ -1,4 +1,18 @@
-        function showToast(msg) {
+// ========================================================
+// ui.js - User Interface Rendering & Interactions
+// ========================================================
+
+var toastTimeout = null;
+
+// Autonomous Card Dismissal Check
+try {
+    if (localStorage.getItem('bms_autocard_dismissed') === '1') {
+        const card = document.getElementById('auto-card');
+        if (card) card.style.display = 'none';
+    }
+} catch (e) {}
+
+function showToast(msg) {
             const toast = document.getElementById('toast');
             if (!toast) return;
             toast.innerHTML = msg;
@@ -7,11 +21,7 @@
             toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 6000);
         }
 
-        // Apply language as soon as defined
-        // applyLanguage moved to main.js
-
-        // Autonomous Card Dismissal
-        function dismissAutoCard(event) {
+function dismissAutoCard(event) {
             if (event) event.stopPropagation();
             const card = document.getElementById('auto-card');
             if (card) card.style.display = 'none';
@@ -19,32 +29,8 @@
                 localStorage.setItem('bms_autocard_dismissed', '1');
             } catch (e) {}
         }
-        try {
-            if (localStorage.getItem('bms_autocard_dismissed') === '1') {
-                const card = document.getElementById('auto-card');
-                if (card) card.style.display = 'none';
-            }
-        } catch (e) {}
 
-        // PWA Service Worker Registration with active update check
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then((reg) => {
-                    reg.update();
-                }).catch(() => {});
-            });
-        }
-
-        // Device Detection (Android vs iOS vs Desktop)
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isStandalone = Boolean(
-            (window.navigator && window.navigator.standalone) || 
-            (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
-        );
-
-        // Toggle APK Card in Main View
-        function toggleApkDetails() {
+function toggleApkDetails() {
             const box = document.getElementById('apk-details-box');
             const arrow = document.getElementById('apk-toggle-arrow');
             if (!box) return;
@@ -59,45 +45,11 @@
             }
         }
 
-        // Dismissal handlers for APK Card
-        function onApkDownload() {
+function onApkDownload() {
             // Tracking or UI updates can happen here
         }
 
-        if (isAndroid) {
-            const btnApk = document.getElementById('btn-toggle-apk');
-            if (btnApk) btnApk.style.display = 'flex';
-        }
-
-        if (isIOS && !isStandalone) {
-            const iosBanner = document.getElementById('install-banner-ios');
-            if (iosBanner) iosBanner.style.display = 'block';
-        }
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            if (!isStandalone) {
-                const banner = document.getElementById('install-banner-android');
-                if (banner) banner.style.display = 'block';
-            }
-        });
-
-        const btnInstall = document.getElementById('btn-install-app');
-        if (btnInstall) {
-            btnInstall.addEventListener('click', async () => {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    deferredPrompt = null;
-                    const banner = document.getElementById('install-banner-android');
-                    if (banner) banner.style.display = 'none';
-                }
-            });
-        }
-
-        function toggleSupportInfo() {
+function toggleSupportInfo() {
             const details = document.getElementById('support-details');
             const arrow = document.getElementById('support-arrow');
             if (!details) return;
@@ -113,7 +65,7 @@
             }
         }
 
-        function updateSupportInfo() {
+function updateSupportInfo() {
             const active = getActiveDevice();
             const mac = (active && active.cleanMac) ? (active.mac || formatMac(active.cleanMac)) : (currentMac ? formatMac(currentMac) : '--');
             const ip = (currentIp && currentIp !== '--') ? currentIp : '--';
@@ -132,7 +84,7 @@
             if (supStat) supStat.innerText = status;
         }
 
-        function copySupportInfo() {
+function copySupportInfo() {
             const active = getActiveDevice();
             const mac = (active && active.cleanMac) ? (active.mac || formatMac(active.cleanMac)) : (currentMac ? formatMac(currentMac) : '--');
             const ip = (currentIp && currentIp !== '--') ? currentIp : '--';
@@ -159,8 +111,7 @@
             });
         }
 
-        // Sub-tabs switching in Setup accordion (Cloud vs Backup)
-        function switchSetupTab(tab) {
+function switchSetupTab(tab) {
             const tabCloudBtn = document.getElementById('tab-btn-cloud');
             const tabManualBtn = document.getElementById('tab-btn-manual');
             const panelCloud = document.getElementById('setup-tab-cloud');
@@ -179,13 +130,12 @@
             }
         }
 
-        // Confirmation Modal for switching / resetting device
-        function confirmResetDevice() {
+function confirmResetDevice() {
             const modal = document.getElementById('reset-modal');
             if (modal) modal.style.display = 'flex';
         }
 
-        function closeResetModal(event) {
+function closeResetModal(event) {
             if (event && event.target && event.target.id !== 'reset-modal' && !event.target.classList.contains('modal-btn-cancel')) {
                 return;
             }
@@ -193,7 +143,7 @@
             if (modal) modal.style.display = 'none';
         }
 
-        function executeResetDevice() {
+function executeResetDevice() {
             const modal = document.getElementById('reset-modal');
             if (modal) modal.style.display = 'none';
 
@@ -231,11 +181,11 @@
             findControllerInCloud(false, true, 3500, null, true);
         }
 
-        function resetActiveDevice() {
+function resetActiveDevice() {
             confirmResetDevice();
         }
 
-        function toggleQuickGuide() {
+function toggleQuickGuide() {
             const guide = document.getElementById('quick-guide');
             const toggleText = document.getElementById('t-toggle-guide-text');
             const t = I18N[currentLang] || I18N.en;
@@ -252,7 +202,234 @@
             }
         }
 
-        function updateUI() {
+function openAndScrollToGuide() {
+            const setupContent = document.getElementById('setup-content');
+            const setupTile = document.getElementById('tile-setup');
+            const faqContent = document.getElementById('faq-content');
+            const faqTile = document.getElementById('tile-faq');
+
+            if (faqContent) faqContent.style.display = 'none';
+            if (faqTile) faqTile.classList.remove('active');
+
+            if (setupContent) setupContent.style.display = 'block';
+            if (setupTile) {
+                setupTile.classList.add('active');
+                setupTile.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+function openAndScrollToStep3() {
+            openAndScrollToGuide();
+            const step3El = document.getElementById('guide-step-3');
+            if (step3El) {
+                setTimeout(() => {
+                    step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+function goToSetupSync() {
+            openAndScrollToStep3();
+        }
+
+function checkFailedNavigation() {
+            const recovery = document.getElementById('nav-recovery-card');
+            const hint = document.getElementById('ip-unreachable-hint');
+            if (recovery && currentIp !== '10.10.10.1') {
+                recovery.style.display = 'block';
+            }
+            if (hint && currentIp !== '10.10.10.1') {
+                hint.style.display = 'flex';
+            }
+        }
+
+async function handleIpUnreachable() {
+            const t = I18N[currentLang] || I18N.ru;
+            showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+            const found = await findControllerInCloud(true, true, 1500);
+            if (!found) {
+                openAndScrollToStep3();
+            }
+        }
+
+function toggleEditIp() {
+            const row = document.getElementById('edit-row');
+            if (row) {
+                row.style.display = (row.style.display === 'flex') ? 'none' : 'flex';
+            }
+        }
+
+function saveManualIp() {
+            const t = I18N[currentLang] || I18N.en;
+            const input = document.getElementById('manual-ip');
+            const val = input ? input.value.trim() : '';
+            if (isValidIp(val)) {
+                const activeMac = getActiveMac();
+                if (activeMac) {
+                    setDeviceIp(activeMac, val);
+                } else {
+                    currentIp = val;
+                    localStorage.setItem('bms_saved_ip', currentIp);
+                    updateUI();
+                }
+                toggleEditIp();
+                showToast(`${t.toastLinked}${currentIp}`);
+            } else {
+                alert(t.alertInvalidIp);
+            }
+        }
+
+function toggleDeviceModal() {
+            const modal = document.getElementById('device-modal');
+            if (!modal) return;
+            const isOpen = (modal.style.display === 'flex');
+            if (isOpen) {
+                modal.style.display = 'none';
+            } else {
+                renderDeviceList();
+                modal.style.display = 'flex';
+            }
+        }
+
+function renderDeviceList() {
+            const listEl = document.getElementById('device-list');
+            if (!listEl) return;
+            const registry = getDeviceRegistry();
+            const activeMac = getActiveMac();
+            const entries = Object.entries(registry);
+
+            if (entries.length === 0) {
+                listEl.innerHTML = '<div style="color: #71717a; font-size: 13px; text-align: center; padding: 12px 0;">Нет сохраненных плат</div>';
+                return;
+            }
+
+            let html = '';
+            entries.forEach(([cMac, dev]) => {
+                const isActive = (cMac === activeMac);
+                const displayMac = dev.mac || formatMac(cMac);
+                const ip = dev.ip || '--';
+                html += `
+                    <div style="background: ${isActive ? '#1e293b' : '#27272a'}; border: 1px solid ${isActive ? '#38bdf8' : '#3f3f46'}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div>
+                            <div style="font-family: monospace; font-size: 13px; font-weight: 700; color: ${isActive ? '#38bdf8' : '#f4f4f5'};">${displayMac}</div>
+                            <div style="font-size: 12px; color: #a1a1aa;">IP: <b style="color: #cbd5e1;">${ip}</b> ${dev.version ? `<span style="font-size: 10.5px; background: rgba(255,255,255,0.06); padding: 1px 4px; border-radius: 4px; margin-left: 4px;">${dev.version}</span>` : ''}</div>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            ${isActive ? 
+                                `<span style="font-size: 11px; font-weight: 700; color: #4ade80; background: rgba(74,222,128,0.12); padding: 4px 8px; border-radius: 6px;">АКТИВНА</span>` : 
+                                `<button type="button" onclick="selectDevice('${cMac}')" style="background: #3b82f6; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Выбрать</button>`
+                            }
+                            <button type="button" onclick="removeDevice('${cMac}')" style="background: transparent; border: none; color: #71717a; cursor: pointer; padding: 4px; font-size: 14px;" title="Удалить">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
+        }
+
+async function selectDevice(mac) {
+            const cMac = cleanMac(mac);
+            setActiveMac(cMac);
+            toggleDeviceModal();
+            showToast(`Выбрана плата: ${formatMac(cMac)}`);
+
+            const dev = getActiveDevice();
+            const savedIp = dev ? dev.ip : '';
+            if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                // Direct-First: check if board is immediately available locally
+                const verify = await verifyDeviceLocal(savedIp, cMac, 600);
+                if (cMac !== getActiveMac()) return; // User switched board again
+                if (verify.ok && verify.matched) {
+                    console.log(`[Direct-First] Board ${cMac} verified locally on ${savedIp}. Cloud query bypassed.`);
+                    const cloudBadge = document.getElementById('cloud-status-badge');
+                    if (cloudBadge) {
+                        cloudBadge.style.display = 'block';
+                        cloudBadge.innerText = `🟢 В сети (Локально)`;
+                    }
+                    updateUI();
+                    return;
+                }
+            }
+            // If not reachable locally on last known IP, query Firebase for this specific board
+            lastCloudFetchTime = 0;
+            lastCloudSuccessData = null;
+            findControllerInCloud(false, false, 2500, cMac, true);
+        }
+
+function removeDevice(mac) {
+            const registry = getDeviceRegistry();
+            delete registry[mac];
+            saveDeviceRegistry(registry);
+            if (getActiveMac() === mac) {
+                localStorage.removeItem('bms_active_mac');
+                const keys = Object.keys(registry);
+                if (keys.length > 0) {
+                    setActiveMac(keys[0]);
+                } else {
+                    currentIp = '';
+                    currentMac = '';
+                    localStorage.removeItem('bms_saved_ip');
+                    localStorage.removeItem('bms_saved_mac');
+                    updateUI();
+                }
+            }
+            renderDeviceList();
+        }
+
+function addNewDeviceSearch() {
+            toggleDeviceModal();
+            openAndScrollToStep3();
+            showToast("Для подключения новой платы подключитесь к её Wi-Fi (Bms_Setup) или выполните синхронизацию.");
+        }
+
+function clearDeviceRegistry() {
+            if (confirm("Удалить все сохраненные платы из памяти?")) {
+                localStorage.removeItem('bms_device_registry');
+                localStorage.removeItem('bms_active_mac');
+                localStorage.removeItem('bms_saved_ip');
+                localStorage.removeItem('bms_saved_mac');
+                currentIp = '';
+                currentMac = '';
+                lastCloudFetchTime = 0;
+                lastCloudSuccessData = null;
+                updateUI();
+                toggleDeviceModal();
+                showToast("Список устройств очищен");
+            }
+        }
+
+function toggleAccordion(type) {
+            const isSetup = (type === 'setup');
+            const targetContent = document.getElementById(type + '-content');
+            const targetTile = document.getElementById('tile-' + type);
+
+            const otherType = isSetup ? 'faq' : 'setup';
+            const otherContent = document.getElementById(otherType + '-content');
+            const otherTile = document.getElementById('tile-' + otherType);
+
+            if (!targetContent) return;
+
+            const isOpen = (targetContent.style.display === 'block');
+
+            if (isOpen) {
+                targetContent.style.display = 'none';
+                if (targetTile) targetTile.classList.remove('active');
+            } else {
+                if (otherContent) otherContent.style.display = 'none';
+                if (otherTile) otherTile.classList.remove('active');
+
+                targetContent.style.display = 'block';
+                if (targetTile) targetTile.classList.add('active');
+                targetTile.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+function toggleTrouble(el, ev) {
+            if (ev && ev.target && ev.target.closest('a')) return;
+            el.classList.toggle('open');
+        }
+
+function updateUI() {
             const displayEl = document.getElementById('display-ip');
             const displayMacEl = document.getElementById('display-mac');
             const manualIpInput = document.getElementById('manual-ip');
@@ -333,264 +510,3 @@
 
             updateSupportInfo();
         }
-
-        // Apply saved IP immediately to DOM
-        updateUI();
-
-        // If linked from URL parameter (?ip=...)
-        if (justLinkedFromUrl) {
-            const t = I18N[currentLang] || I18N.en;
-            showToast(`${t.toastLinked}${currentIp}`);
-        }
-
-        // Auto-expand setup accordion for first-time visitors if IP is not set
-        if (!currentIp || currentIp === '--') {
-            const content = document.getElementById('setup-content');
-            const tile = document.getElementById('tile-setup');
-            if (content) content.style.display = 'block';
-            if (tile) tile.classList.add('active');
-        }
-
-        function openAndScrollToGuide() {
-            const setupContent = document.getElementById('setup-content');
-            const setupTile = document.getElementById('tile-setup');
-            const faqContent = document.getElementById('faq-content');
-            const faqTile = document.getElementById('tile-faq');
-
-            if (faqContent) faqContent.style.display = 'none';
-            if (faqTile) faqTile.classList.remove('active');
-
-            if (setupContent) setupContent.style.display = 'block';
-            if (setupTile) {
-                setupTile.classList.add('active');
-                setupTile.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
-        function openAndScrollToStep3() {
-            openAndScrollToGuide();
-            const step3El = document.getElementById('guide-step-3');
-            if (step3El) {
-                setTimeout(() => {
-                    step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
-            }
-        }
-
-        function goToSetupSync() {
-            openAndScrollToStep3();
-        }
-
-        function checkFailedNavigation() {
-            const recovery = document.getElementById('nav-recovery-card');
-            const hint = document.getElementById('ip-unreachable-hint');
-            if (recovery && currentIp !== '10.10.10.1') {
-                recovery.style.display = 'block';
-            }
-            if (hint && currentIp !== '10.10.10.1') {
-                hint.style.display = 'flex';
-            }
-        }
-
-        async function handleIpUnreachable() {
-            const t = I18N[currentLang] || I18N.ru;
-            showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
-            const found = await findControllerInCloud(true, true, 1500);
-            if (!found) {
-                openAndScrollToStep3();
-            }
-        }
-
-
-        function toggleEditIp() {
-            const row = document.getElementById('edit-row');
-            if (row) {
-                row.style.display = (row.style.display === 'flex') ? 'none' : 'flex';
-            }
-        }
-
-        function saveManualIp() {
-            const t = I18N[currentLang] || I18N.en;
-            const input = document.getElementById('manual-ip');
-            const val = input ? input.value.trim() : '';
-            if (isValidIp(val)) {
-                const activeMac = getActiveMac();
-                if (activeMac) {
-                    setDeviceIp(activeMac, val);
-                } else {
-                    currentIp = val;
-                    localStorage.setItem('bms_saved_ip', currentIp);
-                    updateUI();
-                }
-                toggleEditIp();
-                showToast(`${t.toastLinked}${currentIp}`);
-            } else {
-                alert(t.alertInvalidIp);
-            }
-        }
-
-        // ==========================================
-        // DEVICE MANAGEMENT MODAL
-        // ==========================================
-        function toggleDeviceModal() {
-            const modal = document.getElementById('device-modal');
-            if (!modal) return;
-            const isOpen = (modal.style.display === 'flex');
-            if (isOpen) {
-                modal.style.display = 'none';
-            } else {
-                renderDeviceList();
-                modal.style.display = 'flex';
-            }
-        }
-
-        function renderDeviceList() {
-            const listEl = document.getElementById('device-list');
-            if (!listEl) return;
-            const registry = getDeviceRegistry();
-            const activeMac = getActiveMac();
-            const entries = Object.entries(registry);
-
-            if (entries.length === 0) {
-                listEl.innerHTML = '<div style="color: #71717a; font-size: 13px; text-align: center; padding: 12px 0;">Нет сохраненных плат</div>';
-                return;
-            }
-
-            let html = '';
-            entries.forEach(([cMac, dev]) => {
-                const isActive = (cMac === activeMac);
-                const displayMac = dev.mac || formatMac(cMac);
-                const ip = dev.ip || '--';
-                html += `
-                    <div style="background: ${isActive ? '#1e293b' : '#27272a'}; border: 1px solid ${isActive ? '#38bdf8' : '#3f3f46'}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                        <div>
-                            <div style="font-family: monospace; font-size: 13px; font-weight: 700; color: ${isActive ? '#38bdf8' : '#f4f4f5'};">${displayMac}</div>
-                            <div style="font-size: 12px; color: #a1a1aa;">IP: <b style="color: #cbd5e1;">${ip}</b> ${dev.version ? `<span style="font-size: 10.5px; background: rgba(255,255,255,0.06); padding: 1px 4px; border-radius: 4px; margin-left: 4px;">${dev.version}</span>` : ''}</div>
-                        </div>
-                        <div style="display: flex; gap: 6px; align-items: center;">
-                            ${isActive ? 
-                                `<span style="font-size: 11px; font-weight: 700; color: #4ade80; background: rgba(74,222,128,0.12); padding: 4px 8px; border-radius: 6px;">АКТИВНА</span>` : 
-                                `<button type="button" onclick="selectDevice('${cMac}')" style="background: #3b82f6; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Выбрать</button>`
-                            }
-                            <button type="button" onclick="removeDevice('${cMac}')" style="background: transparent; border: none; color: #71717a; cursor: pointer; padding: 4px; font-size: 14px;" title="Удалить">🗑️</button>
-                        </div>
-                    </div>
-                `;
-            });
-            listEl.innerHTML = html;
-        }
-
-        async function selectDevice(mac) {
-            const cMac = cleanMac(mac);
-            setActiveMac(cMac);
-            toggleDeviceModal();
-            showToast(`Выбрана плата: ${formatMac(cMac)}`);
-
-            const dev = getActiveDevice();
-            const savedIp = dev ? dev.ip : '';
-            if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
-                // Direct-First: check if board is immediately available locally
-                const verify = await verifyDeviceLocal(savedIp, cMac, 600);
-                if (cMac !== getActiveMac()) return; // User switched board again
-                if (verify.ok && verify.matched) {
-                    console.log(`[Direct-First] Board ${cMac} verified locally on ${savedIp}. Cloud query bypassed.`);
-                    const cloudBadge = document.getElementById('cloud-status-badge');
-                    if (cloudBadge) {
-                        cloudBadge.style.display = 'block';
-                        cloudBadge.innerText = `🟢 В сети (Локально)`;
-                    }
-                    updateUI();
-                    return;
-                }
-            }
-            // If not reachable locally on last known IP, query Firebase for this specific board
-            lastCloudFetchTime = 0;
-            lastCloudSuccessData = null;
-            findControllerInCloud(false, false, 2500, cMac, true);
-        }
-
-        function removeDevice(mac) {
-            const registry = getDeviceRegistry();
-            delete registry[mac];
-            saveDeviceRegistry(registry);
-            if (getActiveMac() === mac) {
-                localStorage.removeItem('bms_active_mac');
-                const keys = Object.keys(registry);
-                if (keys.length > 0) {
-                    setActiveMac(keys[0]);
-                } else {
-                    currentIp = '';
-                    currentMac = '';
-                    localStorage.removeItem('bms_saved_ip');
-                    localStorage.removeItem('bms_saved_mac');
-                    updateUI();
-                }
-            }
-            renderDeviceList();
-        }
-
-        function addNewDeviceSearch() {
-            toggleDeviceModal();
-            openAndScrollToStep3();
-            showToast("Для подключения новой платы подключитесь к её Wi-Fi (Bms_Setup) или выполните синхронизацию.");
-        }
-
-        function clearDeviceRegistry() {
-            if (confirm("Удалить все сохраненные платы из памяти?")) {
-                localStorage.removeItem('bms_device_registry');
-                localStorage.removeItem('bms_active_mac');
-                localStorage.removeItem('bms_saved_ip');
-                localStorage.removeItem('bms_saved_mac');
-                currentIp = '';
-                currentMac = '';
-                lastCloudFetchTime = 0;
-                lastCloudSuccessData = null;
-                updateUI();
-                toggleDeviceModal();
-                showToast("Список устройств очищен");
-            }
-        }
-
-        function toggleAccordion(type) {
-            const isSetup = (type === 'setup');
-            const targetContent = document.getElementById(type + '-content');
-            const targetTile = document.getElementById('tile-' + type);
-
-            const otherType = isSetup ? 'faq' : 'setup';
-            const otherContent = document.getElementById(otherType + '-content');
-            const otherTile = document.getElementById('tile-' + otherType);
-
-            if (!targetContent) return;
-
-            const isOpen = (targetContent.style.display === 'block');
-
-            if (isOpen) {
-                targetContent.style.display = 'none';
-                if (targetTile) targetTile.classList.remove('active');
-            } else {
-                if (otherContent) otherContent.style.display = 'none';
-                if (otherTile) otherTile.classList.remove('active');
-
-                targetContent.style.display = 'block';
-                if (targetTile) targetTile.classList.add('active');
-                targetTile.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-
-        function toggleTrouble(el, ev) {
-            if (ev && ev.target && ev.target.closest('a')) return;
-            el.classList.toggle('open');
-        }
-
-        // Final UI refresh
-        updateUI();
-
-        // ==========================================
-        // FIREBASE CLOUD HANDSHAKE & ZERO-CLICK DISCOVERY (RTDB)
-        // ==========================================
-        const RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
-        let discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
-        let activeCloudAbortController = null;
-        let initialCloudPromise = null;
-        let inFlightCloudPromise = null;
-        let lastCloudFetchTime = 0;

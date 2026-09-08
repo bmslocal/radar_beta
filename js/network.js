@@ -1,5 +1,8 @@
+// ========================================================
+// network.js - Network & Cloud Communications (Discovery / RTDB)
+// ========================================================
 
-        function safeNavigateToDashboard(ip) {
+function safeNavigateToDashboard(ip) {
             if (!ip || !isValidIp(ip)) return;
             try {
                 const win = window.open('http://' + ip + '/', '_blank');
@@ -12,122 +15,7 @@
             }
         }
 
-        let isDiscovering = false;
-        async function startOneTapDiscovery(forceSearch = false) {
-            if (isDiscovering) return;
-
-            // If background cloud search is still in flight on page load, await it so we don't open a stale IP from an old board!
-            if (initialCloudPromise) {
-                try { await initialCloudPromise; } catch (e) {}
-                initialCloudPromise = null;
-            }
-
-            // If we already have a valid active IP and not forcing a re-search, open dashboard immediately
-            if (!forceSearch && currentIp && currentIp !== '--' && isValidIp(currentIp)) {
-                safeNavigateToDashboard(currentIp);
-                return;
-            }
-
-            isDiscovering = true;
-
-            const t = I18N[currentLang] || I18N.en;
-            const btn = document.getElementById('btn-main-connect');
-            const statusDot = document.getElementById('status-dot');
-            const statusText = document.getElementById('t-status-idle');
-            const btnIcon = document.getElementById('main-connect-icon');
-
-            const connectStatusBlock = document.getElementById('connect-status-text');
-            if (btn) {
-                btn.classList.add('connecting');
-                btn.disabled = true;
-            }
-            if (btnIcon) btnIcon.style.animation = 'spin 0.8s linear infinite';
-            if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
-            if (statusDot) statusDot.innerText = '🟡';
-
-            const active = getActiveDevice();
-            const targetMac = cleanMac((active && active.cleanMac) || currentMac || getActiveMac());
-            const isHttps = (window.location.protocol === 'https:');
-
-            try {
-                // In HTTPS mode, skip Phase 1 and 2 (which would fail on Mixed Content) and query cloud immediately!
-                if (!isHttps) {
-                    if (statusText) statusText.innerText = t.statusSearchingLocal || 'Поиск контроллера в сети...';
-                    // Phase 1: Local check on lastKnownIp
-                    const lastKnownIp = (active && active.ip) ? active.ip : currentIp;
-                    if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
-                        const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 800);
-                        if (localCheck.ok && localCheck.matched) {
-                            if (statusDot) statusDot.innerText = '🟢';
-                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
-                            setDeviceIp(localCheck.actualMac || targetMac, lastKnownIp, (localCheck.data && (localCheck.data.firmware || localCheck.data.version)));
-                            updateUI();
-                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (${lastKnownIp})`);
-                            setTimeout(() => {
-                                safeNavigateToDashboard(lastKnownIp);
-                            }, 200);
-                            return;
-                        }
-                    }
-
-                    // Phase 2: Probe standard gateway IP (192.168.4.1)
-                    try {
-                        const probe = await verifyDeviceLocal('192.168.4.1', targetMac, 600);
-                        if (probe.ok && probe.matched) {
-                            if (statusDot) statusDot.innerText = '🟢';
-                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
-                            setDeviceIp(probe.actualMac || targetMac, '192.168.4.1', (probe.data && (probe.data.firmware || probe.data.version)));
-                            updateUI();
-                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (192.168.4.1)`);
-                            setTimeout(() => {
-                                safeNavigateToDashboard('192.168.4.1');
-                            }, 200);
-                            return;
-                        }
-                    } catch (e) {}
-                }
-
-                // Phase 3: Firebase RTDB Cloud lookup (auto-discovers freshest online board globally)
-                if (statusText) statusText.innerText = t.statusSearchingCloud || 'Запрос адреса из облака...';
-                const cloudFound = await findControllerInCloud(false, false, 3500);
-                if (cloudFound && currentIp && currentIp !== '--') {
-                    if (statusDot) statusDot.innerText = '🟢';
-                    if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
-                    updateUI();
-                    showToast(`✅ ${t.statusFound || 'Контроллер найден!'} (${currentIp})`);
-                    setTimeout(() => {
-                        safeNavigateToDashboard(currentIp);
-                    }, 200);
-                    return;
-                }
-
-                // If not found in any phase:
-                if (statusDot) statusDot.innerText = '🔴';
-                if (statusText) statusText.innerText = t.statusNotFound || 'Контроллер не найден. Проверьте шаги выше.';
-                showToast('⚠️ Контроллер не ответил. Убедитесь, что включена точка доступа (2.4 ГГц) и режим READY');
-
-                const guide = document.getElementById('quick-guide');
-                const toggleGuideBtn = document.getElementById('btn-toggle-guide');
-                if (guide) {
-                    guide.style.display = 'block';
-                    if (toggleGuideBtn) toggleGuideBtn.style.display = 'none';
-                    guide.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            } catch (err) {
-                console.error('[One-Tap Discovery Error]', err);
-                if (statusDot) statusDot.innerText = '🔴';
-                if (statusText) statusText.innerText = t.statusNotFound || 'Ошибка поиска';
-            } finally {
-                isDiscovering = false;
-                if (btn) {
-                    btn.classList.remove('connecting');
-                    btn.disabled = false;
-                }
-                if (btnIcon) btnIcon.style.animation = '';
-            }
-        }
-        // Hardware-level verification via local /api/info or /status endpoint
-        async function verifyDeviceLocal(ip, expectedMac = '', timeoutMs = 1200) {
+async function verifyDeviceLocal(ip, expectedMac = '', timeoutMs = 1200) {
             if (!isValidIp(ip)) return { ok: false, error: 'invalid_ip' };
             if (window.location.protocol === 'https:') {
                 // HTTPS origin blocks fetch('http://...') as Mixed Content
@@ -161,92 +49,7 @@
             }
         }
 
-        async function openDashboard() {
-            const active = getActiveDevice();
-            const expectedMac = active ? active.cleanMac : getActiveMac();
-
-            if (!currentIp || currentIp === '--') {
-                const openBtnIcon = document.getElementById('open-btn-icon');
-                if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
-                const found = await findControllerInCloud(true, true, 2000);
-                if (openBtnIcon) openBtnIcon.style.animation = '';
-                if (!found) {
-                    openAndScrollToStep3();
-                }
-                return;
-            }
-
-            if (currentIp === '10.10.10.1') {
-                safeNavigateToDashboard('10.10.10.1');
-                return;
-            }
-
-            const isHttps = (window.location.protocol === 'https:');
-            if (isHttps) {
-                // On HTTPS, direct navigation without async delay protects against mobile popup blockers
-                safeNavigateToDashboard(currentIp);
-                return;
-            }
-
-            const openBtnIcon = document.getElementById('open-btn-icon');
-            if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
-
-            // Hardware verification step before opening dashboard (HTTP only)
-            const verify = await verifyDeviceLocal(currentIp, expectedMac, 1200);
-            if (openBtnIcon) openBtnIcon.style.animation = '';
-
-            // Guard: If user switched active device while verification was running, do not open
-            if (expectedMac && expectedMac !== getActiveMac()) {
-                console.log(`[Dashboard] Expected MAC ${expectedMac} no longer active (${getActiveMac()}), aborting open`);
-                return;
-            }
-
-            if (verify.ok) {
-                if (!verify.matched && verify.actualMac) {
-                    console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
-                    showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)}). Запрашиваю облако...`);
-                    // Update the actual board that responded on this IP in registry
-                    setDeviceIp(verify.actualMac, currentIp, (verify.data && (verify.data.firmware || verify.data.version)));
-                    // Search cloud for our active board
-                    await findControllerInCloud(true, true, 2500);
-                    return;
-                }
-
-                // Match confirmed: open window
-                const recovery = document.getElementById('nav-recovery-card');
-                const hint = document.getElementById('ip-unreachable-hint');
-                if (recovery) recovery.style.display = 'none';
-                if (hint) hint.style.display = 'none';
-                safeNavigateToDashboard(currentIp);
-                setTimeout(() => { checkFailedNavigation(); }, 800);
-            } else {
-                // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!
-                console.warn(`[Hardware Unreachable] Device did not answer on ${currentIp}. Querying cloud...`);
-                showToast(`📡 Плата не ответила на ${currentIp}. Поиск свежего IP в облаке...`);
-                const found = await findControllerInCloud(false, true, 2500);
-                if (expectedMac && expectedMac !== getActiveMac()) {
-                    return;
-                }
-                if (found && currentIp && currentIp !== '--') {
-                    safeNavigateToDashboard(currentIp);
-                } else {
-                    checkFailedNavigation();
-                }
-            }
-        }
-
-        function syncWithBoard() {
-            const t = I18N[currentLang] || I18N.en;
-            showToast(t.toastConnecting);
-            setTimeout(() => {
-                window.location.href = 'http://10.10.10.1/sync?lang=' + currentLang;
-            }, 600);
-        }
-        let lastCloudSuccessData = null; // { ip, mac, version, ts }
-        const CLOUD_CACHE_TTL_MS = 15000; // 15 seconds in-memory cooldown for duplicate requests
-        const BOARD_FRESH_THRESHOLD_MS = 15 * 60 * 1000; // 15 minutes freshness threshold for 1-board targeted mode
-
-        async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 3500, specificMac = null, force = false) {
+async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 3500, specificMac = null, force = false) {
             const t = I18N[currentLang] || I18N.ru;
             const searchIcon = document.getElementById('cloud-search-icon');
             const searchLabel = document.getElementById('t-btn-cloud-search');
@@ -562,6 +365,198 @@
             }
         }
 
-        // On page load: Direct-First local check (HTTP only).
-        // On HTTPS, query Firebase RTDB globally for the freshest active board immediately!
-        
+async function startOneTapDiscovery(forceSearch = false) {
+            if (isDiscovering) return;
+
+            // If background cloud search is still in flight on page load, await it so we don't open a stale IP from an old board!
+            if (initialCloudPromise) {
+                try { await initialCloudPromise; } catch (e) {}
+                initialCloudPromise = null;
+            }
+
+            // If we already have a valid active IP and not forcing a re-search, open dashboard immediately
+            if (!forceSearch && currentIp && currentIp !== '--' && isValidIp(currentIp)) {
+                safeNavigateToDashboard(currentIp);
+                return;
+            }
+
+            isDiscovering = true;
+
+            const t = I18N[currentLang] || I18N.en;
+            const btn = document.getElementById('btn-main-connect');
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('t-status-idle');
+            const btnIcon = document.getElementById('main-connect-icon');
+
+            const connectStatusBlock = document.getElementById('connect-status-text');
+            if (btn) {
+                btn.classList.add('connecting');
+                btn.disabled = true;
+            }
+            if (btnIcon) btnIcon.style.animation = 'spin 0.8s linear infinite';
+            if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
+            if (statusDot) statusDot.innerText = '🟡';
+
+            const active = getActiveDevice();
+            const targetMac = cleanMac((active && active.cleanMac) || currentMac || getActiveMac());
+            const isHttps = (window.location.protocol === 'https:');
+
+            try {
+                // In HTTPS mode, skip Phase 1 and 2 (which would fail on Mixed Content) and query cloud immediately!
+                if (!isHttps) {
+                    if (statusText) statusText.innerText = t.statusSearchingLocal || 'Поиск контроллера в сети...';
+                    // Phase 1: Local check on lastKnownIp
+                    const lastKnownIp = (active && active.ip) ? active.ip : currentIp;
+                    if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
+                        const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 800);
+                        if (localCheck.ok && localCheck.matched) {
+                            if (statusDot) statusDot.innerText = '🟢';
+                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                            setDeviceIp(localCheck.actualMac || targetMac, lastKnownIp, (localCheck.data && (localCheck.data.firmware || localCheck.data.version)));
+                            updateUI();
+                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (${lastKnownIp})`);
+                            setTimeout(() => {
+                                safeNavigateToDashboard(lastKnownIp);
+                            }, 200);
+                            return;
+                        }
+                    }
+
+                    // Phase 2: Probe standard gateway IP (192.168.4.1)
+                    try {
+                        const probe = await verifyDeviceLocal('192.168.4.1', targetMac, 600);
+                        if (probe.ok && probe.matched) {
+                            if (statusDot) statusDot.innerText = '🟢';
+                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                            setDeviceIp(probe.actualMac || targetMac, '192.168.4.1', (probe.data && (probe.data.firmware || probe.data.version)));
+                            updateUI();
+                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (192.168.4.1)`);
+                            setTimeout(() => {
+                                safeNavigateToDashboard('192.168.4.1');
+                            }, 200);
+                            return;
+                        }
+                    } catch (e) {}
+                }
+
+                // Phase 3: Firebase RTDB Cloud lookup (auto-discovers freshest online board globally)
+                if (statusText) statusText.innerText = t.statusSearchingCloud || 'Запрос адреса из облака...';
+                const cloudFound = await findControllerInCloud(false, false, 3500);
+                if (cloudFound && currentIp && currentIp !== '--') {
+                    if (statusDot) statusDot.innerText = '🟢';
+                    if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                    updateUI();
+                    showToast(`✅ ${t.statusFound || 'Контроллер найден!'} (${currentIp})`);
+                    setTimeout(() => {
+                        safeNavigateToDashboard(currentIp);
+                    }, 200);
+                    return;
+                }
+
+                // If not found in any phase:
+                if (statusDot) statusDot.innerText = '🔴';
+                if (statusText) statusText.innerText = t.statusNotFound || 'Контроллер не найден. Проверьте шаги выше.';
+                showToast('⚠️ Контроллер не ответил. Убедитесь, что включена точка доступа (2.4 ГГц) и режим READY');
+
+                const guide = document.getElementById('quick-guide');
+                const toggleGuideBtn = document.getElementById('btn-toggle-guide');
+                if (guide) {
+                    guide.style.display = 'block';
+                    if (toggleGuideBtn) toggleGuideBtn.style.display = 'none';
+                    guide.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } catch (err) {
+                console.error('[One-Tap Discovery Error]', err);
+                if (statusDot) statusDot.innerText = '🔴';
+                if (statusText) statusText.innerText = t.statusNotFound || 'Ошибка поиска';
+            } finally {
+                isDiscovering = false;
+                if (btn) {
+                    btn.classList.remove('connecting');
+                    btn.disabled = false;
+                }
+                if (btnIcon) btnIcon.style.animation = '';
+            }
+        }
+
+async function openDashboard() {
+            const active = getActiveDevice();
+            const expectedMac = active ? active.cleanMac : getActiveMac();
+
+            if (!currentIp || currentIp === '--') {
+                const openBtnIcon = document.getElementById('open-btn-icon');
+                if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
+                const found = await findControllerInCloud(true, true, 2000);
+                if (openBtnIcon) openBtnIcon.style.animation = '';
+                if (!found) {
+                    openAndScrollToStep3();
+                }
+                return;
+            }
+
+            if (currentIp === '10.10.10.1') {
+                safeNavigateToDashboard('10.10.10.1');
+                return;
+            }
+
+            const isHttps = (window.location.protocol === 'https:');
+            if (isHttps) {
+                // On HTTPS, direct navigation without async delay protects against mobile popup blockers
+                safeNavigateToDashboard(currentIp);
+                return;
+            }
+
+            const openBtnIcon = document.getElementById('open-btn-icon');
+            if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
+
+            // Hardware verification step before opening dashboard (HTTP only)
+            const verify = await verifyDeviceLocal(currentIp, expectedMac, 1200);
+            if (openBtnIcon) openBtnIcon.style.animation = '';
+
+            // Guard: If user switched active device while verification was running, do not open
+            if (expectedMac && expectedMac !== getActiveMac()) {
+                console.log(`[Dashboard] Expected MAC ${expectedMac} no longer active (${getActiveMac()}), aborting open`);
+                return;
+            }
+
+            if (verify.ok) {
+                if (!verify.matched && verify.actualMac) {
+                    console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
+                    showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)}). Запрашиваю облако...`);
+                    // Update the actual board that responded on this IP in registry
+                    setDeviceIp(verify.actualMac, currentIp, (verify.data && (verify.data.firmware || verify.data.version)));
+                    // Search cloud for our active board
+                    await findControllerInCloud(true, true, 2500);
+                    return;
+                }
+
+                // Match confirmed: open window
+                const recovery = document.getElementById('nav-recovery-card');
+                const hint = document.getElementById('ip-unreachable-hint');
+                if (recovery) recovery.style.display = 'none';
+                if (hint) hint.style.display = 'none';
+                safeNavigateToDashboard(currentIp);
+                setTimeout(() => { checkFailedNavigation(); }, 800);
+            } else {
+                // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!
+                console.warn(`[Hardware Unreachable] Device did not answer on ${currentIp}. Querying cloud...`);
+                showToast(`📡 Плата не ответила на ${currentIp}. Поиск свежего IP в облаке...`);
+                const found = await findControllerInCloud(false, true, 2500);
+                if (expectedMac && expectedMac !== getActiveMac()) {
+                    return;
+                }
+                if (found && currentIp && currentIp !== '--') {
+                    safeNavigateToDashboard(currentIp);
+                } else {
+                    checkFailedNavigation();
+                }
+            }
+        }
+
+function syncWithBoard() {
+            const t = I18N[currentLang] || I18N.en;
+            showToast(t.toastConnecting);
+            setTimeout(() => {
+                window.location.href = 'http://10.10.10.1/sync?lang=' + currentLang;
+            }, 600);
+        }

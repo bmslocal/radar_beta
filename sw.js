@@ -1,9 +1,15 @@
-const CACHE_NAME = 'live-radar-v82-beta';
+const CACHE_NAME = 'live-radar-v84-beta';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './icon.png'
+  './icon.png',
+  './css/style.css',
+  './js/i18n.js',
+  './js/state.js',
+  './js/ui.js',
+  './js/network.js',
+  './js/main.js'
 ];
 
 self.addEventListener('install', (event) => {

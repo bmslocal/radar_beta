@@ -1,17 +1,28 @@
-        const urlParams = new URLSearchParams(window.location.search);
+// ========================================================
+// state.js - Device Registry & State Management
+// ========================================================
 
-        // Validates a real IPv4 address (each octet 0-255)
-        const IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
-        function isValidIp(value) {
-            return IP_REGEX.test((value || '').trim());
-        }
+var IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
 
-        // MAC & IP helpers
-        function cleanMac(mac) {
+// Global UI and Discovery State
+var isDiscovering = false;
+
+// Firebase Realtime Database (RTDB) Configuration & State
+var RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com/boards";
+var discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
+var activeCloudAbortController = null;
+var initialCloudPromise = null;
+var inFlightCloudPromise = null;
+var lastCloudFetchTime = 0;
+var lastCloudSuccessData = null; // { ip, mac, version, ts }
+var CLOUD_CACHE_TTL_MS = 15000; // 15 seconds in-memory cooldown for redundant fetches
+var BOARD_FRESH_THRESHOLD_MS = 15 * 60 * 1000; // 15 minutes freshness threshold
+
+function cleanMac(mac) {
             return (mac || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
         }
 
-        function formatMac(mac) {
+function formatMac(mac) {
             const clean = cleanMac(mac);
             if (clean.length === 12) {
                 return clean.match(/.{1,2}/g).join(':');
@@ -19,8 +30,11 @@
             return mac || '--';
         }
 
-        // Device Registry Management: { [cleanMac]: { mac, cleanMac, ip, version, updatedAt } }
-        function getDeviceRegistry() {
+function isValidIp(value) {
+            return IP_REGEX.test((value || '').trim());
+        }
+
+function getDeviceRegistry() {
             let registry = {};
             try {
                 const raw = localStorage.getItem('bms_device_registry');
@@ -45,13 +59,13 @@
             return registry;
         }
 
-        function saveDeviceRegistry(registry) {
+function saveDeviceRegistry(registry) {
             try {
                 localStorage.setItem('bms_device_registry', JSON.stringify(registry));
             } catch (e) {}
         }
 
-        function getActiveMac() {
+function getActiveMac() {
             let active = cleanMac(localStorage.getItem('bms_active_mac') || '');
             const registry = getDeviceRegistry();
             if (!active || !registry[active]) {
@@ -65,7 +79,7 @@
             return active;
         }
 
-        function setActiveMac(mac) {
+function setActiveMac(mac) {
             const cMac = cleanMac(mac);
             localStorage.setItem('bms_active_mac', cMac);
             const registry = getDeviceRegistry();
@@ -83,13 +97,13 @@
             updateUI();
         }
 
-        function getActiveDevice() {
+function getActiveDevice() {
             const registry = getDeviceRegistry();
             const aMac = getActiveMac();
             return (aMac && registry[aMac]) ? registry[aMac] : null;
         }
 
-        function setDeviceIp(mac, ip, version = '') {
+function setDeviceIp(mac, ip, version = '') {
             const cMac = cleanMac(mac);
             if (!cMac || !isValidIp(ip)) return;
             const registry = getDeviceRegistry();
@@ -112,15 +126,8 @@
             }
         }
 
-        
-let currentIp = '';
-let currentMac = '';
-let justLinkedFromUrl = false;
-
-function initState() {
-// Initialize state from Registry or LocalStorage
-        
-        
+var currentIp = '';
+        var currentMac = '';
         const initActive = getActiveDevice();
         if (initActive && initActive.ip) {
             currentIp = initActive.ip;
@@ -132,7 +139,7 @@ function initState() {
 
         const queryIp = urlParams.get('ip');
         const queryMac = urlParams.get('mac');
-        
+        var justLinkedFromUrl = false;
 
         if (queryMac && queryMac.length >= 6) {
             const cQueryMac = cleanMac(queryMac);
@@ -156,6 +163,3 @@ function initState() {
         if (justLinkedFromUrl && window.history.replaceState) {
             window.history.replaceState({}, document.title, window.location.pathname);
         }
-
-
-}
