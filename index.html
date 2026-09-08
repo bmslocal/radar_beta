@@ -1405,6 +1405,9 @@
                 ipStatusRecent: "Online recently",
                 ipStatusStale: "Offline (Ignition OFF)",
                 ipStatusOffline: "Offline / Standby",
+                cloudStatusOnline: "Active in Cloud",
+                cloudStatusRecent: "Seen in Cloud",
+                cloudStatusStale: "Offline in Cloud",
                 ipStatusChecking: "Checking status...",
                 firstRunTip: "First-time setup: follow the guide below 👇",
                 btnOpen: "Live Monitor",
@@ -1527,6 +1530,9 @@
                 ipStatusRecent: "最近在线",
                 ipStatusStale: "离线 (请开启点火)",
                 ipStatusOffline: "离线 / 待机",
+                cloudStatusOnline: "云端在线",
+                cloudStatusRecent: "最近在云端",
+                cloudStatusStale: "云端离线",
                 ipStatusChecking: "检查状态中...",
                 firstRunTip: "首次设置：请按照下方指南操作 👇",
                 btnOpen: "Live Monitor",
@@ -1636,6 +1642,9 @@
                 ipStatusRecent: "최근 온라인",
                 ipStatusStale: "오프라인 (시동을 켜세요)",
                 ipStatusOffline: "오프라인 / 대기",
+                cloudStatusOnline: "클라우드 온라인",
+                cloudStatusRecent: "클라우드 최근",
+                cloudStatusStale: "클라우드 오프라인",
                 ipStatusChecking: "상태 확인 중...",
                 firstRunTip: "최초 설정: 아래 가이드에 따라 진행하세요 👇",
                 btnOpen: "Live Monitor",
@@ -1742,6 +1751,9 @@
                 ipStatusRecent: "В сети недавно",
                 ipStatusStale: "Не в сети (Зажигание выключено)",
                 ipStatusOffline: "Не в сети / Ожидание",
+                cloudStatusOnline: "Активен в Облаке",
+                cloudStatusRecent: "Был в сети",
+                cloudStatusStale: "Офлайн",
                 ipStatusChecking: "Проверка связи...",
                 firstRunTip: "Первый запуск: следуйте инструкции ниже 👇",
                 btnOpen: "Live Monitor",
@@ -1864,6 +1876,9 @@
                 ipStatusRecent: "最近オンライン",
                 ipStatusStale: "オフライン (READYにしてください)",
                 ipStatusOffline: "オフライン / 待機",
+                cloudStatusOnline: "クラウドでオンライン",
+                cloudStatusRecent: "最近クラウドで確認",
+                cloudStatusStale: "クラウドでオフライン",
                 ipStatusChecking: "接続確認中...",
                 firstRunTip: "初期設定：下のガイドに従ってください 👇",
                 btnOpen: "Live Monitor",
@@ -3325,18 +3340,18 @@
                             cloudBadge.style.display = 'inline-flex';
                             if (isStale) {
                                 const hours = Math.round(ageMs / 3600000);
-                                cloudBadge.innerHTML = `<span id="cloud-status-dot">⚪</span> <span id="t-cloud-status-text">${t.ipStatusStale || "Не в сети"} (${hours} ч назад)</span>`;
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">⚪</span> <span id="t-cloud-status-text">${t.cloudStatusStale || "Не в сети в Облаке"} (${hours} ч назад)</span>`;
                                 cloudBadge.style.color = '#a1a1aa';
                                 cloudBadge.style.background = 'rgba(255, 255, 255, 0.05)';
                                 cloudBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                             } else if (isRecent) {
                                 const mins = Math.round(ageMs / 60000);
-                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟡</span> <span id="t-cloud-status-text">${t.ipStatusRecent || "В сети недавно"} (${mins} мин)</span>`;
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟡</span> <span id="t-cloud-status-text">${t.cloudStatusRecent || "Был в сети"} (${mins} мин назад)</span>`;
                                 cloudBadge.style.color = '#fde047';
                                 cloudBadge.style.background = 'rgba(253, 224, 71, 0.1)';
                                 cloudBadge.style.borderColor = 'rgba(253, 224, 71, 0.25)';
                             } else {
-                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟢</span> <span id="t-cloud-status-text">${t.ipStatusOnline || "В сети"} (Облако)</span>`;
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟢</span> <span id="t-cloud-status-text">${t.cloudStatusOnline || "Активен в Облаке"}</span>`;
                                 cloudBadge.style.color = '#4ade80';
                                 cloudBadge.style.background = 'rgba(74, 222, 128, 0.1)';
                                 cloudBadge.style.borderColor = 'rgba(74, 222, 128, 0.25)';
