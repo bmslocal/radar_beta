@@ -162,7 +162,12 @@ var I18N = {
                 supStatus: "Link Status:",
                 btnResetDev: "Switch / Forget Current Board",
                 btnCopySupport: "Copy Support Data",
-                toastSupportCopied: "✅ Service information copied to clipboard"
+                toastSupportCopied: "✅ Service information copied to clipboard",
+                btnMonitorHelp: "Page not opening? Tap for help",
+                helperBtnReset: "Reset controller memory",
+                toastHardResetDone: "Controller memory cleared. Connect to Bms_Setup or tap 'Search'.",
+                toastOpeningDashboard: "Opening Live Monitor. If page fails to load, tap help below.",
+                statusMemoryCleared: "Memory cleared / Waiting for search"
             },
             zh: {
                 appTitle: "Live Radar",
@@ -310,7 +315,12 @@ var I18N = {
                 supStatus: "连接状态：",
                 btnResetDev: "切换 / 忘记当前主板",
                 btnCopySupport: "复制支持信息",
-                toastSupportCopied: "✅ 服务信息已复制到剪贴板"
+                toastSupportCopied: "✅ 服务信息已复制到剪贴板",
+                btnMonitorHelp: "页面打不开？点击获取帮助",
+                helperBtnReset: "重置控制器内存",
+                toastHardResetDone: "控制器内存已清除。请连接至 Bms_Setup 或点击“查找”。",
+                toastOpeningDashboard: "已打开监视面板。如页面无法加载，请点击下方帮助。",
+                statusMemoryCleared: "内存已清除 / 等待搜索"
             },
             ko: {
                 appTitle: "Live Radar",
@@ -455,7 +465,12 @@ var I18N = {
                 supStatus: "연결 상태:",
                 btnResetDev: "현재 보드 전환 / 초기화",
                 btnCopySupport: "지원 정보 복사",
-                toastSupportCopied: "✅ 서비스 정보가 클립보드에 복사되었습니다"
+                toastSupportCopied: "✅ 서비스 정보가 클립보드에 복사되었습니다",
+                btnMonitorHelp: "페이지가 열리지 않나요? 도움말 보기",
+                helperBtnReset: "컨트롤러 메모리 초기화",
+                toastHardResetDone: "컨트롤러 메모리가 초기화되었습니다. Bms_Setup에 연결하거나 '검색'을 누르세요.",
+                toastOpeningDashboard: "라이브 모니터가 열렸습니다. 페이지가 로드되지 않으면 아래 도움말을 누르세요.",
+                statusMemoryCleared: "메모리 초기화됨 / 검색 대기 중"
             },
             ru: {
                 appTitle: "Live Radar",
@@ -614,7 +629,12 @@ var I18N = {
                 supStatus: "Статус связи:",
                 btnResetDev: "Сменить / забыть текущую плату",
                 btnCopySupport: "Скопировать данные для поддержки",
-                toastSupportCopied: "✅ Служебная информация скопирована в буфер"
+                toastSupportCopied: "✅ Служебная информация скопирована в буфер",
+                btnMonitorHelp: "Не открывается страница? Нажмите для помощи",
+                helperBtnReset: "Сбросить память контроллера",
+                toastHardResetDone: "Память контроллера очищена. Подключитесь к Bms_Setup или нажмите «Поиск».",
+                toastOpeningDashboard: "Открыта панель управления. Если страница не загрузилась — нажмите ссылку помощи ниже.",
+                statusMemoryCleared: "Память очищена / Ожидание поиска"
             },
             ja: {
                 appTitle: "BMS Cooling Radar",
@@ -734,7 +754,12 @@ var I18N = {
                 cloudSearching: "クラウドで検索中...",
                 cloudFound: "コントローラーを検出:",
                 cloudNotFound: "未接続です。スマホのテザリングをONにしてください。",
-                cloudError: "クラウドエラー。スマホのネット接続を確認してください。"
+                cloudError: "クラウドエラー。スマホのネット接続を確認してください。",
+                btnMonitorHelp: "ページが開かない？タップしてサポートを表示",
+                helperBtnReset: "コントローラーメモリのリセット",
+                toastHardResetDone: "コントローラーのメモリを消去しました。Bms_Setupに接続するか「検索」を押してください。",
+                toastOpeningDashboard: "モニターを開きました。読み込めない場合は下のサポートをタップしてください。",
+                statusMemoryCleared: "メモリ消去済み / 検索待機中"
             }
         };
 
@@ -867,6 +892,8 @@ function applyLanguage() {
             if (document.getElementById('t-btn-cloud-search') && t.btnCloudSearch) document.getElementById('t-btn-cloud-search').innerText = t.btnCloudSearch;
             
             // Helper Modal (Live Monitor Guidance)
+            if (document.getElementById('t-btn-monitor-help') && t.btnMonitorHelp) document.getElementById('t-btn-monitor-help').innerText = t.btnMonitorHelp;
+            if (document.getElementById('t-helper-btn-reset') && t.helperBtnReset) document.getElementById('t-helper-btn-reset').innerText = t.helperBtnReset;
             if (document.getElementById('t-helper-title')) document.getElementById('t-helper-title').innerText = t.helperTitle || 'Live Monitor';
             if (document.getElementById('t-helper-ip-label')) document.getElementById('t-helper-ip-label').innerText = t.helperIpLabel || 'Адрес монитора:';
             if (document.getElementById('t-helper-warn-title')) document.getElementById('t-helper-warn-title').innerText = t.helperWarnTitle || 'Не открывается страница?';

@@ -105,6 +105,12 @@
                 <span id="t-btn-open">Live Monitor</span>
             </button>
 
+            <!-- Quick helper link if page is unreachable -->
+            <button type="button" id="btn-monitor-help" class="btn-link-help" onclick="showMonitorHelper(currentIp || '--')" style="display: none; background: transparent; border: none; color: #94a3b8; font-size: 12.5px; padding: 6px 10px; margin-top: 6px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; align-items: center; justify-content: center; gap: 6px; width: 100%;">
+                <span>❓</span>
+                <span id="t-btn-monitor-help">Не открывается страница? Нажмите для помощи</span>
+            </button>
+
             <!-- Android App Collapsible Button (shown on Android / Desktop) -->
             <button type="button" id="btn-toggle-apk" class="btn-secondary" onclick="toggleApkDetails()" style="display: none; justify-content: space-between; padding: 12px 14px; border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.08); margin-top: 14px;">
                 <div style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: #fde68a; white-space: nowrap;">
@@ -443,7 +449,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v93-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v94-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>
@@ -498,6 +504,10 @@
                 <button type="button" class="btn-secondary" onclick="checkControllerFromHelper()" style="width: 100%; padding: 10px 14px; font-size: 13.5px; background: #27272a; border-color: #3f3f46; color: #e4e4e7;">
                     <span id="helper-spin-icon">🔄</span>
                     <span id="t-helper-btn-check">Проверить связь в облаке</span>
+                </button>
+                <button type="button" class="btn-secondary" onclick="closeMonitorHelper(); executeResetDevice();" style="width: 100%; padding: 9px 14px; font-size: 13px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #fca5a5; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>🗑️</span>
+                    <span id="t-helper-btn-reset">Сбросить память контроллера</span>
                 </button>
                 <button type="button" class="modal-btn modal-btn-cancel" onclick="closeMonitorHelper()" style="margin-top: 4px; padding: 8px 12px; font-size: 13px;">
                     <span id="t-helper-btn-close">Закрыть</span>

@@ -94,8 +94,12 @@ window.addEventListener('DOMContentLoaded', () => {
                         initialCloudPromise = findControllerInCloud(false, false, 2500);
                     }
                 } else {
-                    // On HTTPS or when no local check is performed, query cloud immediately for freshest board!
-                    initialCloudPromise = findControllerInCloud(false, false, 2500);
+                    // On HTTPS or when no local check is performed, query cloud if a board is registered
+                    const aMac = getActiveMac();
+                    const isHardReset = (localStorage.getItem('bms_hard_reset') === '1');
+                    if (aMac && !isHardReset) {
+                        initialCloudPromise = findControllerInCloud(false, false, 2500);
+                    }
                 }
             }
         });
@@ -103,7 +107,9 @@ window.addEventListener('DOMContentLoaded', () => {
 // 4. Tab Visibility & Background State Refresh
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-        if (typeof findControllerInCloud === 'function') {
+        const aMac = getActiveMac();
+        const isHardReset = (localStorage.getItem('bms_hard_reset') === '1');
+        if (aMac && !isHardReset && typeof findControllerInCloud === 'function') {
             findControllerInCloud(false, false, 2500).then(found => {
                 if (found && currentIp && currentIp !== '--') {
                     const ipVal = document.getElementById('helper-ip-val');

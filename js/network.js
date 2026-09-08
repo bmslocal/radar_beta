@@ -4,8 +4,11 @@
 
 let isLastCloudBoardOnline = false;
 
+let lastLiveMonitorClickTime = 0;
+
 function safeNavigateToDashboard(ip) {
             if (!ip || !isValidIp(ip)) return;
+            lastLiveMonitorClickTime = Date.now();
             try {
                 const win = window.open('http://' + ip + '/', '_blank');
                 if (!win || win.closed || typeof win.closed === 'undefined') {
@@ -186,6 +189,16 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
 
                         // Level 2: Global query (/boards.json) ONLY if targeted query didn't find a fresh board
                         if (!foundIp) {
+                            // Multi-Board & Hard Reset Isolation:
+                            // If there is no targeted MAC or device was hard-reset,
+                            // global scan (/boards.json) is ONLY permitted when explicitly initiated by the user.
+                            // Never run it on passive background polling, page load, or visibility change.
+                            const isHardReset = (localStorage.getItem('bms_hard_reset') === '1');
+                            if ((!targetCleanMac || isHardReset) && !isUserInitiated) {
+                                console.log('[Cloud Discovery] Passive background check with no target MAC or hard-reset. Skipping global scan.');
+                                return false;
+                            }
+
                             const globalUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
                             const res = await fetch(globalUrl, { signal: abortCtrl.signal });
                             if (res && res.ok) {
@@ -388,6 +401,7 @@ async function startOneTapDiscovery(forceSearch = false) {
             }
 
             isDiscovering = true;
+            try { localStorage.removeItem('bms_hard_reset'); } catch (e) {}
 
             const t = I18N[currentLang] || I18N.en;
             const btn = document.getElementById('btn-main-connect');
@@ -448,7 +462,7 @@ async function startOneTapDiscovery(forceSearch = false) {
 
                 // Phase 3: Firebase RTDB Cloud lookup (auto-discovers freshest online board globally)
                 if (statusText) statusText.innerText = t.statusSearchingCloud || 'Запрос адреса из облака...';
-                const cloudFound = await findControllerInCloud(false, false, 3500);
+                const cloudFound = await findControllerInCloud(false, true, 3500);
                 if (cloudFound && currentIp && currentIp !== '--') {
                     if (isLastCloudBoardOnline) {
                         if (statusDot) statusDot.innerText = '🟢';
@@ -489,6 +503,17 @@ async function startOneTapDiscovery(forceSearch = false) {
         }
 
 async function openDashboard() {
+            const now = Date.now();
+            // 1. Double-Click Fallback: If clicked again within 15 seconds, show helper modal immediately
+            if (now - lastLiveMonitorClickTime < 15000) {
+                console.log('[Live Monitor] Repeated click within 15s. Showing connection helper modal.');
+                lastLiveMonitorClickTime = 0;
+                if (typeof showMonitorHelper === 'function') {
+                    showMonitorHelper(currentIp || '--');
+                }
+                return;
+            }
+
             const active = getActiveDevice();
             const expectedMac = active ? active.cleanMac : getActiveMac();
 
@@ -572,8 +597,12 @@ async function openDashboard() {
             }
 
             if (isOnline && targetIp) {
+                lastLiveMonitorClickTime = Date.now();
+                const t = I18N[currentLang] || I18N.ru;
+                showToast(t.toastOpeningDashboard || "Панель открыта. Если страница не загрузилась — нажмите ссылку помощи ниже.");
                 safeNavigateToDashboard(targetIp);
             } else {
+                lastLiveMonitorClickTime = 0;
                 // Controller is offline / unreachable: open modal helper on screen instead of blank tab
                 if (typeof showMonitorHelper === 'function') {
                     showMonitorHelper(targetIp || currentIp || '--');

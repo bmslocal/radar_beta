@@ -94,7 +94,7 @@ function copySupportInfo() {
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v91-beta',
+                'Radar Version: v94-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -157,38 +157,38 @@ function executeResetDevice() {
             const modal = document.getElementById('reset-modal');
             if (modal) modal.style.display = 'none';
 
-            // Blacklist the current MAC so Firebase RTDB polling does not immediately re-populate it
-            const prevMac = cleanMac(getActiveMac() || currentMac);
-            const now = Date.now();
-            if (prevMac) {
-                try {
-                    localStorage.setItem('bms_ignored_mac', prevMac);
-                    localStorage.setItem('bms_reset_timestamp', String(now));
-                } catch (e) {}
-            }
-
-            localStorage.removeItem('bms_active_mac');
-            localStorage.removeItem('bms_saved_ip');
-            localStorage.removeItem('bms_saved_mac');
-            localStorage.removeItem('bms_device_registry');
-            currentIp = '--';
-            currentMac = '';
-            lastCloudFetchTime = 0;
-            lastCloudSuccessData = null;
-            inFlightCloudPromise = null;
+            // Abort any active in-flight cloud discovery
             if (activeCloudAbortController) {
                 try { activeCloudAbortController.abort(); } catch (e) {}
                 activeCloudAbortController = null;
             }
+            inFlightCloudPromise = null;
+            initialCloudPromise = null;
+
+            // Thorough Hard Reset: clear all stored device keys
+            try {
+                localStorage.removeItem('bms_active_mac');
+                localStorage.removeItem('bms_saved_ip');
+                localStorage.removeItem('bms_saved_mac');
+                localStorage.removeItem('bms_device_registry');
+                localStorage.removeItem('bms_ignored_mac');
+                localStorage.removeItem('bms_reset_timestamp');
+                localStorage.setItem('bms_hard_reset', '1');
+            } catch (e) {}
+
+            currentIp = '--';
+            currentMac = '';
+            lastCloudFetchTime = 0;
+            lastCloudSuccessData = null;
+            isLastCloudBoardOnline = false;
             
-            // Force immediate UI reset
+            // Force immediate UI reset to dashes and clean state
             updateUI();
             
             const t = I18N[currentLang] || I18N.ru;
-            showToast(t.toastResetDone || "Память платы сброшена. Поиск новой активной платы...");
+            showToast(t.toastHardResetDone || "Память контроллера очищена. Подключитесь к Bms_Setup или нажмите «Поиск».");
             
-            // Initiate a background discovery without auto-opening, but UI is already clean
-            findControllerInCloud(false, true, 3500, null, true);
+            // Explicitly DO NOT auto-call findControllerInCloud here to avoid grabbing arbitrary stranger boards!
         }
 
 function resetActiveDevice() {
@@ -500,6 +500,7 @@ function updateUI() {
             const toggleGuideBtn = document.getElementById('btn-toggle-guide');
             const btnQuickResetIcon = document.getElementById('btn-quick-reset-icon');
             const btnOpen = document.getElementById('btn-open');
+            const btnMonitorHelp = document.getElementById('btn-monitor-help');
             const btnMainConnect = document.getElementById('btn-main-connect');
             const cloudStatusBadge = document.getElementById('cloud-status-badge');
             
@@ -524,6 +525,7 @@ function updateUI() {
                 
                 if (btnQuickResetIcon) btnQuickResetIcon.style.display = 'block';
                 if (btnOpen) btnOpen.style.display = 'flex';
+                if (btnMonitorHelp) btnMonitorHelp.style.display = 'flex';
                 if (btnMainConnect) btnMainConnect.style.display = 'none';
                 
                 // Keep cloud status hidden until local check updates it
@@ -546,10 +548,15 @@ function updateUI() {
                 if (setupIcon) setupIcon.innerText = '🚀';
                 if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
                 if (statusDot) statusDot.innerText = '⚪';
-                if (statusText && !isDiscovering) statusText.innerText = t.statusIdle || 'Нажмите для поиска и подключения';
+                if (statusText && !isDiscovering) {
+                    statusText.innerText = (localStorage.getItem('bms_hard_reset') === '1')
+                        ? (t.statusMemoryCleared || 'Память очищена / Ожидание поиска')
+                        : (t.statusIdle || 'Нажмите для поиска и подключения');
+                }
                 
                 if (btnQuickResetIcon) btnQuickResetIcon.style.display = 'none';
                 if (btnOpen) btnOpen.style.display = 'none';
+                if (btnMonitorHelp) btnMonitorHelp.style.display = 'none';
                 if (btnMainConnect) btnMainConnect.style.display = 'flex';
                 if (cloudStatusBadge) cloudStatusBadge.style.display = 'none';
 
