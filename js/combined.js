@@ -1,0 +1,1984 @@
+const I18N = {
+            en: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android App",
+                btnApkToggle: "Android App",
+                badgeRecommended: "🔥 RECOMMENDED",
+                ipLabel: "Controller IP Address",
+                ipStatusOnline: "Online (Ignition ON)",
+                ipStatusRecent: "Online recently",
+                ipStatusStale: "Offline (Ignition OFF)",
+                ipStatusOffline: "Offline / Standby",
+                cloudStatusOnline: "Active in Cloud",
+                cloudStatusRecent: "Seen in Cloud",
+                cloudStatusStale: "Offline in Cloud",
+                ipStatusChecking: "Checking status...",
+                firstRunTip: "First-time setup: follow the guide below 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "No connection. Turn on Mobile Hotspot. If it's already on, tap here to find IP.",
+                btnSync: "Find Controller",
+                                btnManual: "Set IP Manually",
+                step3Or: "Or enter controller IP manually:",
+                step3AdvancedTitle: "For advanced users",
+                step3AdvancedDesc: "Where to find the IP address? Go to the 'Connected devices' section in your phone's hotspot settings.",
+                step3ResetTitle: "Проблемы с подключением или сменили плату?",
+                step3ResetDesc: "Если контроллер не подключается, или вы подключили другую плату — очистите память радара.",
+                btnStep3Reset: "Reset memory & find new board",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "Save",
+                autoText: "<b>Controller operates fully autonomously.</b> Phone is used only for monitoring and settings.",
+                accordionSetupFirst: "First-Time Setup",
+                accordionSetupConfig: "Connection & Setup",
+                accordionFaq: "Help & FAQ",
+                setupSub: "Step-by-step guide",
+                faqSub: "Knowledge base",
+                apkTitle: "Live Monitor",
+                apkDesc: "Android app with live battery HUD widget:",
+                apkF2: "<b>Instant auto-connect via smartphone hotspot</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">App discovers controller automatically — no IP search or manual setup.</span>",
+                btnDownloadApk: "Download APK",
+                apkInstallHint: "After downloading, open the APK from notifications to install",
+                installTitleAndroid: "📲 Install Application",
+                installDescAndroid: "Add Live Radar to your home screen for quick one-tap access.",
+                btnInstall: "Install",
+                installTitleIos: "📲 Install on iPhone",
+                installDescIos: "Tap the <b>Share button ⎋</b> in Safari, then select <b>«Add to Home Screen» ➕</b>.",
+                step1Title: "Turn ON Phone Hotspot",
+                step1Desc: "Enable <b>Personal Hotspot</b> on your phone with the following credentials:",
+                step1Net: "Network: <code>Bms</code>",
+                step1Pwd: "Password: <code>bmslocal</code>",
+                step1Warn: "⚠️ <b>Important:</b> Only supports <b>2.4GHz Wi-Fi</b>. On iPhone, turn ON <i>«Maximize Compatibility»</i>.",
+                step1Note: "",
+                step2Title: "Plug into Car & Power ON",
+                step2Body: "Insert the controller into your vehicle's <b>OBD2 port</b> (under the steering wheel) and power on the car (<b>READY</b> mode).",
+                step3Title: "IP Discovery (Auto-Sync)",
+                step3Desc: "Connect phone Wi-Fi to controller network with the following credentials:",
+                step3Net: "Network: <code>Bms_Setup</code>",
+                step3Pwd: "Password: <code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ IMPORTANT:</b> In the settings of this Wi-Fi network, turn <b>OFF</b> «Auto-reconnect». If prompted, select <b>«Stay connected»</b>.",
+                                btnGuideSync: "Auto-Sync with Controller",
+                step3Note: "The controller will send its IP to Live Radar, disable Bms_Setup, and redirect you back with IP saved.",
+                step4Title: "Launch Live Monitor",
+                step4Body: "After obtaining the IP address, tap <b>«📊 Live Monitor»</b> (here or at the very top) to view live telemetry.",
+                trAutoQ: "🛡️ How does autonomy and updates work?",
+                trAutoA: "• <b>⚡ Full autonomy:</b> Controller is plugged into the vehicle and automatically regulates fan speed. A discharged or forgotten phone never affects battery cooling.<br>• <b>📲 Energy-efficient link:</b> Phone battery is not drained by continuous data polling. Connection is only active when viewing battery temperature or changing network settings.<br>• <b>🔄 Support & updates:</b> Both controller and mobile app are engineered with support for wireless updates.",
+                tr1Q: "🔴 Dashboard not opening or offline?",
+                tr1A: "• Ensure vehicle is in <b>READY</b> mode.<br>• Verify hotspot is ON: default network <code>Bms</code> (password <code>bmslocal</code>) or your custom network.<br>• On iPhone, turn <b>ON</b> <i>«Maximize Compatibility»</i> in Personal Hotspot settings.<br>• On Android, set Hotspot AP Band to <b>2.4 GHz</b>.<br>• You can also try opening <a href=\"http://bms.local\" target=\"_blank\" style=\"color: #4ade80; text-decoration: underline;\">http://bms.local</a> (may be unstable on iPhone hotspot).",
+                tr2Q: "📶 Tips for <code>Bms_Setup</code> Wi-Fi:",
+                tr2A: "• Turn <b>OFF</b> <i>«Auto-reconnect»</i> for Bms_Setup.<br>• If prompted <i>«No Internet»</i>, tap <b>«Keep Wi-Fi connection» / «Always connect»</b>.",
+                tr3Q: "🟡 IP address changed?",
+                tr3A: "• Ensure phone Hotspot (2.4GHz) is ON and phone is connected to <code>Bms_Setup</code> Wi-Fi, then tap <b>«Auto-Sync»</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(go to button)</a>.<br>• Or check phone Hotspot settings for the connected device IP and save it manually.",
+                trAndroidQ: "🤖 Android Hotspot 2.4GHz Settings:",
+                trAndroidA: "In your Android phone settings ➔ <i>Portable Hotspot / Tethering</i> ➔ <i>Set up hotspot</i>, make sure <b>AP Band</b> is set to <b>2.4 GHz Band</b> (not 5.0 GHz preferred).",
+                trCustomQ: "⚙️ How to connect controller to custom/home Wi-Fi?",
+                trCustomA: "1. Turn off phone hotspot for 15s. The controller will launch its setup Wi-Fi <code>Bms_Setup</code> (password <code>bmslocal</code>).<br>2. Connect phone Wi-Fi to <code>Bms_Setup</code>, open <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>, or tap <b>«Auto-Sync»</b> above.<br>3. In the Wi-Fi settings section, enter your network SSID and password, then save. The controller will reconnect to your network automatically!",
+                tr4Q: "❓ Changed phone or typo in Wi-Fi password?",
+                tr4A: "No worries: turn off phone hotspot for 15 seconds. Since the controller cannot find the network, it will re-open <code>Bms_Setup</code> (password <code>bmslocal</code>), so you can enter new credentials via <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> or <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://bms.local</a>.",
+                toastLinked: "✅ Controller linked: ",
+                toastConnecting: "📡 Connecting (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">Ensure phone hotspot is ON and you are connected to <code>Bms_Setup</code> Wi-Fi!</small>",
+                toastSetupFirst: "Please complete setup following the guide below",
+                btnConnecting: "Connecting...",
+                alertInvalidIp: "Invalid IP address format (example: 10.48.33.187)",
+                dashUnreachable: "⚠️ <b>Cannot connect to controller.</b><br>• Ensure phone Hotspot (2.4GHz) is ON:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Network: <code>Bms</code></span><span>Password: <code>bmslocal</code></span></div><br>• Ensure vehicle ignition is in <b>READY</b> mode.<br>• Connect to <code>Bms_Setup</code> Wi-Fi and tap <b>«Auto-Sync via Bms_Setup»</b>.",
+                errNoSetupNetwork: "⚠️ Please connect to <code>Bms_Setup</code> Wi-Fi first",
+                manualIpHint: "Find IP in Hotspot settings (e.g. 10.48.33.x)",
+                btnCloudSearch: "Find Controller in Cloud",
+                cloudSearching: "Searching in cloud...",
+                cloudFound: "Controller found:",
+                cloudNotFound: "Controller not connected to cloud yet. Turn on phone hotspot.",
+                cloudError: "Cloud error. Check phone internet connection.",
+                quickGuideTitle: "Quick Start (3 Steps):",
+                qstep1: "Turn ON phone Hotspot (Network: <code>Bms</code>, Password: <code>bmslocal</code>, Band: <b>2.4 GHz</b>).",
+                qstep2: "Plug adapter into vehicle's <b>OBD2</b> port and power ON (<b>READY</b> mode).",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                tabCloud: "⚡ Quick Start (Cloud)",
+                tabManual: "🛠️ Backup (Bms_Setup)",
+                modalResetTitle: "Switch Controller Board?",
+                modalResetDesc: "Radar will forget the saved address of the current board. You will be able to connect another board or transfer the adapter to another vehicle.",
+                modalResetConfirm: "Forget & Find New",
+                modalResetCancel: "Cancel",
+                manualIntro: "💡 <b>Backup method:</b> use this if mobile hotspot or cellular data is unavailable.",
+                stepBackupATitle: "Wi-Fi Network Bms_Setup",
+                stepBackupADesc: "Turn OFF phone hotspot for 15 seconds. The controller will create a temporary configuration network:",
+                stepBackupBTitle: "Direct Connection",
+                stepBackupBDesc: "Connect your phone to <code>Bms_Setup</code> Wi-Fi and open in browser:",
+                stepBackupCTitle: "Manual IP Entry",
+                stepBackupCDesc: "If you know the controller IP address from your hotspot connected devices:",
+                deviceLabel: "Board:",
+                btnQuickReset: "Switch Board",
+                toastResetDone: "Board memory cleared. Searching for new active board...",
+                btnMainConnect: "Connect to Controller",
+                btnOpenDash: "Open Live Monitor",
+                toggleGuideShow: "Show Connection Steps ▼",
+                toggleGuideHide: "Hide Connection Steps ▲",
+                statusIdle: "Tap to search and connect",
+                statusSearchingLocal: "Searching in local network...",
+                statusSearchingCloud: "Querying cloud for IP...",
+                statusFound: "Controller found! Opening...",
+                statusNotFound: "Controller not found. Check the steps above.",
+                supportTitle: "Service Information (Support)",
+                supRadarVer: "Radar Version:",
+                supDevMac: "Device ID (MAC):",
+                supDevIp: "Controller IP:",
+                supBoardFw: "Board Firmware:",
+                supStatus: "Link Status:",
+                btnResetDev: "Switch / Forget Current Board",
+                btnCopySupport: "Copy Support Data",
+                toastSupportCopied: "✅ Service information copied to clipboard"
+            },
+            zh: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android 应用",
+                btnApkToggle: "Android 应用",
+                badgeRecommended: "🔥 推荐",
+                ipLabel: "控制器 IP 地址",
+                ipStatusOnline: "在线 (点火已开启)",
+                ipStatusRecent: "最近在线",
+                ipStatusStale: "离线 (请开启点火)",
+                ipStatusOffline: "离线 / 待机",
+                cloudStatusOnline: "云端在线",
+                cloudStatusRecent: "最近在云端",
+                cloudStatusStale: "云端离线",
+                ipStatusChecking: "检查状态中...",
+                firstRunTip: "首次设置：请按照下方指南操作 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "无法连接。请开启手机热点。如果已开启，请点击此处查找新 IP。",
+                btnSync: "查找控制器",
+                btnManual: "手动设置 IP",
+                step3Or: "或手动输入控制器 IP：",
+                step3AdvancedTitle: "对于高级用户",
+                step3AdvancedDesc: "哪里可以找到 IP 地址？进入手机热点设置的“已连接设备”部分。",
+                step3ResetTitle: "更换了电路板或第二辆车？",
+                step3ResetDesc: "如果连接了另一块电路板，请点击下方重置已保存的设备内存并发现新板。",
+                btnStep3Reset: "重置内存并查找新板",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "保存",
+                autoText: "<b>控制器完全自主运行。</b> 手机仅用于监控与设置。",
+                accordionSetupFirst: "首次连接指南",
+                accordionSetupConfig: "连接与设置",
+                accordionFaq: "常见问题 (FAQ)",
+                setupSub: "逐步设置指南",
+                faqSub: "知识库与 FAQ",
+                apkTitle: "Live Monitor",
+                apkDesc: "支持悬浮窗实时监控的 Android 应用：",
+                apkF2: "<b>智能手机热点极速自动直连</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">应用自动发现控制器 — 无需查找 IP 与手动设置。</span>",
+                btnDownloadApk: "下载 APK",
+                apkInstallHint: "下载完成后，请从手机通知栏打开文件以完成安装",
+                installTitleAndroid: "📲 安装应用程序",
+                installDescAndroid: "将 Live Radar 添加到主屏幕，享受一键快速访问。",
+                btnInstall: "立即安装",
+                installTitleIos: "📲 在 iPhone 上添加",
+                installDescIos: "在 Safari 浏览器中点击底部<b>分享按钮 ⎋</b>，然后选择<b>“添加到主屏幕” ➕</b>。",
+                step1Title: "开启手机热点",
+                step1Desc: "请在手机上开启<b>个人热点</b>，参数如下：",
+                step1Net: "热点名称：<code>Bms</code>",
+                step1Pwd: "热点密码：<code>bmslocal</code>",
+                step1Warn: "⚠️ <b>特别注意：</b> 仅支持 <b>2.4GHz Wi-Fi</b>。iPhone 用户请开启<i>“最大兼容性”</i>。",
+                step1Note: "",
+                step2Title: "插入车辆并通电",
+                step2Body: "将控制器插入车辆方向盘下方的 <b>OBD2 接口</b>，并将车辆启动至 <b>READY</b> 模式。",
+                step3Title: "IP 检测（自动同步）",
+                step3Desc: "请在手机上连接控制器热点，参数如下：",
+                step3Net: "热点名称：<code>Bms_Setup</code>",
+                step3Pwd: "热点密码：<code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ 重要提示：</b> 在此 Wi-Fi 网络的设置中，<b>关闭“自动连接”</b>。如果提示“无网络”，请选择<b>“保持连接”</b>。",
+                btnGuideSync: "与控制器自动同步",
+                step3Note: "控制器将自动将 IP 发送给雷达，关闭临时热点，并带您返回主屏（已保存 IP）。",
+                step4Title: "启动 Live Monitor",
+                step4Body: "获取 IP 地址后，点击<b>«📊 Live Monitor»</b>（此处或顶部均可）即可查看实时电池遥测数据。",
+                trAutoQ: "🛡️ 自主运行与系统更新机制？",
+                trAutoA: "• <b>⚡ 完全自主运行：</b>控制器硬件直连车辆，完全自动独立调节散热风扇转速。手机没电或遗忘绝不影响电池散热。<br>• <b>📲 超低功耗连接：</b>手机不会因持续通信而耗电。仅在您需要查看电池温度或更改网络设置时才发起连接。<br>• <b>🔄 长期维护与更新：</b>控制器硬件与移动端 App 均具备无线更新支持。",
+                tr1Q: "🔴 无法打开仪表板或设备离线？",
+                tr1A: "• 确保车辆处于通电状态（<b>READY</b> 模式）。<br>• 检查手机热点是否开启：默认网络：<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>热点名称：<code>Bms</code></span><span>热点密码：<code>bmslocal</code></span></div>或您设置的自定义网络。<br>• iPhone 用户请务必在个人热点设置中开启<i>“最大兼容性”</i>。<br>• Android 用户请将热点 AP 频段设置为 <b>2.4 GHz</b>。<br>• 您也可以尝试访问 <a href=\"http://bms.local\" target=\"_blank\" style=\"color: #4ade80; text-decoration: underline;\">http://bms.local</a>（在 iPhone 热点上可能不稳定）。",
+                tr2Q: "📶 连接 Bms_Setup 时的注意事项：",
+                tr2A: "• <b>关闭自动重连：</b>输入密码 <code>bmslocal</code> 时，请<b>关闭</b><i>“自动重连”</i>开关。<br>• <b>提示无网络：</b>若系统提示<i>“无互联网连接”</i>，请勾选<b>“始终连接”/“保持连接”</b>。",
+                tr3Q: "🟡 IP 地址发生变化？",
+                tr3A: "• 请确保手机热点 (2.4GHz) 已开启且手机已连接至 <code>Bms_Setup</code> Wi-Fi，然后点击<b>“自动同步”</b> <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(前往按钮)</a>。<br>• 或在手机的<i>设置 ➔ 个人热点 ➔ 已连接设备</i>中查看分配的 IP 并手动输入。",
+                trAndroidQ: "🤖 Android 手机 2.4GHz 热点设置方法：",
+                trAndroidA: "在手机 <i>设置 ➔ 个人热点 / 网络共享 ➔ 热点设置</i> 中，将 <b>AP 频段</b> 切换为 <b>2.4 GHz 频段</b>（不要选 5 GHz）。",
+                trCustomQ: "⚙️ 如何将控制器连接至自定义 Wi-Fi 网络？",
+                trCustomA: "1. 关闭手机热点 15 秒，控制器将自动开启临时网络 <code>Bms_Setup</code>（密码 <code>bmslocal</code>）。<br>2. 手机连接 <code>Bms_Setup</code> Wi-Fi，打开 <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 或 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a>，或点击上方的<b>“自动同步”</b>。<br>3. 在 Wi-Fi 设置栏中输入您的专属热点 SSID 和密码并点击保存。<br>保存后控制器将自动连接您的网络！",
+                tr4Q: "❓ 更换了手机或输错了 Wi-Fi 密码？",
+                tr4A: "无需担心：关闭手机热点 15 秒。控制器因无法连接网络会自动重新开启 服务热点：<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>热点名称：<code>Bms_Setup</code></span><span>热点密码：<code>bmslocal</code></span></div>，您可通过 <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 或 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a> 重新输入正确的配置。",
+                toastLinked: "✅ 控制器已连接：",
+                toastConnecting: "📡 正在连接 (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">请确保手机热点已开启，且已连接到 <code>Bms_Setup</code> Wi-Fi！</small>",
+                toastSetupFirst: "请先按照下方指南完成连接设置",
+                btnConnecting: "正在连接...",
+                alertInvalidIp: "IP 地址格式无效（示例：10.48.33.187）",
+                dashUnreachable: "⚠️ <b>无法连接至控制器。</b><br>• 请确认手机热点 (2.4GHz) 已开启：<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>热点名称：<code>Bms</code></span><span>热点密码：<code>bmslocal</code></span></div>。<br>• 请确认车辆处于 <b>READY</b> 模式。<br>• 或连接 <code>Bms_Setup</code> 热点并点击<b>“通过 Bms_Setup 自动同步”</b>。",
+                errNoSetupNetwork: "⚠️ 请先连接到 <code>Bms_Setup</code> Wi-Fi",
+                manualIpHint: "在热点设置中查找 IP (例如：10.48.33.x)",
+                btnCloudSearch: "在云端查找控制器",
+                cloudSearching: "正在云端查找控制器...",
+                cloudFound: "已找到控制器：",
+                cloudNotFound: "控制器尚未连接到云端。请开启手机热点。",
+                cloudError: "云端连接错误，请检查手机网络。",
+                quickGuideTitle: "快速上手（3步）：",
+                qstep1: "开启手机热点（网络：<code>Bms</code>，密码：<code>bmslocal</code>，频段：<b>2.4 GHz</b>）。",
+                qstep2: "将适配器插入车辆 <b>OBD2</b> 接口并启动车辆（<b>READY</b> 模式）。",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                deviceLabel: "设备：",
+                btnQuickReset: "更换设备",
+                toastResetDone: "设备缓存已清除。请开启车辆电源 (READY) 以绑定新设备。",
+                btnMainConnect: "连接到控制器",
+                btnOpenDash: "打开 Live Monitor",
+                toggleGuideShow: "显示连接步骤 ▼",
+                toggleGuideHide: "隐藏连接步骤 ▲",
+                statusIdle: "点击搜索并连接",
+                statusSearchingLocal: "正在局域网中搜索...",
+                statusSearchingCloud: "正在向云端请求 IP...",
+                statusFound: "已找到控制器！正在打开...",
+                statusNotFound: "未找到控制器。请检查上方步骤。",
+                supportTitle: "服务信息（供支持人员使用）",
+                supRadarVer: "雷达版本：",
+                supDevMac: "设备 ID (MAC)：",
+                supDevIp: "控制器 IP：",
+                supBoardFw: "主板固件：",
+                supStatus: "连接状态：",
+                btnResetDev: "切换 / 忘记当前主板",
+                btnCopySupport: "复制支持信息",
+                toastSupportCopied: "✅ 服务信息已复制到剪贴板"
+            },
+            ko: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android 앱",
+                btnApkToggle: "Android 앱",
+                badgeRecommended: "🔥 추천",
+                ipLabel: "컨트롤러 IP 주소",
+                ipStatusOnline: "온라인 (시동 켜짐)",
+                ipStatusRecent: "최근 온라인",
+                ipStatusStale: "오프라인 (시동을 켜세요)",
+                ipStatusOffline: "오프라인 / 대기",
+                cloudStatusOnline: "클라우드 온라인",
+                cloudStatusRecent: "클라우드 최근",
+                cloudStatusStale: "클라우드 오프라인",
+                ipStatusChecking: "상태 확인 중...",
+                firstRunTip: "최초 설정: 아래 가이드에 따라 진행하세요 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "연결 없음. 모바일 핫스팟을 켜세요. 켜져 있다면 여기를 눌러 IP를 찾으세요.",
+                btnSync: "컨트롤러 찾기",
+                btnManual: "수동으로 IP 입력",
+                step3Or: "또는 수동으로 IP 입력:",
+                step3AdvancedTitle: "고급 사용자용",
+                step3AdvancedDesc: "IP 주소는 어디서 찾나요? 휴대폰 핫스팟 설정의 '연결된 기기' 섹션으로 이동하세요.",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "저장",
+                autoText: "<b>컨트롤러는 완전 자율 작동합니다.</b> 스마트폰은 모니터링 및 설정에만 사용됩니다.",
+                accordionSetupFirst: "최초 설정 가이드",
+                accordionSetupConfig: "연결 및 설정",
+                accordionFaq: "자주 묻는 질문 (FAQ)",
+                setupSub: "단계별 설정 가이드",
+                faqSub: "도움말 및 FAQ",
+                apkTitle: "Live Monitor",
+                apkDesc: "실시간 배터리 HUD 위젯을 지원하는 Android 앱:",
+                apkF2: "<b>스마트폰 핫스팟 자동 즉시 연결</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">앱이 컨트롤러를 자동 검색 — IP 검색이나 수동 설정 불필요.</span>",
+                btnDownloadApk: "APK 다운로드",
+                apkInstallHint: "다운로드 후 스마트폰 알림창에서 파일을 열어 설치하세요",
+                installTitleAndroid: "📲 앱 설치하기",
+                installDescAndroid: "원터치 빠른 실행을 위해 홈 화면에 Live Radar를 추가하세요.",
+                btnInstall: "설치하기",
+                installTitleIos: "📲 iPhone에 추가하기",
+                installDescIos: "Safari 하단의 <b>공유 버튼 ⎋</b>을 탭한 후 <b>«홈 화면에 추가» ➕</b>를 선택하세요.",
+                step1Title: "스마트폰 핫스팟 켜기",
+                step1Desc: "스마트폰에서 다음 정보로 <b>개인용 핫스팟</b>을 켜세요:",
+                step1Net: "네트워크 이름: <code>Bms</code>",
+                step1Pwd: "비밀번호: <code>bmslocal</code>",
+                step1Warn: "⚠️ <b>중요 알림:</b> <b>2.4GHz Wi-Fi</b>만 지원합니다. iPhone은 <i>«호환성 최대화»</i>를 켜주세요.",
+                step1Note: "",
+                step2Title: "차량 OBD2에 연결 및 전원 켜기",
+                step2Body: "컨트롤러를 운전대 아래 <b>OBD2 단자</b>에 연결하고 차량 전원을 켜세요 (<b>READY</b> 모드).",
+                step3Title: "IP 확인 (자동 동기화)",
+                step3Desc: "스마트폰 Wi-Fi를 컨트롤러 네트워크에 연결하세요. 매개변수는 다음과 같습니다:",
+                step3Net: "네트워크 이름: <code>Bms_Setup</code>",
+                step3Pwd: "비밀번호: <code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ 중요:</b> 이 Wi-Fi 네트워크 설정에서 <b>«자동 연결»</b>을 끕니다. 팝업 시 <b>«연결 유지»</b>를 선택합니다.",
+                btnGuideSync: "컨트롤러와 자동 동기화",
+                step3Note: "컨트롤러가 Live Radar로 IP 주소를 전송하고 Bms_Setup을 끈 후 IP가 저장된 상태로 돌아옵니다.",
+                step4Title: "Live Monitor 실행",
+                step4Body: "IP 주소를 가져온 후 <b>«📊 Live Monitor»</b>(여기 또는 맨 위)를 누르면 실시간 데이터를 볼 수 있습니다.",
+                trAutoQ: "🛡️ 자율 냉각 및 업데이트 방식 안내",
+                trAutoA: "• <b>⚡ 완전 자율 작동:</b> 컨트롤러가 차량에 직접 연결되어 팬 속도를 스스로 조절합니다. 스마트폰이 꺼지거나 없어도 배터리 냉각에는 아무런 영향을 주지 않습니다.<br>• <b>📲 배터리 절약형 통신:</b> 스마트폰 배터리를 지속적으로 소모하지 않습니다. 배터리 온도를 확인하거나 네트워크 설정을 변경할 때만 연결됩니다.<br>• <b>🔄 지원 및 업데이트:</b> 컨트롤러와 모바일 앱 모두 무선 업데이트를 지원하도록 설계되었습니다.",
+                tr1Q: "🔴 대시보드가 열리지 않거나 오프라인인 경우:",
+                tr1A: "• 차량 시동이 켜져 있는지 확인하세요 (<b>READY</b> 모드).<br>• 스마트폰 핫스팟이 켜져 있는지 확인하세요: 기본 네트워크 또는 컨트롤러에 설정한 네트워크:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms</code></span><span>비밀번호: <code>bmslocal</code></span></div><br>• iPhone의 경우 핫스팟 설정에서 <i>«호환성 최대화»</i>를 켜주세요.<br>• Android의 경우 AP 밴드를 <b>2.4 GHz</b>로 설정하세요.<br>• <a href=\"http://bms.local\" target=\"_blank\" style=\"color: #4ade80; text-decoration: underline;\">http://bms.local</a> 에 접속해 볼 수도 있습니다 (iPhone 핫스팟에서는 불안정할 수 있음).",
+                tr2Q: "📶 Bms_Setup Wi-Fi 연결 주의사항:",
+                tr2A: "• Bms_Setup의 <i>«자동 다시 연결»</i>을 끄세요.<br>• <i>«인터넷 없음»</i> 팝업 시 <b>«항상 연결» / «Wi-Fi 연결 유지»</b>를 선택하세요.",
+                tr3Q: "🟡 IP 주소가 변경된 경우:",
+                tr3A: "• 스마트폰 핫스팟(2.4GHz)이 켜져 있고 스마트폰이 <code>Bms_Setup</code> Wi-Fi에 연결되어 있는지 확인한 후 <b>«자동 동기화»</b>를 누르세요 <a href='javascript:void(0)' onclick='openAndScrollToStep3()' style='color: #3b82f6; text-decoration: underline;'>(버튼으로 이동)</a>.<br>• 또는 핫스팟 설정에서 연결된 기기의 IP 주소를 확인하여 수동 입력하세요.",
+                trAndroidQ: "🤖 Android 핫스팟 2.4GHz 설정 방법:",
+                trAndroidA: "스마트폰 <i>설정 ➔ 테더링 및 핫스팟 ➔ 핫스팟 설정</i>에서 <b>AP 밴드</b>를 <b>2.4 GHz 대역</b>으로 선택하세요.",
+                trCustomQ: "⚙️ 컨트롤러를 나만의 Wi-Fi에 연결하는 방법은?",
+                trCustomA: "1. 스마트폰 핫스팟을 15초간 끕니다. 컨트롤러가 설정용 Wi-Fi를 시작합니다:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms_Setup</code></span><span>비밀번호: <code>bmslocal</code></span></div><br>2. <code>Bms_Setup</code> Wi-Fi에 연결한 후 <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 또는 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a> 에 접속하거나 상단의 <b>«자동 동기화»</b>를 누릅니다.<br>3. Wi-Fi 설정 항목에서 사용할 핫스팟 이름과 비밀번호를 입력하고 저장합니다.<br>저장 후 컨트롤러가 자동으로 연결됩니다!",
+                tr4Q: "❓ 스마트폰을 변경했거나 Wi-Fi 비밀번호를 잘못 입력한 경우?",
+                tr4A: "걱정하지 마세요: 스마트폰 핫스팟을 15초간 끕니다. 네트워크를 찾지 못한 컨트롤러가 설정용 Wi-Fi를 다시 실행하므로:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms_Setup</code></span><span>비밀번호: <code>bmslocal</code></span></div> <a href='http://10.10.10.1' target='_blank' style='color: #4ade80; text-decoration: underline;'>http://10.10.10.1</a> 또는 <a href='http://bms.local' target='_blank' style='color: #4ade80; text-decoration: underline;'>bms.local</a> 에서 새 정보를 다시 입력하실 수 있습니다.",
+                toastLinked: "✅ 컨트롤러 연결됨: ",
+                toastConnecting: "📡 연결 중 (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">스마트폰 핫스팟이 켜져 있고 <code>Bms_Setup</code> Wi-Fi에 연결되어 있는지 확인하세요!</small>",
+                toastSetupFirst: "먼저 아래 가이드에 따라 설정을 완료하세요",
+                btnConnecting: "연결 중...",
+                alertInvalidIp: "올바르지 않은 IP 주소 형식입니다 (예: 10.48.33.187)",
+                dashUnreachable: "⚠️ <b>컨트롤러에 연결할 수 없습니다.</b><br>• 스마트폰 핫스팟 (2.4GHz)이 켜져 있는지 확인하세요:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>네트워크 이름: <code>Bms</code></span><span>비밀번호: <code>bmslocal</code></span></div><br>• 차량 시동이 <b>READY</b> 상태인지 확인하세요.<br>• 또는 <code>Bms_Setup</code>에 연결 후 <b>«Bms_Setup을 통한 자동 동기화»</b>를 누르세요.",
+                errNoSetupNetwork: "⚠️ 먼저 <code>Bms_Setup</code> Wi-Fi에 연결하세요",
+                manualIpHint: "핫스팟 설정에서 IP 찾기 (예: 10.48.33.x)",
+                btnCloudSearch: "클라우드에서 찾기",
+                cloudSearching: "클라우드에서 검색 중...",
+                cloudFound: "컨트롤러를 찾았습니다:",
+                cloudNotFound: "컨트롤러가 아직 연결되지 않았습니다. 스마트폰 핫스팟을 켜주세요.",
+                cloudError: "클라우드 오류입니다. 스마트폰 인터넷을 확인하세요.",
+                quickGuideTitle: "빠른 시작 (3단계):",
+                qstep1: "스마트폰 핫스팟을 켭니다 (네트워크: <code>Bms</code>, 비밀번호: <code>bmslocal</code>, 대역: <b>2.4 GHz</b>).",
+                qstep2: "차량 <b>OBD2</b> 단자에 어댑터를 연결하고 시동을 켭니다 (<b>READY</b> 모드).",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                deviceLabel: "보드:",
+                btnQuickReset: "보드 전환",
+                toastResetDone: "보드 메모리가 초기화되었습니다. 새 보드를 연결하려면 차량 시동을 켜세요(READY).",
+                btnMainConnect: "컨트롤러에 연결",
+                btnOpenDash: "Live Monitor 열기",
+                toggleGuideShow: "연결 가이드 보기 ▼",
+                toggleGuideHide: "연결 가이드 숨기기 ▲",
+                statusIdle: "탭하여 검색 및 연결",
+                statusSearchingLocal: "로컬 네트워크에서 검색 중...",
+                statusSearchingCloud: "클라우드에서 IP 조회 중...",
+                statusFound: "컨트롤러를 찾았습니다! 실행 중...",
+                statusNotFound: "컨트롤러를 찾을 수 없습니다. 위의 단계를 확인하세요.",
+                supportTitle: "서비스 정보 (고객 지원용)",
+                supRadarVer: "레이더 버전:",
+                supDevMac: "기기 ID (MAC):",
+                supDevIp: "컨트롤러 IP:",
+                supBoardFw: "보드 펌웨어:",
+                supStatus: "연결 상태:",
+                btnResetDev: "현재 보드 전환 / 초기화",
+                btnCopySupport: "지원 정보 복사",
+                toastSupportCopied: "✅ 서비스 정보가 클립보드에 복사되었습니다"
+            },
+            ru: {
+                appTitle: "Live Radar",
+                appsHeader: "📱 Android App",
+                btnApkToggle: "Android App",
+                badgeRecommended: "🔥 РЕКОМЕНДУЕМ",
+                ipLabel: "IP адрес контроллера",
+                ipStatusOnline: "В сети (Зажигание включено)",
+                ipStatusRecent: "В сети недавно",
+                ipStatusStale: "Не в сети (Зажигание выключено)",
+                ipStatusOffline: "Не в сети / Ожидание",
+                cloudStatusOnline: "Активен в Облаке",
+                cloudStatusRecent: "Был в сети",
+                cloudStatusStale: "Офлайн",
+                ipStatusChecking: "Проверка связи...",
+                firstRunTip: "Первый запуск: следуйте инструкции ниже 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "Нет связи. Включите Точку доступа. Если она включена — нажмите сюда для поиска IP-адреса.",
+                btnSync: "Найти контроллер",
+                btnManual: "Ввести IP-адрес вручную",
+                step3Or: "Укажите IP-адрес вручную:",
+                step3AdvancedTitle: "Для продвинутых пользователей",
+                step3AdvancedDesc: "Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».",
+                step3ResetTitle: "Сменили плату или второе авто?",
+                step3ResetDesc: "Если вы подключили другую плату, нажмите кнопку ниже, чтобы Радар забыл старый IP и сразу нашел новую плату.",
+                btnStep3Reset: "Сбросить память и найти новую плату",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "Сохранить",
+                autoText: "<b>Контроллер работает полностью автономно.</b> Телефон используется только для мониторинга и настройки.",
+                accordionSetupFirst: "Первое подключение",
+                accordionSetupConfig: "Настройка и связь",
+                accordionFaq: "Вопросы и ответы",
+                setupSub: "Пошаговый гид",
+                faqSub: "База знаний (FAQ)",
+                apkTitle: "Live Monitor",
+                apkDesc: "Android приложение с плавающим HUD виджетом:",
+                apkF2: "<b>Мгновенное автоподключение к точке доступа смартфона</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">Приложение само находит контроллер — без поиска IP-адреса и ручных настроек.</span>",
+                btnDownloadApk: "Скачать APK",
+                apkInstallHint: "После загрузки откройте файл из шторки уведомлений для установки",
+                installTitleAndroid: "📲 Установить приложение",
+                installDescAndroid: "Добавьте Live Radar на главный экран для быстрого доступа.",
+                btnInstall: "Установить",
+                installTitleIos: "📲 Установка на iPhone",
+                installDescIos: "Нажмите кнопку <b>Поделиться ⎋</b> в Safari и выберите <b>«На экран Домой» ➕</b>.",
+                step1Title: "Включите раздачу с телефона",
+                step1Desc: "Включите <b>Точку доступа</b> на телефоне со следующими параметрами:",
+                step1Net: "Имя сети: <code>Bms</code>",
+                step1Pwd: "Пароль: <code>bmslocal</code>",
+                step1Warn: "⚠️ <b>Важно:</b> Поддерживается только <b>2.4GHz Wi-Fi</b>. На iPhone включите <i>«Максимальная совместимость»</i>.",
+                step1Note: "",
+                step2Title: "Подключение к авто и запуск",
+                step2Body: "Вставьте контроллер в <b>OBD2 разъем</b> автомобиля и включите зажигание (режим <b>READY</b>).",
+                step3Title: "Определение IP-адреса (Автопоиск)",
+                step3Desc: "Подключите Wi-Fi телефона к сети контроллера со следующими параметрами:",
+                step3Net: "Имя сети: <code>Bms_Setup</code>",
+                step3Pwd: "Пароль: <code>bmslocal</code>",
+                step3Tips: "<b style='color: #fde68a;'>⚠️ ВАЖНО:</b> В настройках этой Wi-Fi сети выключите <b>«Автоподключение»</b>. При окне «Нет интернета» выберите <b>«Оставаться подключенным»</b>.",
+                btnGuideSync: "Найти контроллер (Автопоиск IP-адреса)",
+                step3Note: "Контроллер передаст свой IP-адрес Радару, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с уже сохраненным IP-адресом.",
+                step4Title: "Запуск Live Monitor",
+                step4Body: "После получения IP-адреса нажмите <b>«📊 Live Monitor»</b> (здесь или в самом верху) для перехода к телеметрии.",
+                trAutoQ: "🛡️ Как устроена автономность и обновления?",
+                trAutoA: "• <b>⚡ Полная автономность:</b> Контроллер подключен к автомобилю и сам регулирует обороты вентилятора. Забытый или разряженный телефон никак не влияет на охлаждение батареи.<br>• <b>📲 Энергоэффективная связь:</b> Телефон не сажает батарею постоянным обменом данными. Соединение требуется только тогда, когда вы хотите посмотреть температуру батареи или изменить параметры сети.<br>• <b>🔄 Поддержка и обновления:</b> Контроллер и мобильное приложение спроектированы с поддержкой обновлений.",
+                tr1Q: "🔴 Дашборд не открывается или не в сети?",
+                tr1A: "• Убедитесь, что зажигание включено (режим <b>READY</b>).<br>• Убедитесь, что включена раздача: стандартная сеть либо заданная вами в настройках контроллера:<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms</code></span><span>Пароль: <code>bmslocal</code></span></div><br>• На iPhone включите <i>«Максимальная совместимость»</i> в настройках модема.<br>• На Android выберите диапазон частот точки доступа <b>2.4 ГГц</b>.",
+                tr2Q: "📶 Подсказки для сети Bms_Setup:",
+                tr2A: "• Выключите <i>«Автоподключение»</i> для <code>Bms_Setup</code>.<br>• При появлении окна <i>«Нет интернета»</i> выберите <i>«Оставаться подключенным»</i>.",
+                tr3Q: "🟡 Сменился IP-адрес?",
+                tr3A: "• Благодаря умному автопоиску плата передает новый IP при подключении к вашей точке доступа.<br>• Если вы сменили плату, нажмите <b>«Сменить плату»</b> на главном экране.",
+                trAndroidQ: "🤖 Настройка 2.4GHz на телефонах Android:",
+                trAndroidA: "В меню <i>Настройки ➔ Точка доступа Wi-Fi ➔ Настройка точки доступа</i> переключите пункт <b>Диапазон частот (AP Band)</b> на <b>2.4 ГГц</b> (вместо 5 ГГц).",
+                trCustomQ: "⚙️ Как подключить контроллер к своей сети Wi-Fi (своё имя и пароль)?",
+                trCustomA: "1. Откройте Live Monitor при подключении, перейдите в настройки Wi-Fi, введите SSID и пароль вашей точки доступа и сохраните.<br>После сохранения контроллер будет подключаться к вашей сети автоматически!",
+                tr4Q: "❓ Сменили телефон или ошиблись в пароле Wi-Fi?",
+                tr4A: "Не переживайте: выключите раздачу на телефоне на 15 секунд. Контроллер не найдет сеть и откроет сервисную сеть <code>Bms_Setup</code> (пароль <code>bmslocal</code>), чтобы вы могли ввести новые данные через Live Monitor.",
+                toastLinked: "✅ Контроллер привязан: ",
+                toastConnecting: "📡 Подключение (10.10.10.1)...<br><small style=\"color:#cbd5e1; font-size: 11.5px; line-height: 1.4; display: block; margin-top: 3px;\">Убедитесь, что на телефоне включена точка доступа и вы подключены к Wi-Fi сети <code>Bms_Setup</code>!</small>",
+                toastSetupFirst: "Пожалуйста, выполните подключение по инструкции ниже",
+                btnConnecting: "Подключение...",
+                alertInvalidIp: "Неверный формат IP адреса (пример: 10.48.33.187)",
+                dashUnreachable: "⚠️ <b>Не удается открыть страницу контроллера.</b><br>• Проверьте, что на телефоне включена раздача (2.4GHz):<div class=\"cred-row\" style=\"margin: 6px 0;\"><span>Имя сети: <code>Bms</code></span><span>Пароль: <code>bmslocal</code></span></div><br>• Убедитесь, что авто в режиме <b>READY</b>.",
+                errNoSetupNetwork: "⚠️ Сначала подключитесь к сети <code>Bms_Setup</code>",
+                manualIpHint: "Найдите IP-адрес в настройках точки доступа (например: 10.48.33.x)",
+                btnCloudSearch: "Найти контроллер в облаке",
+                cloudSearching: "Поиск контроллера в облаке...",
+                cloudFound: "Контроллер найден:",
+                cloudNotFound: "Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.",
+                cloudError: "Ошибка связи с облаком. Проверьте интернет на телефоне.",
+                quickGuideTitle: "Быстрый старт (3 шага):",
+                qstep1: "Включите точку доступа на телефоне (сеть: <code>Bms</code>, пароль: <code>bmslocal</code>, частота: <b>2.4 ГГц</b>).",
+                qstep2: "Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                tabCloud: "⚡ Быстрый старт (Облако)",
+                tabManual: "🛠️ Резервный (Bms_Setup)",
+                modalResetTitle: "Сменить плату контроллера?",
+                modalResetDesc: "Радар забудет сохраненный адрес текущей платы. Вы сможете подключить другую плату или перенести контроллер в другой автомобиль.",
+                modalResetConfirm: "Забыть и искать новую",
+                modalResetCancel: "Отмена",
+                manualIntro: "💡 <b>Резервный способ:</b> используйте, если телефон не раздает интернет или нет мобильной сети.",
+                stepBackupATitle: "Wi-Fi сеть Bms_Setup",
+                stepBackupADesc: "Выключите точку доступа на телефоне на 15 секунд. Контроллер сам создаст временную сеть для настройки:",
+                stepBackupBTitle: "Прямой вход в контроллер",
+                stepBackupBDesc: "Подключитесь к Wi-Fi сети <code>Bms_Setup</code> и откройте адрес в браузере:",
+                stepBackupCTitle: "Ручной ввод IP-адреса",
+                stepBackupCDesc: "Если вы знаете IP-адрес из списка подключенных устройств точки доступа:",
+                deviceLabel: "Плата:",
+                btnQuickReset: "Сменить плату",
+                toastResetDone: "Память платы сброшена. Поиск новой активной платы...",
+                btnMainConnect: "Подключиться к контроллеру",
+                btnOpenDash: "Открыть Live Monitor",
+                toggleGuideShow: "Показать шаги подключения ▼",
+                toggleGuideHide: "Скрыть шаги подключения ▲",
+                statusIdle: "Нажмите для поиска и подключения",
+                statusSearchingLocal: "Поиск контроллера в локальной сети...",
+                statusSearchingCloud: "Запрос свежего адреса из облака...",
+                statusFound: "Контроллер найден! Открываем...",
+                statusNotFound: "Контроллер не найден. Проверьте шаги 1–2 выше.",
+                supportTitle: "Служебная информация (для мастера)",
+                supRadarVer: "Версия Радара:",
+                supDevMac: "ID устройства (MAC):",
+                supDevIp: "IP-адрес контроллера:",
+                supBoardFw: "Прошивка платы:",
+                supStatus: "Статус связи:",
+                btnResetDev: "Сменить / забыть текущую плату",
+                btnCopySupport: "Скопировать данные для поддержки",
+                toastSupportCopied: "✅ Служебная информация скопирована в буфер"
+            },
+            ja: {
+                appTitle: "BMS Cooling Radar",
+                appsHeader: "📱 Android アプリ",
+                btnApkToggle: "Android アプリ",
+                badgeRecommended: "🔥 おすすめ",
+                ipLabel: "コントローラー IP アドレス",
+                ipStatusOnline: "オンライン (READY ON)",
+                ipStatusRecent: "最近オンライン",
+                ipStatusStale: "オフライン (READYにしてください)",
+                ipStatusOffline: "オフライン / 待機",
+                cloudStatusOnline: "クラウドでオンライン",
+                cloudStatusRecent: "最近クラウドで確認",
+                cloudStatusStale: "クラウドでオフライン",
+                ipStatusChecking: "接続確認中...",
+                firstRunTip: "初期設定：下のガイドに従ってください 👇",
+                btnOpen: "Live Monitor",
+                ipUnreachableText: "接続できません。テザリングをONにしてください。",
+                btnSync: "コントローラーを検出",
+                btnManual: "IP手動設定",
+                step3Or: "またはIPを手動入力:",
+                step3AdvancedTitle: "上級者向け",
+                step3AdvancedDesc: "テザリングの「接続中の端末」一覧でIPを確認できます。",
+                step3ResetTitle: "ボードの変更または2台目の車両？",
+                step3ResetDesc: "別のボードを接続した場合は、下のボタンを押して保存されたメモリをリセットし、新しいボードを検出してください。",
+                btnStep3Reset: "メモリをリセットして新しいボードを検出",
+                step4Btn: "Live Monitor",
+                btnSaveIp: "保存",
+                autoText: "<b>コントローラーは完全自律型です。</b> スマホは設定と確認時のみ使用します。",
+                accordionSetupFirst: "初期接続ガイド",
+                accordionSetupConfig: "設定と接続",
+                accordionFaq: "よくある質問 (FAQ)",
+                setupSub: "ステップ別ガイド",
+                faqSub: "ナレッジベース",
+                apkTitle: "Live Monitor",
+                apkDesc: "フローティングHUDウィジェット付きAndroidアプリ：",
+                apkF2: "<b>スマホのテザリングで瞬時に自動接続</b><br><span style=\"color: #a1a1aa; font-size: 11.5px;\">IP検索や手動設定は不要です。</span>",
+                btnDownloadApk: "APKをダウンロード",
+                apkInstallHint: "ダウンロード完了後、通知欄から開いてインストールしてください",
+                installTitleAndroid: "📲 アプリのインストール",
+                installDescAndroid: "ホーム画面に追加してワンタップで起動。",
+                btnInstall: "インストール",
+                installTitleIos: "📲 iPhone に追加",
+                installDescIos: "Safariの共有ボタン ⎋ をタップし、「ホーム画面に追加」➕ を選択してください。",
+                quickGuideTitle: "クイックスタート (3ステップ):",
+                qstep1: "スマホのテザリングをONにします（SSID: <code>Bms</code>, パスワード: <code>bmslocal</code>, 帯域: <b>2.4GHz</b>）。",
+                qstep2: "アダプターを車両の <b>OBD2</b> ポートに差し込み、車両を <b>READY</b> モードにします。",
+                qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
+                tabCloud: "⚡ クイックスタート（クラウド）",
+                tabManual: "🛠️ バックアップ（Bms_Setup）",
+                modalResetTitle: "コントローラー基板を変更しますか？",
+                modalResetDesc: "レーダーは現在の基板のアドレスを消去します。別の基板に接続するか、別車両への載せ替えが可能です。",
+                modalResetConfirm: "消去して新規検索",
+                modalResetCancel: "キャンセル",
+                manualIntro: "💡 <b>バックアップ方法：</b> テザリングやモバイル回線が利用できない場合に使用します。",
+                stepBackupATitle: "Wi-Fi ネットワーク Bms_Setup",
+                stepBackupADesc: "スマホのテザリングを15秒間OFFにします。設定用の一時ネットワークが起動します：",
+                stepBackupBTitle: "直接アクセス",
+                stepBackupBDesc: "Wi-Fi <code>Bms_Setup</code> に接続し、ブラウザで開きます：",
+                stepBackupCTitle: "手動IP入力",
+                stepBackupCDesc: "テザリングの接続機器一覧でIPがわかる場合：",
+                deviceLabel: "ボード:",
+                btnQuickReset: "ボード切替",
+                toastResetDone: "ボードのメモリを消去しました。新しい基板を検索中...",
+                btnMainConnect: "コントローラーに接続",
+                btnOpenDash: "Live Monitor を開く",
+                toggleGuideShow: "接続手順を表示 ▼",
+                toggleGuideHide: "接続手順を非表示 ▲",
+                statusIdle: "タップして検索・接続",
+                statusSearchingLocal: "ローカルネットワークで検索中...",
+                statusSearchingCloud: "クラウドからIPを検索中...",
+                statusFound: "コントローラーが見つかりました！開いています...",
+                statusNotFound: "コントローラーが見つかりません。上記の手順を確認してください。",
+                supportTitle: "サービス情報 (サポート用)",
+                supRadarVer: "レーダーバージョン:",
+                supDevMac: "デバイス ID (MAC):",
+                supDevIp: "コントローラー IP:",
+                supBoardFw: "ファームウェア:",
+                supStatus: "接続ステータス:",
+                btnResetDev: "現在のボードを変更 / 消去",
+                btnCopySupport: "サポート用データをコピー",
+                toastSupportCopied: "✅ サポート情報をクリップボードにコピーしました",
+                btnCloudSearch: "クラウドで検索",
+                cloudSearching: "クラウドで検索中...",
+                cloudFound: "コントローラーを検出:",
+                cloudNotFound: "未接続です。スマホのテザリングをONにしてください。",
+                cloudError: "クラウドエラー。スマホのネット接続を確認してください。"
+            }
+        };
+
+let currentLang = detectLanguage();
+
+function detectLanguage() {
+            const urlLang = (urlParams.get('lang') || '').toLowerCase();
+            if (urlLang === 'ja' || urlLang === 'en' || urlLang === 'ru' || urlLang === 'ko' || urlLang === 'zh') {
+                return urlLang;
+            }
+            try {
+                const saved = localStorage.getItem('bms_radar_lang');
+                if (saved && (saved === 'ja' || saved === 'en' || saved === 'ru')) return saved;
+            } catch (e) {}
+
+            const languages = navigator.languages || [navigator.language || 'en'];
+            for (let lang of languages) {
+                const l = (lang || '').toLowerCase();
+                if (l.startsWith('ru')) return 'ru';
+                if (l.startsWith('ja')) return 'ja';
+                if (l.startsWith('en')) return 'en';
+                if (l.startsWith('ko')) return 'ko';
+                if (l.startsWith('zh')) return 'zh';
+            }
+            return 'en';
+        }
+
+function changeLang(lang) {
+            currentLang = lang;
+            try { localStorage.setItem('bms_radar_lang', lang); } catch (e) {}
+            applyLanguage();
+            updateUI();
+        }
+
+function applyLanguage() {
+            const t = I18N[currentLang] || I18N.en;
+
+            // Highlight active lang button
+            ['ru', 'en', 'ja'].forEach(code => {
+                const btn = document.getElementById('lang-btn-' + code);
+                if (btn) {
+                    if (currentLang === code) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+
+            // Text elements
+            if (document.getElementById('t-app-title')) document.getElementById('t-app-title').innerText = t.appTitle;
+            if (document.getElementById('t-tab-cloud')) document.getElementById('t-tab-cloud').innerText = t.tabCloud || '⚡ Быстрый старт (Облако)';
+            if (document.getElementById('t-tab-manual')) document.getElementById('t-tab-manual').innerText = t.tabManual || '🛠️ Резервный (Bms_Setup)';
+            if (document.getElementById('t-modal-reset-title')) document.getElementById('t-modal-reset-title').innerText = t.modalResetTitle || 'Сменить плату контроллера?';
+            if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerText = t.modalResetDesc || 'Радар забудет сохраненный адрес текущей платы.';
+            if (document.getElementById('t-modal-reset-confirm')) document.getElementById('t-modal-reset-confirm').innerText = t.modalResetConfirm || 'Забыть и искать новую';
+            if (document.getElementById('t-modal-reset-cancel')) document.getElementById('t-modal-reset-cancel').innerText = t.modalResetCancel || 'Отмена';
+            if (document.getElementById('t-manual-intro')) document.getElementById('t-manual-intro').innerHTML = t.manualIntro || '';
+            if (document.getElementById('t-step-backup-a-title')) document.getElementById('t-step-backup-a-title').innerText = t.stepBackupATitle || 'Wi-Fi сеть Bms_Setup';
+            if (document.getElementById('t-step-backup-a-desc')) document.getElementById('t-step-backup-a-desc').innerText = t.stepBackupADesc || '';
+            if (document.getElementById('t-step-backup-b-title')) document.getElementById('t-step-backup-b-title').innerText = t.stepBackupBTitle || 'Прямой вход в контроллер';
+            if (document.getElementById('t-step-backup-b-desc')) document.getElementById('t-step-backup-b-desc').innerHTML = t.stepBackupBDesc || '';
+            if (document.getElementById('t-step-backup-c-title')) document.getElementById('t-step-backup-c-title').innerText = t.stepBackupCTitle || 'Ручной ввод IP-адреса';
+            if (document.getElementById('t-step-backup-c-desc')) document.getElementById('t-step-backup-c-desc').innerText = t.stepBackupCDesc || '';
+            if (document.getElementById('t-quick-guide-title')) document.getElementById('t-quick-guide-title').innerHTML = `<span>📋</span> <span>${t.quickGuideTitle || 'Быстрый старт (3 шага):'}</span>`;
+            if (document.getElementById('t-qstep-1')) document.getElementById('t-qstep-1').innerHTML = t.qstep1 || '';
+            if (document.getElementById('t-qstep-2')) document.getElementById('t-qstep-2').innerHTML = t.qstep2 || '';
+            if (document.getElementById('t-qstep-3')) document.getElementById('t-qstep-3').innerHTML = t.qstep3 || '';
+            if (document.getElementById('t-device-label')) document.getElementById('t-device-label').innerText = t.deviceLabel || 'Плата:';
+            if (document.getElementById('t-btn-quick-reset')) document.getElementById('t-btn-quick-reset').innerText = t.btnQuickReset || 'Сменить плату';
+            if (document.getElementById('t-btn-main-connect')) document.getElementById('t-btn-main-connect').innerText = t.btnMainConnect || 'Подключиться к контроллеру';
+            if (document.getElementById('t-status-idle')) document.getElementById('t-status-idle').innerText = t.statusIdle || 'Нажмите для поиска и подключения';
+
+            // Modal Reset Dialog
+            if (document.getElementById('t-modal-reset-title')) document.getElementById('t-modal-reset-title').innerText = t.modalResetTitle || 'Сбросить плату?';
+            if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerText = t.modalResetDesc || 'Сохраненный IP-адрес и ID текущей платы будут удалены. Радар начнет поиск новой активной платы в сети.';
+            if (document.getElementById('t-modal-reset-cancel')) document.getElementById('t-modal-reset-cancel').innerText = t.modalResetCancel || 'Отмена';
+            if (document.getElementById('t-modal-reset-confirm')) document.getElementById('t-modal-reset-confirm').innerText = t.modalResetConfirm || 'Забыть и сбросить';
+
+            // Support Card
+            if (document.getElementById('t-support-title')) document.getElementById('t-support-title').innerText = t.supportTitle || 'Служебная информация (для мастера)';
+            if (document.getElementById('t-sup-radar-ver')) document.getElementById('t-sup-radar-ver').innerText = t.supRadarVer || 'Версия Радара:';
+            if (document.getElementById('t-sup-dev-mac')) document.getElementById('t-sup-dev-mac').innerText = t.supDevMac || 'ID устройства (MAC):';
+            if (document.getElementById('t-sup-dev-ip')) document.getElementById('t-sup-dev-ip').innerText = t.supDevIp || 'IP-адрес контроллера:';
+            if (document.getElementById('t-sup-board-fw')) document.getElementById('t-sup-board-fw').innerText = t.supBoardFw || 'Прошивка платы:';
+            if (document.getElementById('t-sup-status')) document.getElementById('t-sup-status').innerText = t.supStatus || 'Статус связи:';
+            if (document.getElementById('t-btn-reset-dev')) document.getElementById('t-btn-reset-dev').innerText = t.btnResetDev || 'Сменить / забыть текущую плату';
+            if (document.getElementById('t-btn-copy-support')) document.getElementById('t-btn-copy-support').innerText = t.btnCopySupport || 'Скопировать данные для поддержки';
+
+            if (document.getElementById('t-apps-header')) document.getElementById('t-apps-header').innerText = t.appsHeader;
+            if (document.getElementById('t-btn-apk-toggle')) document.getElementById('t-btn-apk-toggle').innerText = t.btnApkToggle;
+            if (document.getElementById('t-badge-recommended')) document.getElementById('t-badge-recommended').innerText = t.badgeRecommended;
+            if (document.getElementById('t-auto-text')) document.getElementById('t-auto-text').innerHTML = t.autoText;
+            if (document.getElementById('t-ip-label')) document.getElementById('t-ip-label').innerText = t.ipLabel;
+            if (document.getElementById('t-first-run-tip')) document.getElementById('t-first-run-tip').innerText = t.firstRunTip;
+            if (document.getElementById('t-btn-open')) document.getElementById('t-btn-open').innerText = t.btnOpen;
+            if (document.getElementById('t-btn-cloud-search') && t.btnCloudSearch) document.getElementById('t-btn-cloud-search').innerText = t.btnCloudSearch;
+            if (document.getElementById('t-ip-unreachable-text') && t.ipUnreachableText) document.getElementById('t-ip-unreachable-text').innerText = t.ipUnreachableText;
+            if (document.getElementById('t-btn-sync')) document.getElementById('t-btn-sync').innerText = t.btnSync;
+                        if (document.getElementById('t-btn-manual')) document.getElementById('t-btn-manual').innerText = t.btnManual;
+            if (document.getElementById('t-manual-ip-hint')) document.getElementById('t-manual-ip-hint').innerText = t.manualIpHint;
+            if (document.getElementById('t-btn-save-ip')) document.getElementById('t-btn-save-ip').innerText = t.btnSaveIp;
+            const isIpConfigured = (currentIp && currentIp !== '--');
+            if (document.getElementById('t-setup-accordion-title')) {
+                document.getElementById('t-setup-accordion-title').innerText = isIpConfigured ? t.accordionSetupConfig : t.accordionSetupFirst;
+            }
+            if (document.getElementById('setup-tile-icon')) {
+                document.getElementById('setup-tile-icon').innerText = isIpConfigured ? '⚙️' : '🚀';
+            }
+            if (document.getElementById('t-setup-sub') && t.setupSub) {
+                document.getElementById('t-setup-sub').innerText = t.setupSub;
+            }
+            if (document.getElementById('t-faq-accordion-title')) {
+                document.getElementById('t-faq-accordion-title').innerText = t.accordionFaq;
+            }
+            if (document.getElementById('t-faq-sub') && t.faqSub) {
+                document.getElementById('t-faq-sub').innerText = t.faqSub;
+            }
+            if (document.getElementById('t-step3-or') && t.step3Or) document.getElementById('t-step3-or').innerText = t.step3Or;
+            if (document.getElementById('t-step3-advanced-title') && t.step3AdvancedTitle) document.getElementById('t-step3-advanced-title').innerHTML = t.step3AdvancedTitle;
+            if (document.getElementById('t-step3-advanced-desc') && t.step3AdvancedDesc) document.getElementById('t-step3-advanced-desc').innerHTML = t.step3AdvancedDesc;
+            if (document.getElementById('t-step3-reset-title') && t.step3ResetTitle) document.getElementById('t-step3-reset-title').innerText = t.step3ResetTitle;
+            if (document.getElementById('t-step3-reset-desc') && t.step3ResetDesc) document.getElementById('t-step3-reset-desc').innerText = t.step3ResetDesc;
+            if (document.getElementById('t-btn-step3-reset') && t.btnStep3Reset) document.getElementById('t-btn-step3-reset').innerText = t.btnStep3Reset;
+            if (document.getElementById('t-step4-btn') && t.step4Btn) document.getElementById('t-step4-btn').innerHTML = t.step4Btn;
+
+            if (document.getElementById('t-apk-title')) document.getElementById('t-apk-title').innerText = t.apkTitle;
+            if (document.getElementById('t-apk-desc')) document.getElementById('t-apk-desc').innerText = t.apkDesc;
+            if (document.getElementById('t-apk-f2')) document.getElementById('t-apk-f2').innerHTML = t.apkF2;
+            if (document.getElementById('t-btn-download-apk')) document.getElementById('t-btn-download-apk').innerText = t.btnDownloadApk;
+            if (document.getElementById('t-apk-install-hint') && t.apkInstallHint) document.getElementById('t-apk-install-hint').innerText = t.apkInstallHint;
+
+            if (document.getElementById('t-install-title-android')) document.getElementById('t-install-title-android').innerText = t.installTitleAndroid;
+            if (document.getElementById('t-install-desc-android')) document.getElementById('t-install-desc-android').innerText = t.installDescAndroid;
+            if (document.getElementById('btn-install-app')) document.getElementById('btn-install-app').innerText = t.btnInstall;
+            if (document.getElementById('t-install-title-ios')) document.getElementById('t-install-title-ios').innerText = t.installTitleIos;
+            if (document.getElementById('t-install-desc-ios')) document.getElementById('t-install-desc-ios').innerHTML = t.installDescIos;
+
+            if (document.getElementById('t-step1-title')) document.getElementById('t-step1-title').innerText = t.step1Title;
+            if (document.getElementById('t-step1-desc')) document.getElementById('t-step1-desc').innerHTML = t.step1Desc;
+            if (document.getElementById('t-step1-net')) document.getElementById('t-step1-net').innerHTML = t.step1Net;
+            if (document.getElementById('t-step1-pwd')) document.getElementById('t-step1-pwd').innerHTML = t.step1Pwd;
+            if (document.getElementById('t-step1-warn')) document.getElementById('t-step1-warn').innerHTML = t.step1Warn;
+            if (document.getElementById('t-step1-note')) document.getElementById('t-step1-note').innerHTML = t.step1Note;
+            if (document.getElementById('t-step3-net')) document.getElementById('t-step3-net').innerHTML = t.step3Net;
+            if (document.getElementById('t-step3-pwd')) document.getElementById('t-step3-pwd').innerHTML = t.step3Pwd;
+            if (document.getElementById('t-step2-title')) document.getElementById('t-step2-title').innerText = t.step2Title;
+            if (document.getElementById('t-step2-body')) document.getElementById('t-step2-body').innerHTML = t.step2Body;
+            if (document.getElementById('t-step3-title')) document.getElementById('t-step3-title').innerText = t.step3Title;
+            if (document.getElementById('t-step3-desc')) document.getElementById('t-step3-desc').innerHTML = t.step3Desc;
+            if (document.getElementById('t-step3-tips')) document.getElementById('t-step3-tips').innerHTML = t.step3Tips;
+                        if (document.getElementById('t-btn-guide-sync')) document.getElementById('t-btn-guide-sync').innerText = t.btnGuideSync;
+            if (document.getElementById('t-step3-note')) document.getElementById('t-step3-note').innerHTML = t.step3Note;
+            if (document.getElementById('t-step4-title')) document.getElementById('t-step4-title').innerText = t.step4Title;
+            if (document.getElementById('t-step4-body')) document.getElementById('t-step4-body').innerHTML = t.step4Body;
+
+            if (document.getElementById('t-tr-auto-q')) document.getElementById('t-tr-auto-q').innerText = t.trAutoQ;
+            if (document.getElementById('t-tr-auto-a')) document.getElementById('t-tr-auto-a').innerHTML = t.trAutoA;
+            if (document.getElementById('t-tr-1-q')) document.getElementById('t-tr-1-q').innerText = t.tr1Q;
+            if (document.getElementById('t-tr-1-a')) document.getElementById('t-tr-1-a').innerHTML = t.tr1A;
+            if (document.getElementById('t-tr-2-q')) document.getElementById('t-tr-2-q').innerText = t.tr2Q;
+            if (document.getElementById('t-tr-2-a')) document.getElementById('t-tr-2-a').innerHTML = t.tr2A;
+            if (document.getElementById('t-tr-3-q')) document.getElementById('t-tr-3-q').innerText = t.tr3Q;
+            if (document.getElementById('t-tr-3-a')) document.getElementById('t-tr-3-a').innerHTML = t.tr3A;
+            if (document.getElementById('t-tr-android-q')) document.getElementById('t-tr-android-q').innerText = t.trAndroidQ;
+            if (document.getElementById('t-tr-android-a')) document.getElementById('t-tr-android-a').innerHTML = t.trAndroidA;
+            if (document.getElementById('t-tr-custom-q')) document.getElementById('t-tr-custom-q').innerText = t.trCustomQ;
+            if (document.getElementById('t-tr-custom-a')) document.getElementById('t-tr-custom-a').innerHTML = t.trCustomA;
+            if (document.getElementById('t-tr-4-q')) document.getElementById('t-tr-4-q').innerText = t.tr4Q;
+            if (document.getElementById('t-tr-4-a')) document.getElementById('t-tr-4-a').innerHTML = t.tr4A;
+        }
+const urlParams = new URLSearchParams(window.location.search);
+const IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+
+function isValidIp(value) {
+            return IP_REGEX.test((value || '').trim());
+        }
+
+function cleanMac(mac) {
+            return (mac || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        }
+
+function formatMac(mac) {
+            const clean = cleanMac(mac);
+            if (clean.length === 12) {
+                return clean.match(/.{1,2}/g).join(':');
+            }
+            return mac || '--';
+        }
+
+function getDeviceRegistry() {
+            let registry = {};
+            try {
+                const raw = localStorage.getItem('bms_device_registry');
+                if (raw) registry = JSON.parse(raw);
+            } catch (e) {}
+
+            // Backward compatibility & migration:
+            const legacyIp = localStorage.getItem('bms_saved_ip');
+            const legacyMac = localStorage.getItem('bms_saved_mac');
+            if (legacyMac && legacyIp && isValidIp(legacyIp)) {
+                const cMac = cleanMac(legacyMac);
+                if (cMac && !registry[cMac]) {
+                    registry[cMac] = {
+                        mac: formatMac(cMac),
+                        cleanMac: cMac,
+                        ip: legacyIp.trim(),
+                        updatedAt: Date.now()
+                    };
+                    try { localStorage.setItem('bms_device_registry', JSON.stringify(registry)); } catch (e) {}
+                }
+            }
+            return registry;
+        }
+
+function saveDeviceRegistry(registry) {
+            try {
+                localStorage.setItem('bms_device_registry', JSON.stringify(registry));
+            } catch (e) {}
+        }
+
+function getActiveMac() {
+            let active = cleanMac(localStorage.getItem('bms_active_mac') || '');
+            const registry = getDeviceRegistry();
+            if (!active || !registry[active]) {
+                const keys = Object.keys(registry);
+                if (keys.length > 0) {
+                    keys.sort((a, b) => (registry[b].updatedAt || 0) - (registry[a].updatedAt || 0));
+                    active = keys[0];
+                    localStorage.setItem('bms_active_mac', active);
+                }
+            }
+            return active;
+        }
+
+function setActiveMac(mac) {
+            const cMac = cleanMac(mac);
+            localStorage.setItem('bms_active_mac', cMac);
+            const registry = getDeviceRegistry();
+            if (cMac && registry[cMac]) {
+                currentIp = registry[cMac].ip || '';
+                currentMac = registry[cMac].mac || formatMac(cMac);
+                localStorage.setItem('bms_saved_ip', currentIp);
+                localStorage.setItem('bms_saved_mac', currentMac);
+            } else {
+                currentIp = '';
+                currentMac = formatMac(cMac);
+                localStorage.setItem('bms_saved_ip', '');
+                localStorage.setItem('bms_saved_mac', currentMac);
+            }
+            updateUI();
+        }
+
+function getActiveDevice() {
+            const registry = getDeviceRegistry();
+            const aMac = getActiveMac();
+            return (aMac && registry[aMac]) ? registry[aMac] : null;
+        }
+
+function setDeviceIp(mac, ip, version = '') {
+            const cMac = cleanMac(mac);
+            if (!cMac || !isValidIp(ip)) return;
+            const registry = getDeviceRegistry();
+            registry[cMac] = {
+                mac: formatMac(cMac),
+                cleanMac: cMac,
+                ip: ip.trim(),
+                version: version || (registry[cMac] && registry[cMac].version) || '',
+                updatedAt: Date.now()
+            };
+            saveDeviceRegistry(registry);
+            
+            // Only update currentIp and UI if this MAC is the currently active one
+            if (cMac === getActiveMac()) {
+                currentIp = ip.trim();
+                currentMac = registry[cMac].mac;
+                localStorage.setItem('bms_saved_ip', currentIp);
+                localStorage.setItem('bms_saved_mac', currentMac);
+                updateUI();
+            }
+        }
+
+function resetActiveDevice() {
+            confirmResetDevice();
+        }
+
+function clearDeviceRegistry() {
+            if (confirm("Удалить все сохраненные платы из памяти?")) {
+                localStorage.removeItem('bms_device_registry');
+                localStorage.removeItem('bms_active_mac');
+                localStorage.removeItem('bms_saved_ip');
+                localStorage.removeItem('bms_saved_mac');
+                currentIp = '';
+                currentMac = '';
+                lastCloudFetchTime = 0;
+                lastCloudSuccessData = null;
+                updateUI();
+                toggleDeviceModal();
+                showToast("Список устройств очищен");
+            }
+        }
+
+// Initialize state from Registry or LocalStorage
+        let currentIp = '';
+        let currentMac = '';
+        const initActive = getActiveDevice();
+        if (initActive && initActive.ip) {
+            currentIp = initActive.ip;
+            currentMac = initActive.mac;
+        } else {
+            currentIp = localStorage.getItem('bms_saved_ip') || '';
+            currentMac = localStorage.getItem('bms_saved_mac') || '';
+        }
+
+        const queryIp = urlParams.get('ip');
+        const queryMac = urlParams.get('mac');
+        let justLinkedFromUrl = false;
+
+        if (queryMac && queryMac.length >= 6) {
+            const cQueryMac = cleanMac(queryMac);
+            if (queryIp && isValidIp(queryIp)) {
+                setDeviceIp(cQueryMac, queryIp.trim());
+                justLinkedFromUrl = true;
+            } else {
+                setActiveMac(cQueryMac);
+            }
+        } else if (queryIp && isValidIp(queryIp)) {
+            const activeMac = getActiveMac();
+            if (activeMac) {
+                setDeviceIp(activeMac, queryIp.trim());
+            } else {
+                currentIp = queryIp.trim();
+                localStorage.setItem('bms_saved_ip', currentIp);
+            }
+            justLinkedFromUrl = true;
+        }
+
+        if (justLinkedFromUrl && window.history.replaceState) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+let toastTimeout = null;
+
+function showToast(msg) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerHTML = msg;
+            toast.style.display = 'block';
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { toast.style.display = 'none'; }, 6000);
+        }
+
+function dismissAutoCard(event) {
+            if (event) event.stopPropagation();
+            const card = document.getElementById('auto-card');
+            if (card) card.style.display = 'none';
+            try {
+                localStorage.setItem('bms_autocard_dismissed', '1');
+            } catch (e) {}
+        }
+
+function toggleApkDetails() {
+            const box = document.getElementById('apk-details-box');
+            const arrow = document.getElementById('apk-toggle-arrow');
+            if (!box) return;
+            const isHidden = (box.style.display === 'none' || !box.style.display);
+            if (isHidden) {
+                box.style.display = 'block';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                box.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+function onApkDownload() {
+            // Tracking or UI updates can happen here
+        }
+
+function toggleSupportInfo() {
+            const details = document.getElementById('support-details');
+            const arrow = document.getElementById('support-arrow');
+            if (!details) return;
+            const isHidden = (details.style.display === 'none' || !details.style.display);
+            if (isHidden) {
+                updateSupportInfo();
+                details.style.display = 'flex';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                details.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                details.style.display = 'none';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+function updateSupportInfo() {
+            const active = getActiveDevice();
+            const mac = (active && active.cleanMac) ? (active.mac || formatMac(active.cleanMac)) : (currentMac ? formatMac(currentMac) : '--');
+            const ip = (currentIp && currentIp !== '--') ? currentIp : '--';
+            const fw = (active && active.version) ? active.version : '--';
+            const isOnline = (currentIp && currentIp !== '--');
+            const status = isOnline ? '🟢 Онлайн' : '⚪ Ожидание';
+
+            const supMac = document.getElementById('sup-device-mac');
+            const supIp = document.getElementById('sup-device-ip');
+            const supFw = document.getElementById('sup-board-fw');
+            const supStat = document.getElementById('sup-link-status');
+
+            if (supMac) supMac.innerText = mac;
+            if (supIp) supIp.innerText = ip;
+            if (supFw) supFw.innerText = fw;
+            if (supStat) supStat.innerText = status;
+        }
+
+function copySupportInfo() {
+            const active = getActiveDevice();
+            const mac = (active && active.cleanMac) ? (active.mac || formatMac(active.cleanMac)) : (currentMac ? formatMac(currentMac) : '--');
+            const ip = (currentIp && currentIp !== '--') ? currentIp : '--';
+            const fw = (active && active.version) ? active.version : '--';
+            const isOnline = (currentIp && currentIp !== '--');
+            const status = isOnline ? 'ONLINE' : 'OFFLINE/IDLE';
+
+            const text = [
+                '=== BMS COOLING RADAR INFO ===',
+                'Radar Version: v87-beta',
+                `Device MAC: ${mac}`,
+                `Controller IP: ${ip}`,
+                `Board Firmware: ${fw}`,
+                `Connection Status: ${status}`,
+                `User Agent: ${navigator.userAgent}`,
+                `Timestamp: ${new Date().toISOString()}`
+            ].join('\n');
+
+            navigator.clipboard.writeText(text).then(() => {
+                const t = I18N[currentLang] || I18N.en;
+                showToast(t.toastSupportCopied || '✅ Служебная информация скопирована');
+            }).catch(() => {
+                showToast('⚠️ Не удалось скопировать в буфер');
+            });
+        }
+
+function switchSetupTab(tab) {
+            const tabCloudBtn = document.getElementById('tab-btn-cloud');
+            const tabManualBtn = document.getElementById('tab-btn-manual');
+            const panelCloud = document.getElementById('setup-tab-cloud');
+            const panelManual = document.getElementById('setup-tab-manual');
+
+            if (tab === 'manual') {
+                if (tabCloudBtn) tabCloudBtn.classList.remove('active');
+                if (tabManualBtn) tabManualBtn.classList.add('active');
+                if (panelCloud) panelCloud.style.display = 'none';
+                if (panelManual) panelManual.style.display = 'block';
+            } else {
+                if (tabCloudBtn) tabCloudBtn.classList.add('active');
+                if (tabManualBtn) tabManualBtn.classList.remove('active');
+                if (panelCloud) panelCloud.style.display = 'block';
+                if (panelManual) panelManual.style.display = 'none';
+            }
+        }
+
+function confirmResetDevice() {
+            const modal = document.getElementById('reset-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+function closeResetModal(event) {
+            if (event && event.target && event.target.id !== 'reset-modal' && !event.target.classList.contains('modal-btn-cancel')) {
+                return;
+            }
+            const modal = document.getElementById('reset-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+function toggleQuickGuide() {
+            const guide = document.getElementById('quick-guide');
+            const toggleText = document.getElementById('t-toggle-guide-text');
+            const t = I18N[currentLang] || I18N.en;
+            if (!guide) return;
+            const isHidden = (guide.style.display === 'none');
+            if (isHidden) {
+                guide.style.display = 'block';
+                guide.dataset.userForceShown = 'true';
+                if (toggleText) toggleText.innerText = t.toggleGuideHide || 'Скрыть шаги подключения ▲';
+            } else {
+                guide.style.display = 'none';
+                delete guide.dataset.userForceShown;
+                if (toggleText) toggleText.innerText = t.toggleGuideShow || 'Показать шаги подключения ▼';
+            }
+        }
+
+function updateUI() {
+            const displayEl = document.getElementById('display-ip');
+            const displayMacEl = document.getElementById('display-mac');
+            const manualIpInput = document.getElementById('manual-ip');
+            const firstRunTip = document.getElementById('first-run-tip');
+            const setupTitle = document.getElementById('t-setup-accordion-title');
+            const setupIcon = document.getElementById('setup-tile-icon');
+            const connectStatusBlock = document.getElementById('connect-status-text');
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('t-status-idle');
+            const tBtnMainConnect = document.getElementById('t-btn-main-connect');
+            const mainConnectIcon = document.getElementById('main-connect-icon');
+            const quickGuide = document.getElementById('quick-guide');
+            const toggleGuideBtn = document.getElementById('btn-toggle-guide');
+            const btnQuickResetIcon = document.getElementById('btn-quick-reset-icon');
+            const btnOpen = document.getElementById('btn-open');
+            const btnMainConnect = document.getElementById('btn-main-connect');
+            const cloudStatusBadge = document.getElementById('cloud-status-badge');
+            
+            const t = I18N[currentLang] || I18N.en;
+
+            const active = getActiveDevice();
+            if (active && active.cleanMac) {
+                if (displayMacEl) displayMacEl.innerText = active.mac || formatMac(active.cleanMac);
+            } else if (currentMac) {
+                if (displayMacEl) displayMacEl.innerText = formatMac(currentMac);
+            } else {
+                if (displayMacEl) displayMacEl.innerText = '--';
+            }
+
+            if (currentIp && currentIp !== '--' && isValidIp(currentIp)) {
+                if (displayEl) displayEl.innerText = currentIp;
+                if (manualIpInput) manualIpInput.value = currentIp;
+                if (firstRunTip) firstRunTip.style.display = 'none';
+                if (setupTitle) setupTitle.innerText = t.accordionSetupConfig;
+                if (setupIcon) setupIcon.innerText = '⚙️';
+                if (connectStatusBlock) connectStatusBlock.style.display = 'none';
+                
+                if (btnQuickResetIcon) btnQuickResetIcon.style.display = 'block';
+                if (btnOpen) btnOpen.style.display = 'flex';
+                if (btnMainConnect) btnMainConnect.style.display = 'none';
+                
+                // Keep cloud status hidden until local check updates it
+                // We don't hide it unconditionally because verifyDeviceLocal might have just shown it
+
+                // Auto-collapse quick guide when IP is active
+                if (quickGuide && !quickGuide.dataset.userForceShown) {
+                    quickGuide.style.display = 'none';
+                    if (toggleGuideBtn) {
+                        toggleGuideBtn.style.display = 'flex';
+                        const toggleText = document.getElementById('t-toggle-guide-text');
+                        if (toggleText) toggleText.innerText = t.toggleGuideShow || 'Показать шаги подключения ▼';
+                    }
+                }
+            } else {
+                if (displayEl) displayEl.innerText = '--';
+                if (manualIpInput) manualIpInput.value = '';
+                if (firstRunTip) firstRunTip.style.display = 'none'; // Replaced redundant tip with the integrated quick guide
+                if (setupTitle) setupTitle.innerText = t.accordionSetupFirst;
+                if (setupIcon) setupIcon.innerText = '🚀';
+                if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
+                if (statusDot) statusDot.innerText = '⚪';
+                if (statusText && !isDiscovering) statusText.innerText = t.statusIdle || 'Нажмите для поиска и подключения';
+                
+                if (btnQuickResetIcon) btnQuickResetIcon.style.display = 'none';
+                if (btnOpen) btnOpen.style.display = 'none';
+                if (btnMainConnect) btnMainConnect.style.display = 'flex';
+                if (cloudStatusBadge) cloudStatusBadge.style.display = 'none';
+
+                if (tBtnMainConnect && !isDiscovering) tBtnMainConnect.innerText = t.btnMainConnect || 'Подключиться к контроллеру';
+                const tBtnDup = document.getElementById('t-btn-main-connect-dup');
+                if (tBtnDup && !isDiscovering) tBtnDup.innerText = t.btnMainConnect || 'Подключиться к контроллеру';
+                if (mainConnectIcon && !isDiscovering) mainConnectIcon.innerText = '🚀';
+
+                // Always show quick guide when disconnected
+                if (quickGuide) quickGuide.style.display = 'block';
+                if (toggleGuideBtn) toggleGuideBtn.style.display = 'none';
+            }
+
+            updateSupportInfo();
+        }
+
+function openAndScrollToGuide() {
+            const setupContent = document.getElementById('setup-content');
+            const setupTile = document.getElementById('tile-setup');
+            const faqContent = document.getElementById('faq-content');
+            const faqTile = document.getElementById('tile-faq');
+
+            if (faqContent) faqContent.style.display = 'none';
+            if (faqTile) faqTile.classList.remove('active');
+
+            if (setupContent) setupContent.style.display = 'block';
+            if (setupTile) {
+                setupTile.classList.add('active');
+                setupTile.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+function openAndScrollToStep3() {
+            openAndScrollToGuide();
+            const step3El = document.getElementById('guide-step-3');
+            if (step3El) {
+                setTimeout(() => {
+                    step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+function goToSetupSync() {
+            openAndScrollToStep3();
+        }
+
+function checkFailedNavigation() {
+            const recovery = document.getElementById('nav-recovery-card');
+            const hint = document.getElementById('ip-unreachable-hint');
+            if (recovery && currentIp !== '10.10.10.1') {
+                recovery.style.display = 'block';
+            }
+            if (hint && currentIp !== '10.10.10.1') {
+                hint.style.display = 'flex';
+            }
+        }
+
+async function handleIpUnreachable() {
+            const t = I18N[currentLang] || I18N.ru;
+            showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+            const found = await findControllerInCloud(true, true, 1500);
+            if (!found) {
+                openAndScrollToStep3();
+            }
+        }
+
+function toggleEditIp() {
+            const row = document.getElementById('edit-row');
+            if (row) {
+                row.style.display = (row.style.display === 'flex') ? 'none' : 'flex';
+            }
+        }
+
+function saveManualIp() {
+            const t = I18N[currentLang] || I18N.en;
+            const input = document.getElementById('manual-ip');
+            const val = input ? input.value.trim() : '';
+            if (isValidIp(val)) {
+                const activeMac = getActiveMac();
+                if (activeMac) {
+                    setDeviceIp(activeMac, val);
+                } else {
+                    currentIp = val;
+                    localStorage.setItem('bms_saved_ip', currentIp);
+                    updateUI();
+                }
+                toggleEditIp();
+                showToast(`${t.toastLinked}${currentIp}`);
+            } else {
+                alert(t.alertInvalidIp);
+            }
+        }
+
+function toggleDeviceModal() {
+            const modal = document.getElementById('device-modal');
+            if (!modal) return;
+            const isOpen = (modal.style.display === 'flex');
+            if (isOpen) {
+                modal.style.display = 'none';
+            } else {
+                renderDeviceList();
+                modal.style.display = 'flex';
+            }
+        }
+
+function renderDeviceList() {
+            const listEl = document.getElementById('device-list');
+            if (!listEl) return;
+            const registry = getDeviceRegistry();
+            const activeMac = getActiveMac();
+            const entries = Object.entries(registry);
+
+            if (entries.length === 0) {
+                listEl.innerHTML = '<div style="color: #71717a; font-size: 13px; text-align: center; padding: 12px 0;">Нет сохраненных плат</div>';
+                return;
+            }
+
+            let html = '';
+            entries.forEach(([cMac, dev]) => {
+                const isActive = (cMac === activeMac);
+                const displayMac = dev.mac || formatMac(cMac);
+                const ip = dev.ip || '--';
+                html += `
+                    <div style="background: ${isActive ? '#1e293b' : '#27272a'}; border: 1px solid ${isActive ? '#38bdf8' : '#3f3f46'}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div>
+                            <div style="font-family: monospace; font-size: 13px; font-weight: 700; color: ${isActive ? '#38bdf8' : '#f4f4f5'};">${displayMac}</div>
+                            <div style="font-size: 12px; color: #a1a1aa;">IP: <b style="color: #cbd5e1;">${ip}</b> ${dev.version ? `<span style="font-size: 10.5px; background: rgba(255,255,255,0.06); padding: 1px 4px; border-radius: 4px; margin-left: 4px;">${dev.version}</span>` : ''}</div>
+                        </div>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            ${isActive ? 
+                                `<span style="font-size: 11px; font-weight: 700; color: #4ade80; background: rgba(74,222,128,0.12); padding: 4px 8px; border-radius: 6px;">АКТИВНА</span>` : 
+                                `<button type="button" onclick="selectDevice('${cMac}')" style="background: #3b82f6; color: #fff; border: none; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Выбрать</button>`
+                            }
+                            <button type="button" onclick="removeDevice('${cMac}')" style="background: transparent; border: none; color: #71717a; cursor: pointer; padding: 4px; font-size: 14px;" title="Удалить">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
+        }
+
+async function selectDevice(mac) {
+            const cMac = cleanMac(mac);
+            setActiveMac(cMac);
+            toggleDeviceModal();
+            showToast(`Выбрана плата: ${formatMac(cMac)}`);
+
+            const dev = getActiveDevice();
+            const savedIp = dev ? dev.ip : '';
+            if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                // Direct-First: check if board is immediately available locally
+                const verify = await verifyDeviceLocal(savedIp, cMac, 600);
+                if (cMac !== getActiveMac()) return; // User switched board again
+                if (verify.ok && verify.matched) {
+                    console.log(`[Direct-First] Board ${cMac} verified locally on ${savedIp}. Cloud query bypassed.`);
+                    const cloudBadge = document.getElementById('cloud-status-badge');
+                    if (cloudBadge) {
+                        cloudBadge.style.display = 'block';
+                        cloudBadge.innerText = `🟢 В сети (Локально)`;
+                    }
+                    updateUI();
+                    return;
+                }
+            }
+            // If not reachable locally on last known IP, query Firebase for this specific board
+            lastCloudFetchTime = 0;
+            lastCloudSuccessData = null;
+            findControllerInCloud(false, false, 2500, cMac, true);
+        }
+
+function removeDevice(mac) {
+            const registry = getDeviceRegistry();
+            delete registry[mac];
+            saveDeviceRegistry(registry);
+            if (getActiveMac() === mac) {
+                localStorage.removeItem('bms_active_mac');
+                const keys = Object.keys(registry);
+                if (keys.length > 0) {
+                    setActiveMac(keys[0]);
+                } else {
+                    currentIp = '';
+                    currentMac = '';
+                    localStorage.removeItem('bms_saved_ip');
+                    localStorage.removeItem('bms_saved_mac');
+                    updateUI();
+                }
+            }
+            renderDeviceList();
+        }
+
+function addNewDeviceSearch() {
+            toggleDeviceModal();
+            openAndScrollToStep3();
+            showToast("Для подключения новой платы подключитесь к её Wi-Fi (Bms_Setup) или выполните синхронизацию.");
+        }
+
+function toggleAccordion(type) {
+            const isSetup = (type === 'setup');
+            const targetContent = document.getElementById(type + '-content');
+            const targetTile = document.getElementById('tile-' + type);
+
+            const otherType = isSetup ? 'faq' : 'setup';
+            const otherContent = document.getElementById(otherType + '-content');
+            const otherTile = document.getElementById('tile-' + otherType);
+
+            if (!targetContent) return;
+
+            const isOpen = (targetContent.style.display === 'block');
+
+            if (isOpen) {
+                targetContent.style.display = 'none';
+                if (targetTile) targetTile.classList.remove('active');
+            } else {
+                if (otherContent) otherContent.style.display = 'none';
+                if (otherTile) otherTile.classList.remove('active');
+
+                targetContent.style.display = 'block';
+                if (targetTile) targetTile.classList.add('active');
+                targetTile.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+function toggleTrouble(el, ev) {
+            if (ev && ev.target && ev.target.closest('a')) return;
+            el.classList.toggle('open');
+        }
+
+function safeNavigateToDashboard(ip) {
+            if (!ip || !isValidIp(ip)) return;
+            try {
+                const win = window.open('http://' + ip + '/', '_blank');
+                if (!win || win.closed || typeof win.closed === 'undefined') {
+                    // Mobile popup blocker fallback: navigate directly
+                    window.location.href = 'http://' + ip + '/';
+                }
+            } catch (e) {
+                window.location.href = 'http://' + ip + '/';
+            }
+        }
+
+let isDiscovering = false;
+
+async function startOneTapDiscovery(forceSearch = false) {
+            if (isDiscovering) return;
+
+            // If background cloud search is still in flight on page load, await it so we don't open a stale IP from an old board!
+            if (initialCloudPromise) {
+                try { await initialCloudPromise; } catch (e) {}
+                initialCloudPromise = null;
+            }
+
+            // If we already have a valid active IP and not forcing a re-search, open dashboard immediately
+            if (!forceSearch && currentIp && currentIp !== '--' && isValidIp(currentIp)) {
+                safeNavigateToDashboard(currentIp);
+                return;
+            }
+
+            isDiscovering = true;
+
+            const t = I18N[currentLang] || I18N.en;
+            const btn = document.getElementById('btn-main-connect');
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('t-status-idle');
+            const btnIcon = document.getElementById('main-connect-icon');
+
+            const connectStatusBlock = document.getElementById('connect-status-text');
+            if (btn) {
+                btn.classList.add('connecting');
+                btn.disabled = true;
+            }
+            if (btnIcon) btnIcon.style.animation = 'spin 0.8s linear infinite';
+            if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
+            if (statusDot) statusDot.innerText = '🟡';
+
+            const active = getActiveDevice();
+            const targetMac = cleanMac((active && active.cleanMac) || currentMac || getActiveMac());
+            const isHttps = (window.location.protocol === 'https:');
+
+            try {
+                // In HTTPS mode, skip Phase 1 and 2 (which would fail on Mixed Content) and query cloud immediately!
+                if (!isHttps) {
+                    if (statusText) statusText.innerText = t.statusSearchingLocal || 'Поиск контроллера в сети...';
+                    // Phase 1: Local check on lastKnownIp
+                    const lastKnownIp = (active && active.ip) ? active.ip : currentIp;
+                    if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
+                        const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 800);
+                        if (localCheck.ok && localCheck.matched) {
+                            if (statusDot) statusDot.innerText = '🟢';
+                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                            setDeviceIp(localCheck.actualMac || targetMac, lastKnownIp, (localCheck.data && (localCheck.data.firmware || localCheck.data.version)));
+                            updateUI();
+                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (${lastKnownIp})`);
+                            setTimeout(() => {
+                                safeNavigateToDashboard(lastKnownIp);
+                            }, 200);
+                            return;
+                        }
+                    }
+
+                    // Phase 2: Probe standard gateway IP (192.168.4.1)
+                    try {
+                        const probe = await verifyDeviceLocal('192.168.4.1', targetMac, 600);
+                        if (probe.ok && probe.matched) {
+                            if (statusDot) statusDot.innerText = '🟢';
+                            if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                            setDeviceIp(probe.actualMac || targetMac, '192.168.4.1', (probe.data && (probe.data.firmware || probe.data.version)));
+                            updateUI();
+                            showToast(`✅ ${t.statusFound || 'Контроллер на связи!'} (192.168.4.1)`);
+                            setTimeout(() => {
+                                safeNavigateToDashboard('192.168.4.1');
+                            }, 200);
+                            return;
+                        }
+                    } catch (e) {}
+                }
+
+                // Phase 3: Firebase RTDB Cloud lookup (auto-discovers freshest online board globally)
+                if (statusText) statusText.innerText = t.statusSearchingCloud || 'Запрос адреса из облака...';
+                const cloudFound = await findControllerInCloud(false, false, 3500);
+                if (cloudFound && currentIp && currentIp !== '--') {
+                    if (statusDot) statusDot.innerText = '🟢';
+                    if (statusText) statusText.innerText = t.statusFound || 'Контроллер найден! Открываем...';
+                    updateUI();
+                    showToast(`✅ ${t.statusFound || 'Контроллер найден!'} (${currentIp})`);
+                    setTimeout(() => {
+                        safeNavigateToDashboard(currentIp);
+                    }, 200);
+                    return;
+                }
+
+                // If not found in any phase:
+                if (statusDot) statusDot.innerText = '🔴';
+                if (statusText) statusText.innerText = t.statusNotFound || 'Контроллер не найден. Проверьте шаги выше.';
+                showToast('⚠️ Контроллер не ответил. Убедитесь, что включена точка доступа (2.4 ГГц) и режим READY');
+
+                const guide = document.getElementById('quick-guide');
+                const toggleGuideBtn = document.getElementById('btn-toggle-guide');
+                if (guide) {
+                    guide.style.display = 'block';
+                    if (toggleGuideBtn) toggleGuideBtn.style.display = 'none';
+                    guide.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } catch (err) {
+                console.error('[One-Tap Discovery Error]', err);
+                if (statusDot) statusDot.innerText = '🔴';
+                if (statusText) statusText.innerText = t.statusNotFound || 'Ошибка поиска';
+            } finally {
+                isDiscovering = false;
+                if (btn) {
+                    btn.classList.remove('connecting');
+                    btn.disabled = false;
+                }
+                if (btnIcon) btnIcon.style.animation = '';
+            }
+        }
+
+function executeResetDevice() {
+            const modal = document.getElementById('reset-modal');
+            if (modal) modal.style.display = 'none';
+
+            // Blacklist the current MAC so Firebase RTDB polling does not immediately re-populate it
+            const prevMac = cleanMac(getActiveMac() || currentMac);
+            const now = Date.now();
+            if (prevMac) {
+                try {
+                    localStorage.setItem('bms_ignored_mac', prevMac);
+                    localStorage.setItem('bms_reset_timestamp', String(now));
+                } catch (e) {}
+            }
+
+            localStorage.removeItem('bms_active_mac');
+            localStorage.removeItem('bms_saved_ip');
+            localStorage.removeItem('bms_saved_mac');
+            localStorage.removeItem('bms_device_registry');
+            currentIp = '--';
+            currentMac = '';
+            lastCloudFetchTime = 0;
+            lastCloudSuccessData = null;
+            inFlightCloudPromise = null;
+            if (activeCloudAbortController) {
+                try { activeCloudAbortController.abort(); } catch (e) {}
+                activeCloudAbortController = null;
+            }
+            
+            // Force immediate UI reset
+            updateUI();
+            
+            const t = I18N[currentLang] || I18N.ru;
+            showToast(t.toastResetDone || "Память платы сброшена. Поиск новой активной платы...");
+            
+            // Initiate a background discovery without auto-opening, but UI is already clean
+            findControllerInCloud(false, true, 3500, null, true);
+        }
+
+async function verifyDeviceLocal(ip, expectedMac = '', timeoutMs = 1200) {
+            if (!isValidIp(ip)) return { ok: false, error: 'invalid_ip' };
+            if (window.location.protocol === 'https:') {
+                // HTTPS origin blocks fetch('http://...') as Mixed Content
+                return { ok: false, error: 'mixed_content_prevented' };
+            }
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                // First try lightweight /api/info
+                let res = null;
+                try {
+                    res = await fetch(`http://${ip}/api/info?t=${Date.now()}`, { signal: controller.signal });
+                } catch (e) {}
+                
+                // Fallback to /status if /api/info is not present on older firmware
+                if (!res || !res.ok) {
+                    res = await fetch(`http://${ip}/status?t=${Date.now()}`, { signal: controller.signal });
+                }
+                clearTimeout(tid);
+                if (res && res.ok) {
+                    const data = await res.json();
+                    const actualMac = cleanMac(data.mac || '');
+                    const expMac = cleanMac(expectedMac);
+                    const matched = expMac ? (actualMac === expMac) : true;
+                    return { ok: true, matched, actualMac, data };
+                }
+                return { ok: false, error: 'http_error' };
+            } catch (e) {
+                clearTimeout(tid);
+                return { ok: false, error: e };
+            }
+        }
+
+async function openDashboard() {
+            const active = getActiveDevice();
+            const expectedMac = active ? active.cleanMac : getActiveMac();
+
+            if (!currentIp || currentIp === '--') {
+                const openBtnIcon = document.getElementById('open-btn-icon');
+                if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
+                const found = await findControllerInCloud(true, true, 2000);
+                if (openBtnIcon) openBtnIcon.style.animation = '';
+                if (!found) {
+                    openAndScrollToStep3();
+                }
+                return;
+            }
+
+            if (currentIp === '10.10.10.1') {
+                safeNavigateToDashboard('10.10.10.1');
+                return;
+            }
+
+            const isHttps = (window.location.protocol === 'https:');
+            if (isHttps) {
+                // On HTTPS, direct navigation without async delay protects against mobile popup blockers
+                safeNavigateToDashboard(currentIp);
+                return;
+            }
+
+            const openBtnIcon = document.getElementById('open-btn-icon');
+            if (openBtnIcon) openBtnIcon.style.animation = 'spin 0.8s linear infinite';
+
+            // Hardware verification step before opening dashboard (HTTP only)
+            const verify = await verifyDeviceLocal(currentIp, expectedMac, 1200);
+            if (openBtnIcon) openBtnIcon.style.animation = '';
+
+            // Guard: If user switched active device while verification was running, do not open
+            if (expectedMac && expectedMac !== getActiveMac()) {
+                console.log(`[Dashboard] Expected MAC ${expectedMac} no longer active (${getActiveMac()}), aborting open`);
+                return;
+            }
+
+            if (verify.ok) {
+                if (!verify.matched && verify.actualMac) {
+                    console.warn(`[Hardware Mismatch] Expected ${expectedMac}, but found ${verify.actualMac} on ${currentIp}`);
+                    showToast(`⚠️ На ${currentIp} отвечает другая плата (${formatMac(verify.actualMac)}). Запрашиваю облако...`);
+                    // Update the actual board that responded on this IP in registry
+                    setDeviceIp(verify.actualMac, currentIp, (verify.data && (verify.data.firmware || verify.data.version)));
+                    // Search cloud for our active board
+                    await findControllerInCloud(true, true, 2500);
+                    return;
+                }
+
+                // Match confirmed: open window
+                const recovery = document.getElementById('nav-recovery-card');
+                const hint = document.getElementById('ip-unreachable-hint');
+                if (recovery) recovery.style.display = 'none';
+                if (hint) hint.style.display = 'none';
+                safeNavigateToDashboard(currentIp);
+                setTimeout(() => { checkFailedNavigation(); }, 800);
+            } else {
+                // IP is unreachable locally (e.g. DHCP IP changed). Query cloud!
+                console.warn(`[Hardware Unreachable] Device did not answer on ${currentIp}. Querying cloud...`);
+                showToast(`📡 Плата не ответила на ${currentIp}. Поиск свежего IP в облаке...`);
+                const found = await findControllerInCloud(false, true, 2500);
+                if (expectedMac && expectedMac !== getActiveMac()) {
+                    return;
+                }
+                if (found && currentIp && currentIp !== '--') {
+                    safeNavigateToDashboard(currentIp);
+                } else {
+                    checkFailedNavigation();
+                }
+            }
+        }
+
+function syncWithBoard() {
+            const t = I18N[currentLang] || I18N.en;
+            showToast(t.toastConnecting);
+            setTimeout(() => {
+                window.location.href = 'http://10.10.10.1/sync?lang=' + currentLang;
+            }, 600);
+        }
+
+const RTDB_URL = "https://bms-project-9008-default-rtdb.firebaseio.com";
+        let discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
+        let activeCloudAbortController = null;
+        let initialCloudPromise = null;
+        let inFlightCloudPromise = null;
+        let lastCloudFetchTime = 0;
+        let lastCloudSuccessData = null; // { ip, mac, version, ts }
+        const CLOUD_CACHE_TTL_MS = 15000; // 15 seconds in-memory cooldown for duplicate requests
+        const BOARD_FRESH_THRESHOLD_MS = 15 * 60 * 1000;
+
+async function findControllerInCloud(autoOpen = false, isUserInitiated = false, timeoutMs = 3500, specificMac = null, force = false) {
+            const t = I18N[currentLang] || I18N.ru;
+            const searchIcon = document.getElementById('cloud-search-icon');
+            const searchLabel = document.getElementById('t-btn-cloud-search');
+            const guideSyncBtn = document.getElementById('btn-guide-sync');
+            const cloudBadge = document.getElementById('cloud-status-badge');
+
+            const isHttps = (window.location.protocol === 'https:');
+
+            // DIRECT-FIRST: Check if the device is already directly accessible locally on lastKnownIP (HTTP only)
+            if (!isHttps && specificMac && cleanMac(specificMac).length >= 6) {
+                const targetMac = cleanMac(specificMac);
+                const activeDev = getActiveDevice();
+                const lastKnownIp = (activeDev && activeDev.cleanMac === targetMac) ? activeDev.ip : currentIp;
+                if (lastKnownIp && isValidIp(lastKnownIp) && lastKnownIp !== '10.10.10.1') {
+                    const localCheck = await verifyDeviceLocal(lastKnownIp, targetMac, 600);
+                    if (targetMac !== getActiveMac()) return false;
+                    if (localCheck.ok && localCheck.matched) {
+                        console.log(`[Direct-First] Device ${targetMac} answered locally on ${lastKnownIp}. Bypassing Firebase!`);
+                        if (cloudBadge) {
+                            cloudBadge.style.display = 'block';
+                            cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Локально)`;
+                        }
+                        if (isUserInitiated) {
+                            showToast(`✅ Контроллер на связи локально (${lastKnownIp})`);
+                        }
+                        if (autoOpen) {
+                            setTimeout(() => { safeNavigateToDashboard(lastKnownIp); }, 200);
+                        }
+                        return true;
+                    }
+                }
+            }
+
+            // 1. IN-MEMORY CACHE: Return fresh memory result if queried less than 15s ago
+            if (!force && lastCloudSuccessData && (Date.now() - lastCloudFetchTime < CLOUD_CACHE_TTL_MS)) {
+                console.log(`[Cloud Discovery] Cache hit (${Math.round((Date.now() - lastCloudFetchTime)/1000)}s old). Bypassing Firebase REST!`);
+                if (isUserInitiated) {
+                    showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${lastCloudSuccessData.ip}`);
+                }
+                if (autoOpen && lastCloudSuccessData.ip && isValidIp(lastCloudSuccessData.ip)) {
+                    setTimeout(() => { safeNavigateToDashboard(lastCloudSuccessData.ip); }, 150);
+                }
+                return true;
+            }
+
+            // 2. IN-FLIGHT DEDUPLICATION: If request is already running, join existing promise
+            if (!force && inFlightCloudPromise) {
+                console.log("[Cloud Discovery] In-flight cloud request already in progress, joining existing promise...");
+                const res = await inFlightCloudPromise;
+                if (isUserInitiated && res && currentIp && isValidIp(currentIp)) {
+                    showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${currentIp}`);
+                }
+                if (autoOpen && res && currentIp && isValidIp(currentIp)) {
+                    setTimeout(() => { safeNavigateToDashboard(currentIp); }, 150);
+                }
+                return res;
+            }
+
+            // 3. EXECUTE NETWORK FETCH
+            const executeFetch = async () => {
+                // Cancel any previous in-flight request to prevent race conditions
+                if (activeCloudAbortController) {
+                    try { activeCloudAbortController.abort(); } catch (e) {}
+                    activeCloudAbortController = null;
+                }
+
+                const abortCtrl = new AbortController();
+                activeCloudAbortController = abortCtrl;
+                const thisEpoch = ++discoveryEpoch;
+
+                if (isUserInitiated) {
+                    if (searchIcon) searchIcon.style.animation = 'spin 0.8s linear infinite';
+                    if (searchLabel) searchLabel.innerText = t.cloudSearching || "Поиск...";
+                    if (guideSyncBtn) guideSyncBtn.disabled = true;
+                    showToast(t.cloudSearching || "📡 Поиск контроллера в облаке...");
+                }
+
+                let foundIp = null;
+                let foundMac = null;
+                let foundVersion = null;
+                let foundTs = 0;
+                let candidateIp = null;
+                let candidateMac = null;
+                let candidateVersion = null;
+                let candidateTs = 0;
+
+                let ignoredMac = '';
+                let resetTs = 0;
+                try {
+                    ignoredMac = cleanMac(localStorage.getItem('bms_ignored_mac') || '');
+                    resetTs = Number(localStorage.getItem('bms_reset_timestamp') || 0);
+                } catch (e) {}
+
+                try {
+                    const timeoutId = setTimeout(() => abortCtrl.abort(), timeoutMs);
+
+                    try {
+                        const targetCleanMac = cleanMac(specificMac || getActiveMac());
+                        const isIgnored = (ignoredMac && targetCleanMac === ignoredMac && !specificMac);
+
+                        // Level 1: Targeted Query (~110 bytes) if targetCleanMac is known and not blacklisted
+                        if (targetCleanMac && targetCleanMac.length >= 6 && !isIgnored) {
+                            const targetedUrl = `${RTDB_URL}/boards/${targetCleanMac}.json?nocache=${Date.now()}`;
+                            const res = await fetch(targetedUrl, { signal: abortCtrl.signal });
+                            if (res && res.ok) {
+                                const data = await res.json();
+                                if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
+                                    const bTs = Number(data.ts) || 0;
+                                    const now = Date.now();
+                                    const ageMs = (bTs > 0 && bTs <= now) ? (now - bTs) : Infinity;
+
+                                    if (targetCleanMac === ignoredMac && bTs <= resetTs + 60000) {
+                                        console.log(`[Cloud Discovery] Targeted record for ${targetCleanMac} is older than reset time (${bTs} <= ${resetTs}). Ignored.`);
+                                    } else if (ageMs <= BOARD_FRESH_THRESHOLD_MS) {
+                                        // 1 Board active user: fresh handshake!
+                                        foundIp = data.ip.trim();
+                                        foundMac = data.mac ? cleanMac(data.mac) : targetCleanMac;
+                                        foundVersion = data.version || '';
+                                        foundTs = bTs;
+                                        console.log(`[Cloud Discovery] Targeted board ${foundMac} is fresh (${Math.round(ageMs/60000)}m ago). Bypassing global scan! (~110 bytes)`);
+                                    } else {
+                                        // Saved board is stale (>15m). Might be replaced by 2nd board!
+                                        console.log(`[Cloud Discovery] Targeted board ${targetCleanMac} is stale (${Math.round(ageMs/60000)}m ago). Fallback to global scan...`);
+                                        candidateIp = data.ip.trim();
+                                        candidateMac = data.mac ? cleanMac(data.mac) : targetCleanMac;
+                                        candidateVersion = data.version || '';
+                                        candidateTs = bTs;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Level 2: Global query (/boards.json) ONLY if targeted query didn't find a fresh board
+                        if (!foundIp) {
+                            const globalUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
+                            const res = await fetch(globalUrl, { signal: abortCtrl.signal });
+                            if (res && res.ok) {
+                                const allBoards = await res.json();
+                                if (allBoards && typeof allBoards === 'object') {
+                                    const validBoards = Object.entries(allBoards)
+                                        .map(([key, val]) => ({
+                                            keyMac: cleanMac(key),
+                                            mac: (val && val.mac) ? cleanMac(val.mac) : cleanMac(key),
+                                            ip: val && val.ip && val.ip.trim(),
+                                            ts: Number((val && val.ts) || 0),
+                                            version: (val && val.version) || ''
+                                        }))
+                                        .filter(b => {
+                                            if (!b.ip || !isValidIp(b.ip) || b.ip === '0.0.0.0' || b.ip === '1.2.3.4' || b.ip === '192.168.43.99') return false;
+                                            // Blacklist filter: Ignore reset board unless it published fresh telemetry AFTER the reset
+                                            if (ignoredMac && (b.keyMac === ignoredMac || b.mac === ignoredMac)) {
+                                                if (b.ts <= resetTs + 60000) {
+                                                    console.log(`[Cloud Discovery] Filtered out blacklisted stale board: ${b.mac} (ts: ${b.ts} <= reset: ${resetTs})`);
+                                                    return false;
+                                                }
+                                            }
+
+                                            // Global discovery freshness threshold
+                                            // We must NOT auto-connect to arbitrary stale boards from the global database if we are finding a NEW board.
+                                            // 10 minutes = 600,000 ms. If older than 10 mins, do not auto-adopt globally.
+                                            const ageMs = Date.now() - b.ts;
+                                            if (ageMs > 10 * 60 * 1000) {
+                                                return false;
+                                            }
+
+                                            return true;
+                                        });
+
+                                    validBoards.sort((a, b) => b.ts - a.ts);
+
+                                    if (validBoards.length > 0) {
+                                        if (validBoards[0].ts >= candidateTs) {
+                                            foundIp = validBoards[0].ip.trim();
+                                            foundMac = validBoards[0].mac || validBoards[0].keyMac;
+                                            foundVersion = validBoards[0].version || '';
+                                            foundTs = validBoards[0].ts;
+                                            console.log(`[Cloud Discovery] Global scan selected freshest active board: ${foundMac} on ${foundIp} (ts: ${foundTs})`);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Fallback to stale candidate if nothing newer was found in global (if candidate not blacklisted)
+                            if (!foundIp && candidateIp) {
+                                if (!ignoredMac || (candidateMac !== ignoredMac && cleanMac(candidateMac) !== ignoredMac) || candidateTs > resetTs) {
+                                    foundIp = candidateIp;
+                                    foundMac = candidateMac;
+                                    foundVersion = candidateVersion;
+                                    foundTs = candidateTs;
+                                }
+                            }
+                        }
+                    } finally {
+                        clearTimeout(timeoutId);
+                    }
+
+                    // Stale check
+                    if (abortCtrl.signal.aborted || thisEpoch !== discoveryEpoch) {
+                        console.log(`[RTDB Discovery] Request aborted or stale epoch (${thisEpoch} vs ${discoveryEpoch})`);
+                        return false;
+                    }
+
+                    if (foundIp && foundMac) {
+                        console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs);
+                        const previousMac = getActiveMac();
+                        const cleanPrev = cleanMac(previousMac);
+                        const cleanNew = cleanMac(foundMac);
+                        const isBoardSwitched = cleanPrev && (cleanPrev !== cleanNew);
+
+                        if (cleanNew !== ignoredMac) {
+                            try {
+                                localStorage.removeItem('bms_ignored_mac');
+                                localStorage.removeItem('bms_reset_timestamp');
+                            } catch (e) {}
+                        }
+
+                        setActiveMac(cleanNew);
+                        setDeviceIp(cleanNew, foundIp, foundVersion);
+                        updateUI();
+
+                        // Cache in memory
+                        lastCloudFetchTime = Date.now();
+                        lastCloudSuccessData = { ip: foundIp, mac: cleanNew, version: foundVersion, ts: foundTs };
+
+                        const now = Date.now();
+                        const ageMs = (foundTs > 0 && foundTs <= now) ? (now - foundTs) : 0;
+                        const isVeryFresh = (foundTs > 0) && (ageMs < 15 * 60 * 1000); // < 15 min
+                        const isRecent = (foundTs > 0) && (ageMs >= 15 * 60 * 1000 && ageMs < 4 * 3600 * 1000); // 15m to 4h
+                        const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
+
+                        if (cloudBadge) {
+                            cloudBadge.style.display = 'inline-flex';
+                            if (isStale) {
+                                const hours = Math.round(ageMs / 3600000);
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">⚪</span> <span id="t-cloud-status-text">${t.cloudStatusStale || "Не в сети в Облаке"} (${hours} ч назад)</span>`;
+                                cloudBadge.style.color = '#a1a1aa';
+                                cloudBadge.style.background = 'rgba(255, 255, 255, 0.05)';
+                                cloudBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                            } else if (isRecent) {
+                                const mins = Math.round(ageMs / 60000);
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟡</span> <span id="t-cloud-status-text">${t.cloudStatusRecent || "Был в сети"} (${mins} мин назад)</span>`;
+                                cloudBadge.style.color = '#fde047';
+                                cloudBadge.style.background = 'rgba(253, 224, 71, 0.1)';
+                                cloudBadge.style.borderColor = 'rgba(253, 224, 71, 0.25)';
+                            } else {
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟢</span> <span id="t-cloud-status-text">${t.cloudStatusOnline || "Активен в Облаке"}</span>`;
+                                cloudBadge.style.color = '#4ade80';
+                                cloudBadge.style.background = 'rgba(74, 222, 128, 0.1)';
+                                cloudBadge.style.borderColor = 'rgba(74, 222, 128, 0.25)';
+                            }
+                        }
+
+                        if (isUserInitiated) {
+                            if (isStale) {
+                                showToast(`⚠️ Запись в облаке устарела (${Math.round(ageMs / 3600000)} ч назад). Включите зажигание (READY)`);
+                            } else if (isBoardSwitched) {
+                                showToast(`✅ Обнаружена активная плата: ${formatMac(cleanNew)} (${foundIp})`);
+                            } else {
+                                showToast(`✅ ${t.cloudFound || "Контроллер найден:"} ${foundIp}`);
+                            }
+                        }
+
+                        if (autoOpen) {
+                            if (!isStale) {
+                                setTimeout(() => {
+                                    safeNavigateToDashboard(foundIp);
+                                }, 200);
+                            } else {
+                                console.log("[Cloud Discovery] Board is stale, skipping autoOpen");
+                            }
+                        }
+                        return true;
+                    } else {
+                        if (cloudBadge) {
+                            cloudBadge.style.display = 'inline-flex';
+                            cloudBadge.innerHTML = `<span id="cloud-status-dot">⚪</span> <span id="t-cloud-status-text">${t.ipStatusOffline || "Не в сети"}</span>`;
+                            cloudBadge.style.color = '#a1a1aa';
+                            cloudBadge.style.background = 'rgba(255, 255, 255, 0.05)';
+                            cloudBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        }
+                        if (isUserInitiated) {
+                            showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
+                        }
+                        return false;
+                    }
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        console.log("[Cloud Discovery] Request aborted cleanly");
+                        return false;
+                    }
+                    console.error("[Cloud Discovery] Error:", err);
+                    if (isUserInitiated) {
+                        showToast(t.cloudError || "⚠️ Ошибка связи с облаком. Проверьте интернет на телефоне.");
+                    }
+                    return false;
+                } finally {
+                    if (thisEpoch === discoveryEpoch) {
+                        if (searchIcon) searchIcon.style.animation = '';
+                        if (searchLabel) searchLabel.innerText = t.btnCloudSearch || "Найти контроллер в облаке";
+                        if (guideSyncBtn) guideSyncBtn.disabled = false;
+                        if (activeCloudAbortController === abortCtrl) {
+                            activeCloudAbortController = null;
+                        }
+                    }
+                }
+            };
+
+            inFlightCloudPromise = executeFetch();
+            try {
+                return await inFlightCloudPromise;
+            } finally {
+                inFlightCloudPromise = null;
+            }
+        }
+
+window.addEventListener('DOMContentLoaded', () => {
+            if (!justLinkedFromUrl) {
+                const aMac = getActiveMac();
+                const isHttps = (window.location.protocol === 'https:');
+                if (!isHttps && aMac) {
+                    const dev = getActiveDevice();
+                    const savedIp = (dev && dev.ip) ? dev.ip : currentIp;
+                    if (savedIp && isValidIp(savedIp) && savedIp !== '10.10.10.1') {
+                        verifyDeviceLocal(savedIp, aMac, 600).then(verify => {
+                            if (aMac !== getActiveMac()) return;
+                            const cloudBadge = document.getElementById('cloud-status-badge');
+                            if (verify.ok && verify.matched) {
+                                if (cloudBadge) {
+                                    cloudBadge.style.display = 'inline-flex';
+                                    cloudBadge.innerHTML = `<span id="cloud-status-dot">🟢</span> <span id="t-cloud-status-text">${I18N[currentLang]?.ipStatusOnline || "В сети"} (Wi-Fi)</span>`;
+                                    cloudBadge.style.color = '#4ade80';
+                                    cloudBadge.style.background = 'rgba(74, 222, 128, 0.1)';
+                                    cloudBadge.style.borderColor = 'rgba(74, 222, 128, 0.25)';
+                                }
+                            } else {
+                                // IP not responsive locally -> query cloud for freshest board
+                                findControllerInCloud(false, false, 2000);
+                            }
+                        });
+                    } else {
+                        initialCloudPromise = findControllerInCloud(false, false, 2500);
+                    }
+                } else {
+                    // On HTTPS or when no local check is performed, query cloud immediately for freshest board!
+                    initialCloudPromise = findControllerInCloud(false, false, 2500);
+                }
+            }
+        });
