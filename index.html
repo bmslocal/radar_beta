@@ -1057,29 +1057,43 @@
             <span id="t-toggle-guide-text">Показать шаги подключения ▼</span>
         </button>
 
-        <!-- One-Tap Action Card -->
-        <div class="one-tap-card" id="main-card">
-            <button id="btn-main-connect" class="btn-main-connect" onclick="startOneTapDiscovery()">
-                <span id="main-connect-icon" style="font-size: 20px;">🚀</span>
-                <span id="t-btn-main-connect">Подключиться к контроллеру</span>
-            </button>
-            <div id="connect-status-text" class="connect-status">
+        <!-- Main Card -->
+        <div class="card" id="main-card">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <div class="ip-label" id="t-ip-label" style="margin-bottom: 0;">Controller IP Address</div>
+                <!-- Reset Board Button next to IP Label -->
+                <button type="button" id="btn-quick-reset-icon" onclick="confirmResetDevice()" style="display: none; background: transparent; border: none; padding: 4px; cursor: pointer; color: #71717a; transition: color 0.2s;" title="Сменить плату">
+                    <span style="font-size: 14px;">🔄</span>
+                </button>
+            </div>
+            
+            <div id="display-ip" class="ip-value">--</div>
+
+            <!-- Optional status dot from cloud/local verification -->
+            <div id="cloud-status-badge" style="display: none; font-size: 12.5px; font-weight: 600; color: #fbbf24; margin-top: -10px; margin-bottom: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); align-items: center; justify-content: center; padding: 4px 10px; border-radius: 12px; gap: 6px; width: max-content; margin-left: auto; margin-right: auto;">
+                <span id="cloud-status-dot">🟠</span> 
+                <span id="t-cloud-status-text">Найдена в Облаке</span>
+            </div>
+
+            <div id="connect-status-text" class="connect-status" style="margin-top: -8px; margin-bottom: 16px;">
                 <span id="status-dot">⚪</span>
                 <span id="t-status-idle">Нажмите для поиска и подключения</span>
             </div>
 
-            <!-- Active Device Status Box with Prominent Reset Button -->
-            <div id="active-device-box" style="display: none; align-items: center; justify-content: space-between; margin-top: 12px; padding: 10px 14px; background: #202024; border: 1px solid #2d2d32; border-radius: 10px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span id="device-status-dot">🟢</span>
-                    <span style="font-size: 13.5px; color: #a1a1aa;" id="t-device-label">Плата:</span>
-                    <span class="mono" id="display-ip" style="font-size: 14.5px; font-weight: 700; color: #4ade80;">--</span>
-                </div>
-                <button type="button" class="btn-ghost" onclick="confirmResetDevice()" style="margin: 0; padding: 6px 10px; font-size: 12.5px; color: #fca5a5; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Сменить плату или забыть сохраненный IP">
-                    <span>🔄</span>
-                    <span id="t-btn-quick-reset">Сменить плату</span>
-                </button>
+            <div id="first-run-tip" class="first-run-tip" onclick="openAndScrollToGuide()">
+                <span style="font-size: 16px; line-height: 1;">📖</span>
+                <span id="t-first-run-tip">First-time setup: follow the guide below 👇</span>
             </div>
+
+            <button id="btn-main-connect" class="btn-main-connect" onclick="startOneTapDiscovery()" style="display: none;">
+                <span id="main-connect-icon" style="font-size: 20px;">🚀</span>
+                <span id="t-btn-main-connect">Подключиться к контроллеру</span>
+            </button>
+
+            <button id="btn-open" class="btn-primary" onclick="openDashboard()">
+                <span id="open-btn-icon">📊</span>
+                <span id="t-btn-open">Live Monitor</span>
+            </button>
 
             <!-- Android App Collapsible Button (shown on Android / Desktop) -->
             <button type="button" id="btn-toggle-apk" class="btn-secondary" onclick="toggleApkDetails()" style="display: none; justify-content: space-between; padding: 12px 14px; border-color: rgba(245, 158, 11, 0.45); background: rgba(245, 158, 11, 0.08); margin-top: 14px;">
@@ -2639,6 +2653,11 @@
             const mainConnectIcon = document.getElementById('main-connect-icon');
             const quickGuide = document.getElementById('quick-guide');
             const toggleGuideBtn = document.getElementById('btn-toggle-guide');
+            const btnQuickResetIcon = document.getElementById('btn-quick-reset-icon');
+            const btnOpen = document.getElementById('btn-open');
+            const btnMainConnect = document.getElementById('btn-main-connect');
+            const cloudStatusBadge = document.getElementById('cloud-status-badge');
+            
             const t = I18N[currentLang] || I18N.en;
 
             const active = getActiveDevice();
@@ -2650,17 +2669,20 @@
                 if (displayMacEl) displayMacEl.innerText = '--';
             }
 
-            const activeDeviceBox = document.getElementById('active-device-box');
             if (currentIp && currentIp !== '--' && isValidIp(currentIp)) {
                 if (displayEl) displayEl.innerText = currentIp;
-                if (activeDeviceBox) activeDeviceBox.style.display = 'flex';
                 if (manualIpInput) manualIpInput.value = currentIp;
                 if (firstRunTip) firstRunTip.style.display = 'none';
                 if (setupTitle) setupTitle.innerText = t.accordionSetupConfig;
                 if (setupIcon) setupIcon.innerText = '⚙️';
                 if (connectStatusBlock) connectStatusBlock.style.display = 'none';
-                if (tBtnMainConnect && !isDiscovering) tBtnMainConnect.innerText = t.btnOpenDash || 'Открыть Live Monitor';
-                if (mainConnectIcon && !isDiscovering) mainConnectIcon.innerText = '📊';
+                
+                if (btnQuickResetIcon) btnQuickResetIcon.style.display = 'block';
+                if (btnOpen) btnOpen.style.display = 'flex';
+                if (btnMainConnect) btnMainConnect.style.display = 'none';
+                
+                // Keep cloud status hidden until local check updates it
+                // We don't hide it unconditionally because verifyDeviceLocal might have just shown it
 
                 // Auto-collapse quick guide when IP is active
                 if (quickGuide && !quickGuide.dataset.userForceShown) {
@@ -2673,7 +2695,6 @@
                 }
             } else {
                 if (displayEl) displayEl.innerText = '--';
-                if (activeDeviceBox) activeDeviceBox.style.display = 'none';
                 if (manualIpInput) manualIpInput.value = '';
                 if (firstRunTip) firstRunTip.style.display = 'flex';
                 if (setupTitle) setupTitle.innerText = t.accordionSetupFirst;
@@ -2681,6 +2702,12 @@
                 if (connectStatusBlock) connectStatusBlock.style.display = 'flex';
                 if (statusDot) statusDot.innerText = '⚪';
                 if (statusText && !isDiscovering) statusText.innerText = t.statusIdle || 'Нажмите для поиска и подключения';
+                
+                if (btnQuickResetIcon) btnQuickResetIcon.style.display = 'none';
+                if (btnOpen) btnOpen.style.display = 'none';
+                if (btnMainConnect) btnMainConnect.style.display = 'flex';
+                if (cloudStatusBadge) cloudStatusBadge.style.display = 'none';
+
                 if (tBtnMainConnect && !isDiscovering) tBtnMainConnect.innerText = t.btnMainConnect || 'Подключиться к контроллеру';
                 if (mainConnectIcon && !isDiscovering) mainConnectIcon.innerText = '🚀';
 
@@ -3295,15 +3322,24 @@
                         const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
 
                         if (cloudBadge) {
-                            cloudBadge.style.display = 'block';
+                            cloudBadge.style.display = 'inline-flex';
                             if (isStale) {
                                 const hours = Math.round(ageMs / 3600000);
-                                cloudBadge.innerText = `⚪ ${t.ipStatusStale || "Не в сети"} (${hours} ч назад)`;
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">⚪</span> <span id="t-cloud-status-text">${t.ipStatusStale || "Не в сети"} (${hours} ч назад)</span>`;
+                                cloudBadge.style.color = '#a1a1aa';
+                                cloudBadge.style.background = 'rgba(255, 255, 255, 0.05)';
+                                cloudBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                             } else if (isRecent) {
                                 const mins = Math.round(ageMs / 60000);
-                                cloudBadge.innerText = `🟡 ${t.ipStatusRecent || "В сети недавно"} (${mins} мин)`;
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟡</span> <span id="t-cloud-status-text">${t.ipStatusRecent || "В сети недавно"} (${mins} мин)</span>`;
+                                cloudBadge.style.color = '#fde047';
+                                cloudBadge.style.background = 'rgba(253, 224, 71, 0.1)';
+                                cloudBadge.style.borderColor = 'rgba(253, 224, 71, 0.25)';
                             } else {
-                                cloudBadge.innerText = `🟢 ${t.ipStatusOnline || "В сети"} (Облако)`;
+                                cloudBadge.innerHTML = `<span id="cloud-status-dot">🟢</span> <span id="t-cloud-status-text">${t.ipStatusOnline || "В сети"} (Облако)</span>`;
+                                cloudBadge.style.color = '#4ade80';
+                                cloudBadge.style.background = 'rgba(74, 222, 128, 0.1)';
+                                cloudBadge.style.borderColor = 'rgba(74, 222, 128, 0.25)';
                             }
                         }
 
@@ -3329,8 +3365,11 @@
                         return true;
                     } else {
                         if (cloudBadge) {
-                            cloudBadge.style.display = 'block';
-                            cloudBadge.innerText = `⚪ ${t.ipStatusOffline || "Не в сети"}`;
+                            cloudBadge.style.display = 'inline-flex';
+                            cloudBadge.innerHTML = `<span id="cloud-status-dot">⚪</span> <span id="t-cloud-status-text">${t.ipStatusOffline || "Не в сети"}</span>`;
+                            cloudBadge.style.color = '#a1a1aa';
+                            cloudBadge.style.background = 'rgba(255, 255, 255, 0.05)';
+                            cloudBadge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                         }
                         if (isUserInitiated) {
                             showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
@@ -3382,8 +3421,11 @@
                             const cloudBadge = document.getElementById('cloud-status-badge');
                             if (verify.ok && verify.matched) {
                                 if (cloudBadge) {
-                                    cloudBadge.style.display = 'block';
-                                    cloudBadge.innerText = `🟢 ${I18N[currentLang]?.ipStatusOnline || "В сети"} (Локально)`;
+                                    cloudBadge.style.display = 'inline-flex';
+                                    cloudBadge.innerHTML = `<span id="cloud-status-dot">🟢</span> <span id="t-cloud-status-text">${I18N[currentLang]?.ipStatusOnline || "В сети"} (Wi-Fi)</span>`;
+                                    cloudBadge.style.color = '#4ade80';
+                                    cloudBadge.style.background = 'rgba(74, 222, 128, 0.1)';
+                                    cloudBadge.style.borderColor = 'rgba(74, 222, 128, 0.25)';
                                 }
                             } else {
                                 // IP not responsive locally -> query cloud for freshest board
