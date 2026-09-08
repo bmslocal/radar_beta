@@ -97,6 +97,7 @@ var I18N = {
                 qstep2: "Plug adapter into vehicle's <b>OBD2</b> port and power ON (<b>READY</b> mode).",
                 qstep3: "Tap the green «Connect to Controller» button below.",
                 tabCloud: "⚡ Cloud",
+                cloudIntro: "⚡ <b>Recommended & simplest method:</b> one-tap automatic connection. If controller is not found via cloud, use the <b>«Search»</b> tab.",
                 tabSearch: "🔍 Search",
                 tabOffline: "📡 Offline",
                 searchIntro: "💡 <b>Local auto-search without internet:</b> the controller sends its IP directly to Radar via service Wi-Fi.",
@@ -240,6 +241,7 @@ var I18N = {
                 qstep2: "将适配器插入车辆 <b>OBD2</b> 接口并启动车辆（<b>READY</b> 模式）。",
                 qstep3: "点击下方绿色“连接到控制器”按钮。",
                 tabCloud: "⚡ 云端",
+                cloudIntro: "⚡ <b>推荐且最简便的方式：</b>一键自动连接。如果无法通过云端找到控制器，请使用<b>“搜索”</b>标签页。",
                 tabSearch: "🔍 搜索",
                 tabOffline: "📡 离线",
                 searchIntro: "💡 <b>无网络本地自动搜索：</b>控制器通过服务 Wi-Fi 直接向雷达发送 IP 地址。",
@@ -369,6 +371,7 @@ var I18N = {
                 qstep2: "차량 <b>OBD2</b> 단자에 어댑터를 연결하고 시동을 켭니다 (<b>READY</b> 모드).",
                 qstep3: "아래 초록색 «컨트롤러에 연결» 버튼을 누르세요.",
                 tabCloud: "⚡ 클라우드",
+                cloudIntro: "⚡ <b>가장 간단하고 권장되는 방법:</b> 원탭 자동 연결. 클라우드를 통해 컨트롤러를 찾을 수 없는 경우 <b>«검색»</b> 탭을 사용하세요.",
                 tabSearch: "🔍 검색",
                 tabOffline: "📡 오프라인",
                 searchIntro: "💡 <b>인터넷 없는 로컬 자동 검색:</b> 컨트롤러가 서비스 Wi-Fi를 통해 레이더로 직접 IP를 전송합니다.",
@@ -501,6 +504,7 @@ var I18N = {
                 qstep2: "Вставьте адаптер в разъем <b>OBD2</b> автомобиля и включите зажигание (режим <b>READY</b>).",
                 qstep3: "Нажмите зеленую кнопку «Подключиться к контроллеру» ниже.",
                 tabCloud: "⚡ Облако",
+                cloudIntro: "⚡ <b>Рекомендуемый и самый простой способ:</b> автоматическое подключение в один клик. Если не удается найти через облако — используйте вкладку <b>«Поиск»</b>.",
                 tabSearch: "🔍 Поиск",
                 tabOffline: "📡 Офлайн",
                 searchIntro: "💡 <b>Локальный автопоиск без интернета:</b> контроллер сам передаст свой IP в Радар через сервисную сеть.",
@@ -600,6 +604,7 @@ var I18N = {
                 qstep2: "アダプターを車両の <b>OBD2</b> ポートに差し込み、車両を <b>READY</b> モードにします。",
                 qstep3: "下の緑色の「コントローラーに接続」ボタンをタップします。",
                 tabCloud: "⚡ クラウド",
+                cloudIntro: "⚡ <b>推奨・最も簡単な接続方法：</b>ワンタップ自動接続。クラウド経由で見つからない場合は<b>「検索」</b>タブをお使いください。",
                 tabSearch: "🔍 検索",
                 tabOffline: "📡 オフライン",
                 searchIntro: "💡 <b>ネット不要のローカル自動検索：</b>コントローラーが設定用Wi-Fi経由でレーダーにIPを直接通知します。",
@@ -708,6 +713,9 @@ function applyLanguage() {
             if (document.getElementById('t-tab-cloud')) document.getElementById('t-tab-cloud').innerText = t.tabCloud || '⚡ Облако';
             if (document.getElementById('t-tab-search')) document.getElementById('t-tab-search').innerText = t.tabSearch || '🔍 Поиск';
             if (document.getElementById('t-tab-offline')) document.getElementById('t-tab-offline').innerText = t.tabOffline || '📡 Офлайн';
+
+            // Tab 1 (Cloud) elements
+            if (document.getElementById('t-cloud-intro')) document.getElementById('t-cloud-intro').innerHTML = t.cloudIntro || '';
 
             // Tab 2 (Search) elements
             if (document.getElementById('t-search-intro')) document.getElementById('t-search-intro').innerHTML = t.searchIntro || '';
