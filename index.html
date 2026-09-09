@@ -282,9 +282,7 @@
                             <span id="t-search-step2-net">Имя сети: <code>Bms_Setup</code></span>
                             <span id="t-search-step2-pwd">Пароль: <code>bmslocal</code></span>
                         </div>
-                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4; margin-bottom: 6px;" id="t-search-step2-tip">
-                            💡 Если сеть <code>Bms_Setup</code> не отображается, выключите раздачу на телефоне на 15 секунд — контроллер создаст её автоматически.
-                        </div>
+                        
                         <div class="option-note" id="t-search-step2-warn" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 8px 10px; margin: 6px 0 0 0; color: #e4e4e7; font-size: 12.5px; line-height: 1.4;">
                             ⚠️ В настройках сети <code>Bms_Setup</code> выключите «Автоподключение». При появлении окна «Нет интернета» выберите «Оставаться подключенным».
                         </div>
@@ -333,30 +331,13 @@
                     ⚠️ <b>Внимание: мобильный интернет будет недоступен</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>, так как контроллер не раздает выход в интернет.
                 </div>
 
-                <div class="guide-step">
+                <div class="guide-step" style="margin-bottom: 8px;">
                     <div class="step-header">
-                        <span class="step-num">A</span>
-                        <span class="step-title" id="t-offline-step-a-title">Wi-Fi сеть Bms_Setup</span>
+                        <span class="step-title" id="t-offline-step-b-title" style="margin-left: 0;">Прямой вход в контроллер</span>
                     </div>
-                    <div class="step-body">
-                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step-a-desc">
-                            Выключите точку доступа на телефоне на 15 секунд. Контроллер создаст резервную сеть для прямого входа:
-                        </div>
-                        <div class="cred-row" style="margin-bottom: 0;">
-                            <span>Имя сети: <code>Bms_Setup</code></span>
-                            <span>Пароль: <code>bmslocal</code></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="guide-step" style="margin-bottom: 4px;">
-                    <div class="step-header">
-                        <span class="step-num">B</span>
-                        <span class="step-title" id="t-offline-step-b-title">Прямой вход в контроллер</span>
-                    </div>
-                    <div class="step-body">
+                    <div class="step-body" style="margin-left: 0;">
                         <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step-b-desc">
-                            Подключитесь к Wi-Fi сети <code>Bms_Setup</code> и откройте адрес контроллера напрямую:
+                            Подключитесь к Wi-Fi сети <code>Bms_Setup</code> (пароль: <code>bmslocal</code>) и откройте адрес контроллера напрямую:
                         </div>
                         <a href="http://10.10.10.1/" target="_blank" class="btn-sync" style="text-decoration: none; margin-top: 4px; margin-bottom: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                             <span>🌐</span> <span id="t-btn-open-direct">Открыть http://10.10.10.1</span>
@@ -449,7 +430,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v96-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v97-beta</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>

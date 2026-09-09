@@ -121,7 +121,7 @@ var I18N = {
                 searchStep2Tip: "💡 If <code>Bms_Setup</code> does not appear, turn off phone hotspot for 15 seconds — controller will create it automatically.",
                 searchStep2Warn: "⚠️ In <code>Bms_Setup</code> network settings turn off «Auto-Join». If prompted «No internet», choose «Keep connection».",
                 searchStep3Title: "Automatic IP Discovery",
-                searchStep3Note: "The controller sends its IP to Radar, turns off <code>Bms_Setup</code>, and redirects you back with saved IP.",
+                searchStep3Note: "The controller sends its IP to Radar and redirects you back with saved IP.",
                 manualIpTitle: "Enter IP Manually (Advanced)",
                 manualIpAdvDesc: "Where to find IP? In phone hotspot settings under «Connected devices».",
                 offlineWarn: "⚠️ <b>Mobile internet is unavailable</b> while connected directly to controller Wi-Fi <code>Bms_Setup</code>.",
@@ -285,7 +285,7 @@ var I18N = {
                 searchStep2Tip: "💡 如果未出现 <code>Bms_Setup</code>，请关闭手机热点 15 秒 — 控制器将自动开启服务网络。",
                 searchStep2Warn: "⚠️ 在 <code>Bms_Setup</code> 设置中关闭“自动加入”。若提示“无互联网连接”，请选择“保持连接”。",
                 searchStep3Title: "自动获取 IP 地址",
-                searchStep3Note: "控制器将自动将 IP 发送给雷达，关闭临时热点，并带您返回主屏（已保存 IP）。",
+                searchStep3Note: "控制器将自动将 IP 发送给雷达，并带您返回主屏（已保存 IP）。",
                 manualIpTitle: "手动输入 IP（高级）",
                 manualIpAdvDesc: "从手机热点设置的“已连接设备”中查找 IP 地址。",
                 offlineWarn: "⚠️ <b>注意：直接连接控制器 Wi-Fi 期间无法使用蜂窝移动网络。</b>",
@@ -435,7 +435,7 @@ var I18N = {
                 searchStep2Tip: "💡 <code>Bms_Setup</code>이 표시되지 않으면 스마트폰 핫스팟을 15초간 끄세요. 컨트롤러가 자동으로 생성합니다.",
                 searchStep2Warn: "⚠️ <code>Bms_Setup</code> 설정에서 «자동 연결»을 끄세요. «인터넷 없음» 안내 시 «연결 유지»를 선택하세요.",
                 searchStep3Title: "자동 IP 수신",
-                searchStep3Note: "컨트롤러가 레이더로 IP를 전달하고 <code>Bms_Setup</code>을 종료한 뒤 IP가 저장된 상태로 복귀합니다.",
+                searchStep3Note: "컨트롤러가 레이더로 IP를 전달하고 IP가 저장된 상태로 복귀합니다.",
                 manualIpTitle: "수동 IP 입력 (고급)",
                 manualIpAdvDesc: "IP 주소는 스마트폰 핫스팟 설정의 «연결된 기기» 목록에서 확인할 수 있습니다.",
                 offlineWarn: "⚠️ <b>컨트롤러 Wi-Fi에 직접 연결된 동안에는 모바일 인터넷을 사용할 수 없습니다.</b>",
@@ -502,9 +502,9 @@ var I18N = {
                 step3Or: "Укажите IP-адрес вручную:",
                 step3AdvancedTitle: "Для продвинутых пользователей",
                 step3AdvancedDesc: "Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».",
-                step3ResetTitle: "Сменили плату или второе авто?",
-                step3ResetDesc: "Если вы подключили другую плату, нажмите кнопку ниже, чтобы Радар забыл старый IP и сразу нашел новую плату.",
-                btnStep3Reset: "Сбросить память и найти новую плату",
+                step3ResetTitle: "Сменили авто или плату?",
+                step3ResetDesc: "Обновите подключение, чтобы Радар привязался к текущему бортовому устройству. Старая связь будет заменена, а поиск новой платы начнется автоматически.",
+                btnStep3Reset: "Обновить связь и найти новую плату",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "Сохранить",
                 autoText: "<b>Контроллер работает полностью автономно.</b> Телефон используется только для мониторинга и настройки.",
@@ -588,14 +588,14 @@ var I18N = {
                 searchStep2Tip: "💡 Если сеть <code>Bms_Setup</code> не появилась, выключите раздачу на телефоне на 15 секунд — контроллер поднимет её автоматически.",
                 searchStep2Warn: "⚠️ В свойствах сети <code>Bms_Setup</code> отключите «Автоподключение». Если появится запрос «Без доступа к интернету» — выберите «Сохранять подключение».",
                 searchStep3Title: "Получение IP-адреса",
-                searchStep3Note: "Контроллер передаст свой адрес в Радар, выключит сеть <code>Bms_Setup</code> и вернет вас на главный экран с сохраненным адресом.",
+                searchStep3Note: "Контроллер передаст свой адрес в Радар и вернет вас на главный экран с сохраненным адресом.",
                 manualIpTitle: "Ввести IP вручную (для продвинутых)",
                 manualIpAdvDesc: "Где узнать IP? В настройках точки доступа телефона в списке «Подключенные устройства».",
                 offlineWarn: "⚠️ <b>Мобильный интернет не будет работать</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>.",
                 offlineStepATitle: "Wi-Fi сеть Bms_Setup",
                 offlineStepADesc: "Выключите точку доступа на телефоне на 15 секунд. Контроллер создаст резервную сеть для прямого входа:",
                 offlineStepBTitle: "Прямой вход в контроллер",
-                offlineStepBDesc: "Подключитесь к Wi-Fi сети <code>Bms_Setup</code> и откройте адрес контроллера напрямую:",
+                offlineStepBDesc: "Подключитесь к Wi-Fi сети <code>Bms_Setup</code> (пароль: <code>bmslocal</code>) и откройте адрес контроллера напрямую:",
                 btnOpenDirect: "Открыть http://10.10.10.1",
                 offlineStepBNote: "В веб-интерфейсе можно смотреть телеметрию и прописать параметры вашей точки доступа Wi-Fi.",
                 modalResetTitle: "Сменить плату контроллера?",
@@ -842,7 +842,7 @@ function applyLanguage() {
             if (document.getElementById('t-offline-step-a-title')) document.getElementById('t-offline-step-a-title').innerText = t.offlineStepATitle || '';
             if (document.getElementById('t-offline-step-a-desc')) document.getElementById('t-offline-step-a-desc').innerText = t.offlineStepADesc || '';
             if (document.getElementById('t-offline-step-b-title')) document.getElementById('t-offline-step-b-title').innerText = t.offlineStepBTitle || '';
-            if (document.getElementById('t-offline-step-b-desc')) document.getElementById('t-offline-step-b-desc').innerText = t.offlineStepBDesc || '';
+            if (document.getElementById('t-offline-step-b-desc')) document.getElementById('t-offline-step-b-desc').innerHTML = t.offlineStepBDesc || '';
             if (document.getElementById('t-btn-open-direct')) document.getElementById('t-btn-open-direct').innerText = t.btnOpenDirect || 'Открыть http://10.10.10.1';
             if (document.getElementById('t-offline-step-b-note')) document.getElementById('t-offline-step-b-note').innerText = t.offlineStepBNote || '';
 
