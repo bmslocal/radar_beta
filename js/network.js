@@ -266,11 +266,31 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                     }
 
                     if (foundIp && foundMac) {
-                        console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs);
+                        const cleanNew = cleanMac(foundMac);
                         const previousMac = getActiveMac();
                         const cleanPrev = cleanMac(previousMac);
-                        const cleanNew = cleanMac(foundMac);
                         const isBoardSwitched = cleanPrev && (cleanPrev !== cleanNew);
+
+                        const now = Date.now();
+                        const ageMs = (foundTs > 0 && foundTs <= now) ? (now - foundTs) : Infinity;
+                        // Strict online definition: Telemetry must be fresh (< 3 minutes)
+                        const isVeryFresh = (foundTs > 0) && (ageMs < 3 * 60 * 1000); // < 3 min
+                        const isRecent = (foundTs > 0) && (ageMs >= 3 * 60 * 1000 && ageMs < 4 * 3600 * 1000); // 3m to 4h
+                        const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
+
+                        isLastCloudBoardOnline = isVeryFresh;
+
+                        // CRITICAL: If this is an unlinked/hard-reset state or discovering new boards,
+                        // DO NOT adopt stale or offline boards as active!
+                        if (!isVeryFresh && !specificMac && (localStorage.getItem('bms_hard_reset') === '1' || !previousMac)) {
+                            console.log(`[Cloud Discovery] Discovered board ${cleanNew} is offline (${Math.round(ageMs/60000)}m old). Refusing to bind in unlinked state.`);
+                            if (isUserInitiated) {
+                                showToast(t.cloudNotFound || "⚠️ Контроллер пока не ответил. Убедитесь, что раздача Wi-Fi включена.");
+                            }
+                            return false;
+                        }
+
+                        console.log("[Cloud Discovery] Controller discovered:", foundIp, foundMac, "ts:", foundTs, "online:", isVeryFresh);
 
                         if (cleanNew !== ignoredMac) {
                             try {
@@ -286,14 +306,6 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                         // Cache in memory
                         lastCloudFetchTime = Date.now();
                         lastCloudSuccessData = { ip: foundIp, mac: cleanNew, version: foundVersion, ts: foundTs };
-
-                        const now = Date.now();
-                        const ageMs = (foundTs > 0 && foundTs <= now) ? (now - foundTs) : 0;
-                        const isVeryFresh = (foundTs > 0) && (ageMs < 20 * 60 * 1000); // < 20 min
-                        const isRecent = (foundTs > 0) && (ageMs >= 20 * 60 * 1000 && ageMs < 4 * 3600 * 1000); // 20m to 4h
-                        const isStale = (foundTs > 0) && (ageMs >= 4 * 3600 * 1000); // > 4h
-
-                        isLastCloudBoardOnline = isVeryFresh;
 
                         if (cloudBadge) {
                             cloudBadge.style.display = 'inline-flex';
@@ -318,8 +330,8 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                         }
 
                         if (isUserInitiated) {
-                            if (isStale) {
-                                showToast(`⚠️ Запись в облаке устарела (${Math.round(ageMs / 3600000)} ч назад). Включите зажигание (READY)`);
+                            if (!isVeryFresh) {
+                                showToast(`⚠️ Контроллер не в сети (был ${Math.round(ageMs / 60000)} мин назад). Включите зажигание (READY)`);
                             } else if (isBoardSwitched) {
                                 showToast(`✅ Обнаружена активная плата: ${formatMac(cleanNew)} (${foundIp})`);
                             } else {
@@ -327,17 +339,10 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                             }
                         }
 
-                        if (autoOpen) {
-                            if (isVeryFresh) {
-                                setTimeout(() => {
-                                    safeNavigateToDashboard(foundIp);
-                                }, 200);
-                            } else {
-                                console.log("[Cloud Discovery] Board is not online/fresh, showing monitor helper");
-                                if (typeof showMonitorHelper === 'function') {
-                                    showMonitorHelper(foundIp);
-                                }
-                            }
+                        if (autoOpen && isVeryFresh) {
+                            setTimeout(() => {
+                                safeNavigateToDashboard(foundIp);
+                            }, 200);
                         }
                         return true;
                     } else {
@@ -475,9 +480,6 @@ async function startOneTapDiscovery(forceSearch = false) {
                         return;
                     } else {
                         updateUI();
-                        if (typeof showMonitorHelper === 'function') {
-                            showMonitorHelper(currentIp);
-                        }
                         return;
                     }
                 }

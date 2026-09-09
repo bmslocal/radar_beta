@@ -94,7 +94,7 @@ function copySupportInfo() {
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v94-beta',
+                'Radar Version: v95-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
