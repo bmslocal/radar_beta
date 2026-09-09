@@ -94,7 +94,7 @@ function copySupportInfo() {
 
             const text = [
                 '=== BMS COOLING RADAR INFO ===',
-                'Radar Version: v95-beta',
+                'Radar Version: v96-beta',
                 `Device MAC: ${mac}`,
                 `Controller IP: ${ip}`,
                 `Board Firmware: ${fw}`,
@@ -285,19 +285,23 @@ async function checkControllerFromHelper() {
     }
 }
 
-function openAndScrollToStep3() {
+function openAndScrollToSearchIntro() {
     switchSetupTab('search');
     openAndScrollToGuide();
-    const step3El = document.getElementById('guide-step-3');
-    if (step3El) {
+    const introEl = document.getElementById('t-search-intro') || document.getElementById('setup-tab-search');
+    if (introEl) {
         setTimeout(() => {
-            step3El.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            introEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 120);
     }
 }
 
+function openAndScrollToStep3() {
+    openAndScrollToSearchIntro();
+}
+
 function goToSetupSync() {
-    openAndScrollToStep3();
+    openAndScrollToSearchIntro();
 }
 
 function checkFailedNavigation() {
