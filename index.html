@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/style.css">
 
     <style>
-        /* Modern Bento FAQ styling */
+        /* Modern Compact Bento FAQ styling */
         #faq-content {
             background: transparent !important;
             padding: 0 !important;
@@ -20,25 +20,49 @@
             box-shadow: none !important;
         }
         #faq-content .trouble-item {
-            background: #27272a;
-            border: 1px solid #3f3f46;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden; /* For smooth corners when expanded */
-            transition: border-color 0.2s ease, transform 0.2s ease;
+            background: #232328;
+            border: 1px solid #333338;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            transition: border-color 0.2s ease, background 0.2s ease;
         }
-        #faq-content .trouble-item:active {
-            transform: scale(0.99);
+        #faq-content .trouble-item.open {
+            border-color: #3b82f6;
+            background: #26262c;
         }
         #faq-content .trouble-header {
-            padding: 16px;
-            border-bottom: none; /* Removed the default bottom border */
+            padding: 9px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        #faq-content .trouble-q {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #f4f4f5;
+            line-height: 1.35;
+        }
+        #faq-content .trouble-arrow {
+            font-size: 10.5px;
+            color: #a1a1aa;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+        #faq-content .trouble-item.open .trouble-arrow {
+            transform: rotate(180deg);
+            color: #38bdf8;
         }
         #faq-content .trouble-a {
-            background: rgba(0, 0, 0, 0.15); /* Slightly darker background for answer */
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #cbd5e1;
         }
     </style>
 </head>
@@ -195,13 +219,6 @@
                 <div>
                     <div class="bento-tile-title" id="t-faq-accordion-title">Help & FAQ</div>
                     <div class="bento-tile-sub" id="t-faq-sub">Knowledge base</div>
-                </div>
-                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #3f3f46;">
-                    <div style="font-size: 12.5px; color: #a1a1aa; margin-bottom: 10px; line-height: 1.4; text-align: center;" id="t-step3-reset-desc">Сменили контроллер или нет связи? Отвяжите текущий контроллер, чтобы найти новый.</div>
-                    <button type="button" class="btn-ghost" onclick="confirmResetDevice()" style="width: 100%; padding: 10px; font-size: 13.5px; font-weight: 600; justify-content: center; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #fca5a5; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">
-                        <span style="margin-right: 8px;">🔄</span>
-                        <span id="t-btn-step3-reset">Сбросить плату</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -469,6 +486,13 @@
                 <div class="support-row">
                     <span class="support-label" id="t-sup-board-fw">Board Firmware:</span>
                     <span class="support-val mono" id="sup-board-fw">--</span>
+                </div>
+                <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                    <div style="font-size: 12px; color: #a1a1aa; margin-bottom: 8px; line-height: 1.4; text-align: center;" id="t-step3-reset-desc">Сменили контроллер или нет связи? Отвяжите текущее устройство, чтобы найти новое.</div>
+                    <button type="button" class="btn-ghost" onclick="confirmResetDevice()" style="width: 100%; padding: 10px; font-size: 13.5px; font-weight: 600; justify-content: center; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #fca5a5; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center;">
+                        <span style="margin-right: 8px;">🔄</span>
+                        <span id="t-btn-step3-reset">Отвязать контроллер</span>
+                    </button>
                 </div>
             </div>
         </div>
