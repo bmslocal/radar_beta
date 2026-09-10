@@ -10,6 +10,37 @@
     <meta name="apple-mobile-web-app-title" content="Live Radar">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Modern Bento FAQ styling */
+        #faq-content {
+            background: transparent !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        #faq-content .trouble-item {
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* For smooth corners when expanded */
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+        #faq-content .trouble-item:active {
+            transform: scale(0.99);
+        }
+        #faq-content .trouble-header {
+            padding: 16px;
+            border-bottom: none; /* Removed the default bottom border */
+        }
+        #faq-content .trouble-a {
+            background: rgba(0, 0, 0, 0.15); /* Slightly darker background for answer */
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px;
+        }
+    </style>
 </head>
 <body>
     <div class="container" id="app-container">
