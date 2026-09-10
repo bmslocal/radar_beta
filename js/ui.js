@@ -578,17 +578,4 @@ function updateUI() {
         }
 
 
-function toggleResetAccordion() {
-    const content = document.getElementById('reset-content');
-    const arrow = document.getElementById('reset-arrow');
-    if (!content || !arrow) return;
-    
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        arrow.style.transform = 'rotate(180deg)';
-    } else {
-        content.style.display = 'none';
-        arrow.style.transform = 'rotate(0deg)';
-    }
-}
-window.toggleResetAccordion = toggleResetAccordion;
+
