@@ -502,9 +502,9 @@ var I18N = {
                 step3Or: "Укажите IP-адрес вручную:",
                 step3AdvancedTitle: "Для продвинутых пользователей",
                 step3AdvancedDesc: "Где взять IP-адрес? В настройках точки доступа телефона перейдите в раздел «Подключенные устройства».",
-                step3ResetTitle: "Сброс текущего подключения",
-                step3ResetDesc: "Отвяжите этот контроллер, чтобы освободить Радар для поиска и привязки другого.",
-                btnStep3Reset: "Отвязать контроллер",
+                step3ResetTitle: "Подключили другой контроллер?",
+                step3ResetDesc: "⚠️ <span style=\"color: #ff9800; font-weight: bold;\">Внимание:</span> Радар отвяжет текущий контроллер! После этого вы сможете подключить новый через меню сверху.",
+                btnStep3Reset: "Отвязать текущий контроллер",
                 step4Btn: "Live Monitor",
                 btnSaveIp: "Сохранить",
                 autoText: "<b>Контроллер работает полностью автономно.</b> Телефон используется только для мониторинга и настройки.",
@@ -599,7 +599,7 @@ var I18N = {
                 btnOpenDirect: "Открыть http://10.10.10.1",
                 offlineStepBNote: "В веб-интерфейсе можно смотреть телеметрию и прописать параметры вашей точки доступа Wi-Fi.",
                 modalResetTitle: "Отвязать контроллер?",
-                modalResetDesc: "Радар забудет сохраненный IP-адрес текущего контроллера. Вы сможете привязать новый контроллер после сброса.",
+                modalResetDesc: "Радар отвяжет текущий контроллер. <br><span style=\"color: #4caf50; font-weight: bold;\">Настройки самого контроллера не удалятся!</span><br><br>После сброса вы сможете привязать новый контроллер через меню.",
                 modalResetConfirm: "Забыть контроллер",
                 modalResetCancel: "Отмена",
                 manualIntro: "💡 <b>Резервный способ:</b> используйте, если телефон не раздает интернет или нет мобильной сети.",
@@ -847,7 +847,7 @@ function applyLanguage() {
             if (document.getElementById('t-offline-step-b-note')) document.getElementById('t-offline-step-b-note').innerText = t.offlineStepBNote || '';
 
             if (document.getElementById('t-modal-reset-title')) document.getElementById('t-modal-reset-title').innerText = t.modalResetTitle || 'Сменить плату контроллера?';
-            if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerText = t.modalResetDesc || 'Радар забудет сохраненный адрес текущей платы.';
+            if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerHTML = t.modalResetDesc || 'Радар забудет сохраненный адрес текущей платы.';
             if (document.getElementById('t-modal-reset-confirm')) document.getElementById('t-modal-reset-confirm').innerText = t.modalResetConfirm || 'Забыть и искать новую';
             if (document.getElementById('t-modal-reset-cancel')) document.getElementById('t-modal-reset-cancel').innerText = t.modalResetCancel || 'Отмена';
             if (document.getElementById('t-manual-intro')) document.getElementById('t-manual-intro').innerHTML = t.manualIntro || '';
@@ -868,7 +868,7 @@ function applyLanguage() {
 
             // Modal Reset Dialog
             if (document.getElementById('t-modal-reset-title')) document.getElementById('t-modal-reset-title').innerText = t.modalResetTitle || 'Сбросить плату?';
-            if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerText = t.modalResetDesc || 'Сохраненный IP-адрес и ID текущей платы будут удалены. Радар начнет поиск новой активной платы в сети.';
+            if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerHTML = t.modalResetDesc || 'Сохраненный IP-адрес и ID текущей платы будут удалены. Радар начнет поиск новой активной платы в сети.';
             if (document.getElementById('t-modal-reset-cancel')) document.getElementById('t-modal-reset-cancel').innerText = t.modalResetCancel || 'Отмена';
             if (document.getElementById('t-modal-reset-confirm')) document.getElementById('t-modal-reset-confirm').innerText = t.modalResetConfirm || 'Забыть и сбросить';
 
@@ -928,7 +928,7 @@ function applyLanguage() {
             if (document.getElementById('t-step3-advanced-title') && t.step3AdvancedTitle) document.getElementById('t-step3-advanced-title').innerHTML = t.step3AdvancedTitle;
             if (document.getElementById('t-step3-advanced-desc') && t.step3AdvancedDesc) document.getElementById('t-step3-advanced-desc').innerHTML = t.step3AdvancedDesc;
             if (document.getElementById('t-step3-reset-title') && t.step3ResetTitle) document.getElementById('t-step3-reset-title').innerText = t.step3ResetTitle;
-            if (document.getElementById('t-step3-reset-desc') && t.step3ResetDesc) document.getElementById('t-step3-reset-desc').innerText = t.step3ResetDesc;
+            if (document.getElementById('t-step3-reset-desc') && t.step3ResetDesc) document.getElementById('t-step3-reset-desc').innerHTML = t.step3ResetDesc;
             if (document.getElementById('t-btn-step3-reset') && t.btnStep3Reset) document.getElementById('t-btn-step3-reset').innerText = t.btnStep3Reset;
             if (document.getElementById('t-step4-btn') && t.step4Btn) document.getElementById('t-step4-btn').innerHTML = t.step4Btn;
 
