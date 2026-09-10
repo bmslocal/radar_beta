@@ -35,7 +35,7 @@ var I18N = {
                 step3Or: "Or enter controller IP manually:",
                 step3AdvancedTitle: "For advanced users",
                 step3AdvancedDesc: "Where to find the IP address? Go to the 'Connected devices' section in your phone's hotspot settings.",
-                step3ResetTitle: "Проблемы с подключением или сменили плату?",
+                step3ResetTitle: "Сменили контроллер?",
                 step3ResetDesc: "Если контроллер не подключается, или вы подключили другую плату — очистите память радара.",
                 btnStep3Reset: "Reset memory & find new board",
                 step4Btn: "Live Monitor",
