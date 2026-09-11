@@ -125,12 +125,15 @@ var I18N = {
                 manualIpTitle: "Enter IP Manually (Advanced)",
                 manualIpAdvDesc: "Where to find IP? In phone hotspot settings under «Connected devices».",
                 offlineWarn: "⚠️ <b>Mobile internet is unavailable</b> while connected directly to controller Wi-Fi <code>Bms_Setup</code>.",
-                offlineStepATitle: "Wi-Fi Network Bms_Setup",
-                offlineStepADesc: "Turn off phone hotspot for 15 seconds. The controller creates a backup network for direct connection:",
-                offlineStepBTitle: "Direct Controller Access",
-                offlineStepBDesc: "Connect phone to <code>Bms_Setup</code> Wi-Fi and open controller interface directly:",
+                offlineStep1Title: "Connect to Bms_Setup Wi-Fi",
+                offlineStep1Desc: "Connect your phone's Wi-Fi to the controller's service network:",
+                offlineStep1Net: "Network Name: <code>Bms_Setup</code>",
+                offlineStep1Pwd: "Password: <code>bmslocal</code>",
+                offlineStep1Tip: "💡 If <code>Bms_Setup</code> does not appear, turn off phone hotspot for 10–15 seconds — controller will create it automatically.",
+                offlineStep2Title: "Direct Web Interface Access",
+                offlineStep2Desc: "After connecting to Wi-Fi, open controller control panel directly:",
                 btnOpenDirect: "Open http://10.10.10.1",
-                offlineStepBNote: "In web interface you can view telemetry or configure Wi-Fi credentials for your phone hotspot.",
+                offlineStep2Note: "ℹ️ In web interface you can view battery telemetry or configure Wi-Fi credentials for your phone hotspot.",
                 modalResetTitle: "Switch Controller Board?",
                 modalResetDesc: "Radar will forget the saved address of the current board. You will be able to connect another board or transfer the adapter to another vehicle.",
                 modalResetConfirm: "Forget & Find New",
@@ -289,12 +292,15 @@ var I18N = {
                 manualIpTitle: "手动输入 IP（高级）",
                 manualIpAdvDesc: "从手机热点设置的“已连接设备”中查找 IP 地址。",
                 offlineWarn: "⚠️ <b>注意：直接连接控制器 Wi-Fi 期间无法使用蜂窝移动网络。</b>",
-                offlineStepATitle: "Wi-Fi 网络 Bms_Setup",
-                offlineStepADesc: "关闭手机热点 15 秒，控制器将创建备用网络以供直接访问：",
-                offlineStepBTitle: "直接访问控制器",
-                offlineStepBDesc: "连接手机至 <code>Bms_Setup</code> Wi-Fi 并直接在浏览器中打开控制器地址：",
+                offlineStep1Title: "连接至服务网络 Bms_Setup",
+                offlineStep1Desc: "将手机 Wi-Fi 连接到控制器的服务网络：",
+                offlineStep1Net: "网络名称：<code>Bms_Setup</code>",
+                offlineStep1Pwd: "密码：<code>bmslocal</code>",
+                offlineStep1Tip: "💡 如果未出现 <code>Bms_Setup</code>，请关闭手机热点 10–15 秒 — 控制器将自动开启服务网络。",
+                offlineStep2Title: "直接访问控制面板",
+                offlineStep2Desc: "连接网络后，直接打开控制器管理界面：",
                 btnOpenDirect: "打开 http://10.10.10.1",
-                offlineStepBNote: "在控制器界面中可查看电池遥测并配置手机热点 Wi-Fi 参数。",
+                offlineStep2Note: "ℹ️ 在控制器界面中可查看电池遥测并配置手机热点 Wi-Fi 参数。",
                 deviceLabel: "设备：",
                 btnQuickReset: "更换设备",
                 toastResetDone: "设备缓存已清除。请开启车辆电源 (READY) 以绑定新设备。",
@@ -439,12 +445,15 @@ var I18N = {
                 manualIpTitle: "수동 IP 입력 (고급)",
                 manualIpAdvDesc: "IP 주소는 스마트폰 핫스팟 설정의 «연결된 기기» 목록에서 확인할 수 있습니다.",
                 offlineWarn: "⚠️ <b>컨트롤러 Wi-Fi에 직접 연결된 동안에는 모바일 인터넷을 사용할 수 없습니다.</b>",
-                offlineStepATitle: "Wi-Fi 네트워크 Bms_Setup",
-                offlineStepADesc: "스마트폰 핫스팟을 15초간 끕니다. 컨트롤러가 직접 접속용 백업 네트워크를 생성합니다:",
-                offlineStepBTitle: "컨트롤러 직접 접속",
-                offlineStepBDesc: "<code>Bms_Setup</code> Wi-Fi에 연결하고 브라우저에서 컨트롤러 주소를 직접 엽니다:",
+                offlineStep1Title: "서비스 네트워크 Bms_Setup 연결",
+                offlineStep1Desc: "스마트폰 Wi-Fi를 컨트롤러의 서비스 네트워크에 연결합니다:",
+                offlineStep1Net: "네트워크 이름: <code>Bms_Setup</code>",
+                offlineStep1Pwd: "비밀번호: <code>bmslocal</code>",
+                offlineStep1Tip: "💡 <code>Bms_Setup</code> 네트워크가 나타나지 않으면 핫스팟을 10–15초간 끄세요. 컨트롤러가 자동으로 생성합니다.",
+                offlineStep2Title: "웹 제어 패널 직접 접속",
+                offlineStep2Desc: "Wi-Fi 연결 후 브라우저에서 컨트롤러 제어 화면을 직접 엽니다:",
                 btnOpenDirect: "http://10.10.10.1 열기",
-                offlineStepBNote: "웹 화면에서 배터리 상태를 확인하거나 핫스팟 Wi-Fi 정보를 설정할 수 있습니다.",
+                offlineStep2Note: "ℹ️ 웹 화면에서 배터리 상태를 확인하거나 핫스팟 Wi-Fi 정보를 설정할 수 있습니다.",
                 deviceLabel: "보드:",
                 btnQuickReset: "보드 전환",
                 toastResetDone: "보드 메모리가 초기화되었습니다. 새 보드를 연결하려면 차량 시동을 켜세요(READY).",
@@ -592,12 +601,15 @@ var I18N = {
                 manualIpTitle: "Ввести IP вручную (для продвинутых)",
                 manualIpAdvDesc: "Где узнать IP? В настройках точки доступа телефона в списке «Подключенные устройства».",
                 offlineWarn: "⚠️ <b>Мобильный интернет не будет работать</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>.",
-                offlineStepATitle: "Wi-Fi сеть Bms_Setup",
-                offlineStepADesc: "Выключите точку доступа на телефоне на 15 секунд. Контроллер создаст резервную сеть для прямого входа:",
-                offlineStepBTitle: "Прямой вход в контроллер",
-                offlineStepBDesc: "Подключитесь к Wi-Fi сети <code>Bms_Setup</code> (пароль: <code>bmslocal</code>) и откройте адрес контроллера напрямую:",
+                offlineStep1Title: "Подключение к сервисной сети",
+                offlineStep1Desc: "Подключите Wi-Fi на телефоне к сервисной сети контроллера:",
+                offlineStep1Net: "Имя сети: <code>Bms_Setup</code>",
+                offlineStep1Pwd: "Пароль: <code>bmslocal</code>",
+                offlineStep1Tip: "💡 Если сеть <code>Bms_Setup</code> не появилась, отключите раздачу на телефоне на 10–15 секунд — контроллер поднимет её автоматически.",
+                offlineStep2Title: "Прямой вход в веб-интерфейс",
+                offlineStep2Desc: "После подключения к сети откройте панель управления контроллера:",
                 btnOpenDirect: "Открыть http://10.10.10.1",
-                offlineStepBNote: "В веб-интерфейсе можно смотреть телеметрию и прописать параметры вашей точки доступа Wi-Fi.",
+                offlineStep2Note: "ℹ️ В веб-интерфейсе можно смотреть телеметрию батареи и прописать параметры вашей точки доступа Wi-Fi.",
                 modalResetTitle: "Отвязать контроллер?",
                 modalResetDesc: "Радар очистит сохраненный IP-адрес. <br><span style=\"color: #4caf50; font-weight: bold;\">Настройки самого контроллера не пострадают!</span><br><br>После этого вы сможете заново найти свой или подключить другой контроллер.",
                 modalResetConfirm: "Забыть контроллер",
@@ -712,12 +724,15 @@ var I18N = {
                 manualIpTitle: "手動IP入力 (上級者向け)",
                 manualIpAdvDesc: "IPアドレスはスマホのテザリング設定「接続中の機器」一覧で確認できます。",
                 offlineWarn: "⚠️ <b>コントローラーWi-Fiに接続中はモバイルデータ通信（ネット）は利用できません。</b>",
-                offlineStepATitle: "Wi-Fi ネットワーク Bms_Setup",
-                offlineStepADesc: "テザリングを15秒間OFFにすると、直接接続用のバックアップネットワークが起動します：",
-                offlineStepBTitle: "コントローラー直接アクセス",
-                offlineStepBDesc: "<code>Bms_Setup</code> Wi-Fi に接続し、ブラウザで直接コントローラーを開きます：",
+                offlineStep1Title: "設定用Wi-Fi Bms_Setup に接続",
+                offlineStep1Desc: "スマホのWi-Fiをコントローラーの設定用ネットワークに接続します：",
+                offlineStep1Net: "ネットワーク名: <code>Bms_Setup</code>",
+                offlineStep1Pwd: "パスワード: <code>bmslocal</code>",
+                offlineStep1Tip: "💡 <code>Bms_Setup</code> が表示されない場合は、テザリングを10〜15秒間OFFにしてください。自動で起動します。",
+                offlineStep2Title: "コントローラー管理画面へ直接アクセス",
+                offlineStep2Desc: "Wi-Fi接続後、ブラウザでコントローラー管理画面を開きます：",
                 btnOpenDirect: "http://10.10.10.1 を開く",
-                offlineStepBNote: "Web画面でバッテリー情報を確認したり、テザリング用Wi-Fi設定を行えます。",
+                offlineStep2Note: "ℹ️ 管理画面でバッテリー情報の確認やテザリングWi-Fiの設定が可能です。",
                 modalResetTitle: "コントローラー基板を変更しますか？",
                 modalResetDesc: "レーダーは現在の基板のアドレスを消去します。別の基板に接続するか、別車両への載せ替えが可能です。",
                 modalResetConfirm: "消去して新規検索",
@@ -839,12 +854,15 @@ function applyLanguage() {
 
             // Tab 3 (Offline) elements
             if (document.getElementById('t-offline-warn')) document.getElementById('t-offline-warn').innerHTML = t.offlineWarn || '';
-            if (document.getElementById('t-offline-step-a-title')) document.getElementById('t-offline-step-a-title').innerText = t.offlineStepATitle || '';
-            if (document.getElementById('t-offline-step-a-desc')) document.getElementById('t-offline-step-a-desc').innerText = t.offlineStepADesc || '';
-            if (document.getElementById('t-offline-step-b-title')) document.getElementById('t-offline-step-b-title').innerText = t.offlineStepBTitle || '';
-            if (document.getElementById('t-offline-step-b-desc')) document.getElementById('t-offline-step-b-desc').innerHTML = t.offlineStepBDesc || '';
+            if (document.getElementById('t-offline-step1-title')) document.getElementById('t-offline-step1-title').innerText = t.offlineStep1Title || '';
+            if (document.getElementById('t-offline-step1-desc')) document.getElementById('t-offline-step1-desc').innerHTML = t.offlineStep1Desc || '';
+            if (document.getElementById('t-offline-step1-net')) document.getElementById('t-offline-step1-net').innerHTML = t.offlineStep1Net || '';
+            if (document.getElementById('t-offline-step1-pwd')) document.getElementById('t-offline-step1-pwd').innerHTML = t.offlineStep1Pwd || '';
+            if (document.getElementById('t-offline-step1-tip')) document.getElementById('t-offline-step1-tip').innerHTML = t.offlineStep1Tip || '';
+            if (document.getElementById('t-offline-step2-title')) document.getElementById('t-offline-step2-title').innerText = t.offlineStep2Title || '';
+            if (document.getElementById('t-offline-step2-desc')) document.getElementById('t-offline-step2-desc').innerHTML = t.offlineStep2Desc || '';
             if (document.getElementById('t-btn-open-direct')) document.getElementById('t-btn-open-direct').innerText = t.btnOpenDirect || 'Открыть http://10.10.10.1';
-            if (document.getElementById('t-offline-step-b-note')) document.getElementById('t-offline-step-b-note').innerText = t.offlineStepBNote || '';
+            if (document.getElementById('t-offline-step2-note')) document.getElementById('t-offline-step2-note').innerHTML = t.offlineStep2Note || '';
 
             if (document.getElementById('t-modal-reset-title')) document.getElementById('t-modal-reset-title').innerText = t.modalResetTitle || 'Сменить плату контроллера?';
             if (document.getElementById('t-modal-reset-desc')) document.getElementById('t-modal-reset-desc').innerHTML = t.modalResetDesc || 'Радар забудет сохраненный адрес текущей платы.';

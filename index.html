@@ -370,23 +370,45 @@
 
             <!-- Panel 3: Direct Offline Access -->
             <div id="setup-tab-offline" style="display: none;">
-                <div class="option-note" id="t-offline-warn" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; color: #fde68a; font-size: 13px; line-height: 1.5;">
-                    ⚠️ <b>Внимание: мобильный интернет будет недоступен</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>, так как контроллер не раздает выход в интернет.
+                <div class="option-note" id="t-offline-warn" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; color: #fde68a; font-size: 13px; line-height: 1.5;">
+                    ⚠️ <b>Мобильный интернет не будет работать</b> во время прямого подключения к Wi-Fi сети контроллера <code>Bms_Setup</code>.
                 </div>
 
+                <!-- Step 1: Connect to service Wi-Fi -->
+                <div class="guide-step">
+                    <div class="step-header">
+                        <span class="step-num">1</span>
+                        <span class="step-title" id="t-offline-step1-title">Подключение к сервисной сети</span>
+                    </div>
+                    <div class="step-body">
+                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step1-desc">
+                            Подключите Wi-Fi на телефоне к сервисной сети контроллера:
+                        </div>
+                        <div class="cred-row" style="margin-bottom: 8px;">
+                            <span id="t-offline-step1-net">Имя сети: <code>Bms_Setup</code></span>
+                            <span id="t-offline-step1-pwd">Пароль: <code>bmslocal</code></span>
+                        </div>
+                        <div class="option-note" id="t-offline-step1-tip" style="background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 8px 10px; margin: 0; color: #e4e4e7; font-size: 12.5px; line-height: 1.4;">
+                            💡 Если сеть <code>Bms_Setup</code> не появилась, отключите раздачу на телефоне на 10–15 секунд — контроллер поднимет её автоматически.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Direct control panel -->
                 <div class="guide-step" style="margin-bottom: 8px;">
                     <div class="step-header">
-                        <span class="step-title" id="t-offline-step-b-title" style="margin-left: 0;">Прямой вход в контроллер</span>
+                        <span class="step-num">2</span>
+                        <span class="step-title" id="t-offline-step2-title">Прямой вход в веб-интерфейс</span>
                     </div>
-                    <div class="step-body" style="margin-left: 0;">
-                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step-b-desc">
-                            Подключитесь к Wi-Fi сети <code>Bms_Setup</code> (пароль: <code>bmslocal</code>) и откройте адрес контроллера напрямую:
+                    <div class="step-body">
+                        <div style="font-size: 13.5px; color: #cbd5e1; line-height: 1.45; margin-bottom: 8px;" id="t-offline-step2-desc">
+                            После подключения к сети откройте панель управления контроллера:
                         </div>
                         <a href="http://10.10.10.1/" target="_blank" class="btn-sync" style="text-decoration: none; margin-top: 4px; margin-bottom: 8px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
                             <span>🌐</span> <span id="t-btn-open-direct">Открыть http://10.10.10.1</span>
                         </a>
-                        <div style="font-size: 12.5px; color: #a1a1aa; line-height: 1.4; margin-top: 6px;" id="t-offline-step-b-note">
-                            В веб-интерфейсе контроллера доступен мониторинг батареи и раздел настроек Wi-Fi для подключения к вашей сети.
+                        <div class="option-note" id="t-offline-step2-note" style="background: rgba(255, 255, 255, 0.04); border-left: 3px solid #64748b; border-radius: 6px; padding: 8px 10px; margin: 6px 0 0 0; color: #cbd5e1; font-size: 12.5px; line-height: 1.4;">
+                            ℹ️ В веб-интерфейсе можно смотреть телеметрию батареи и прописать параметры вашей точки доступа Wi-Fi.
                         </div>
                     </div>
                 </div>
@@ -568,5 +590,12 @@
     <script src="js/ui.js"></script>
     <script src="js/network.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+    </script>
 </body>
 </html>
