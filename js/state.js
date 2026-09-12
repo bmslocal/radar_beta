@@ -7,10 +7,11 @@ var IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-
 // Global UI and Discovery State
 var isDiscovering = false;
 
-// Cloud Discovery Configuration (Cloudflare Pages Functions with RTDB fallback)
-var RTDB_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? "https://bms-project-9008-default-rtdb.firebaseio.com"
+// Cloud Discovery Configuration (Cloudflare Workers KV Backend)
+var CLOUD_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? "https://beta.bmslocal.app"
     : window.location.origin;
+var RTDB_URL = CLOUD_API_URL; // Alias for backward compatibility
 var discoveryEpoch = 0; // Monotonic epoch counter to eliminate race conditions
 var activeCloudAbortController = null;
 var initialCloudPromise = null;
