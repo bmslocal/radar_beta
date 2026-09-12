@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Live Radar</title>
+    <title>BMS Local</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="theme-color" content="#121214">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Live Radar">
+    <meta name="apple-mobile-web-app-title" content="BMS Local">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/style.css">
 
@@ -79,7 +79,7 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a1a1aa" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
             </div>
-            <div class="install-desc" id="t-install-desc-android">Add Live Radar to your home screen for quick one-tap access.</div>
+            <div class="install-desc" id="t-install-desc-android">Add BMS Local to your home screen for quick one-tap access.</div>
             <button type="button" id="btn-install-app" class="btn-install">Install</button>
         </div>
 
@@ -181,13 +181,12 @@
 
             <!-- Android App Collapsible Details -->
             <div id="apk-details-box" style="display: none; margin-top: 10px; background: #202024; border: 1px solid #2d2d32; border-radius: 12px; padding: 14px; text-align: left;">
-                <div style="font-size: 13.5px; font-weight: 700; color: #f4f4f5; margin-bottom: 4px;" id="t-apk-title">Live Monitor</div>
                 <div style="font-size: 13.5px; color: #a1a1aa; line-height: 1.4; margin-bottom: 10px;" id="t-apk-desc">Android app with live battery HUD widget:</div>
                 <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.45;">
                     <span style="font-size: 13.5px; margin-top: 1px;">⚡</span>
                     <div id="t-apk-f2"><b>Instant auto-connect via smartphone hotspot</b><br><span style="color: #a1a1aa; font-size: 11.5px;">App discovers controller automatically — no IP search or manual setup.</span></div>
                 </div>
-                <a href="./Live_Monitor.apk" download="Live_Monitor.apk" class="btn-apk" id="btn-download-apk" onclick="onApkDownload()">
+                <a href="./BMS_Monitor.apk" download="BMS_Monitor.apk" class="btn-apk" id="btn-download-apk" onclick="onApkDownload()">
                     <span>⬇️</span>
                     <span id="t-btn-download-apk">Download APK</span>
                 </a>
@@ -495,7 +494,7 @@
             <div id="support-details" class="support-details" style="display: none;">
                 <div class="support-row">
                     <span class="support-label" id="t-sup-radar-ver">Radar Version:</span>
-                    <span class="support-val mono" id="sup-radar-ver">v97-beta</span>
+                    <span class="support-val mono" id="sup-radar-ver">v7</span>
                 </div>
                 <div class="support-row">
                     <span class="support-label" id="t-sup-dev-mac">Device ID (MAC):</span>

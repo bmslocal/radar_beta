@@ -1,6 +1,6 @@
 {
-  "name": "Live Radar",
-  "short_name": "Live Radar",
+  "name": "BMS Local",
+  "short_name": "BMS Local",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -7,7 +7,7 @@ var IP_REGEX = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-
 // Global UI and Discovery State
 var isDiscovering = false;
 
-// Cloud Discovery Configuration (Cloudflare Pages Functions with fallback)
+// Cloud Discovery Configuration (Cloudflare Pages Functions with RTDB fallback)
 var RTDB_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? "https://bms-project-9008-default-rtdb.firebaseio.com"
     : window.location.origin;
