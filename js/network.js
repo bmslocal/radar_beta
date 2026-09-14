@@ -162,7 +162,7 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                             if (res && res.ok) {
                                 const data = await res.json();
                                 if (data && data.ip && isValidIp(data.ip) && data.ip !== '0.0.0.0' && data.ip !== '1.2.3.4' && data.ip !== '192.168.43.99') {
-                                    const bTs = Number(data.ts) || 0;
+                                    let bTs = Number(data.ts) || 0; if (bTs > 0 && bTs < 10000000000) bTs = bTs * 1000;
                                     const now = Date.now();
                                     const ageMs = (bTs > 0 && bTs <= now) ? (now - bTs) : Infinity;
 
@@ -202,14 +202,17 @@ async function findControllerInCloud(autoOpen = false, isUserInitiated = false, 
                             const globalUrl = `${RTDB_URL}/boards.json?nocache=${Date.now()}`;
                             const res = await fetch(globalUrl, { signal: abortCtrl.signal });
                             if (res && res.ok) {
-                                const allBoards = await res.json();
+                                const rawResponse = await res.json();
+                                const allBoards = (rawResponse && rawResponse.boards && typeof rawResponse.boards === 'object') 
+                                    ? rawResponse.boards 
+                                    : rawResponse;
                                 if (allBoards && typeof allBoards === 'object') {
                                     const validBoards = Object.entries(allBoards)
                                         .map(([key, val]) => ({
                                             keyMac: cleanMac(key),
                                             mac: (val && val.mac) ? cleanMac(val.mac) : cleanMac(key),
                                             ip: val && val.ip && val.ip.trim(),
-                                            ts: Number((val && val.ts) || 0),
+                                            ts: (Number((val && val.ts) || 0) < 10000000000 && Number((val && val.ts) || 0) > 0) ? Number(val.ts) * 1000 : Number((val && val.ts) || 0),
                                             version: (val && val.version) || ''
                                         }))
                                         .filter(b => {
